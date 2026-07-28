@@ -358,9 +358,24 @@ const ARTIFACT_TYPES = [
 const DATA_MODELS = ['fhir-r4', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
 const MEASURE_TYPES = ['process', 'outcome', 'intermediate-outcome', 'structural', 'patient-reported-outcome'] as const
 
+/**
+ * An artifact path must stay inside the package. Rejected here as well as in
+ * the validator because a path escaping the root is structurally invalid, and
+ * because the registry runs this over packages submitted by strangers.
+ */
+function isContainedPath(path: string): boolean {
+  if (path.startsWith('/') || /^[a-zA-Z]:/.test(path)) return false
+  return !path.split(/[\\/]/).includes('..')
+}
+
 const ArtifactSchema = z
   .object({
-    path: z.string().min(1),
+    path: z
+      .string()
+      .min(1)
+      .refine(isContainedPath, {
+        message: 'artifact path must stay inside the package: no absolute paths, no ".." segments',
+      }),
     type: z.enum(ARTIFACT_TYPES),
     dialect: z.string().optional(),
   })
@@ -452,7 +467,7 @@ export function parseManifest(source: string): ParseResult {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/manifest.test.ts`
-Expected: PASS, 6 tests.
+Expected: PASS, 9 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1489,8 +1504,8 @@ Expected: FAIL, cannot resolve `../src/validate.js`.
 `packages/core/src/validate.ts`:
 
 ```typescript
-import { readFile, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { readFile, realpath, stat } from 'node:fs/promises'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { parseManifest, type Manifest } from './manifest.js'
 import { checkLicense } from './licenses.js'
 import { checkValueSetRefs } from './valuesets.js'
@@ -1512,6 +1527,32 @@ async function readIfPresent(path: string): Promise<string | undefined> {
   } catch {
     return undefined
   }
+}
+
+function escapes(root: string, target: string): boolean {
+  const rel = relative(root, target)
+  return rel === '' || rel.startsWith('..') || isAbsolute(rel)
+}
+
+/**
+ * Resolves a package-relative path, or undefined if it escapes the package.
+ * The manifest schema already rejects ".." and absolute paths, but this is the
+ * layer that actually opens files, so it does not delegate its own safety:
+ * validatePackage runs over packages submitted by strangers.
+ *
+ * Checked twice, before and after following symlinks. `resolve` is purely
+ * lexical, so a link sitting inside the package but pointing outside it passes
+ * a lexical check untouched. That is the classic bypass.
+ */
+async function resolveInside(root: string, candidate: string): Promise<string | undefined> {
+  const realRoot = await realpath(root).catch(() => resolve(root))
+  const full = resolve(realRoot, candidate)
+  if (escapes(realRoot, full)) return undefined
+
+  const real = await realpath(full).catch(() => undefined)
+  // Nonexistent path: nothing to follow, and the caller reports it as missing.
+  if (real === undefined) return full
+  return escapes(realRoot, real) ? undefined : real
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -1565,7 +1606,15 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
     })
   }
   for (const artifact of manifest.artifacts) {
-    if (!(await exists(join(dir, artifact.path)))) {
+    const full = await resolveInside(dir, artifact.path)
+    if (full === undefined) {
+      findings.push({
+        check: 'artifacts.present',
+        severity: 'error',
+        message: `declared artifact ${artifact.path} resolves outside the package`,
+        path: artifact.path,
+      })
+    } else if (!(await exists(full))) {
       findings.push({
         check: 'artifacts.present',
         severity: 'error',
@@ -1583,7 +1632,9 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   checksRun.push('content.forbidden')
   for (const artifact of manifest.artifacts) {
-    const content = await readIfPresent(join(dir, artifact.path))
+    const full = await resolveInside(dir, artifact.path)
+    if (full === undefined) continue
+    const content = await readIfPresent(full)
     if (content !== undefined) findings.push(...scanContent(artifact.path, content))
   }
 
@@ -1596,7 +1647,7 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/validate.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 7 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1771,7 +1822,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 73 tests.
+Expected: PASS, 8 files, 78 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -2023,7 +2074,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 77 tests.
+Expected: PASS, 9 files, 82 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -2181,7 +2232,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 82 tests, typecheck exits 0.
+Expected: PASS, 10 files, 87 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -2194,7 +2245,7 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 82 tests across 10 files.
+- `pnpm test` passes with 87 tests across 10 files.
 - `pnpm typecheck` exits 0.
 - `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
