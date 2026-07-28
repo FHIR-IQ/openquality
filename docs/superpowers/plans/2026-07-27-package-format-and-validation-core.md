@@ -473,15 +473,35 @@ git commit -m "feat(core): add openquality.yaml manifest schema and parser"
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { checkLicense } from '../src/licenses.js'
+import { checkLicense, ALLOWED_LICENSES } from '../src/licenses.js'
+
+/**
+ * An independent copy of the allowlist, deliberately NOT derived from
+ * ALLOWED_LICENSES. Driving the cases off the source would be tautological:
+ * deleting an entry would delete its own test and the suite would stay green.
+ * Changing the licensing policy should require editing this list too.
+ */
+const EXPECTED_LICENSES = [
+  'Apache-2.0',
+  'MIT',
+  'BSD-2-Clause',
+  'BSD-3-Clause',
+  'CC0-1.0',
+  'CC-BY-4.0',
+  'CC-BY-SA-4.0',
+  'GPL-3.0-only',
+  'GPL-3.0-or-later',
+  'LGPL-3.0-only',
+  'MPL-2.0',
+] as const
 
 describe('checkLicense', () => {
-  it('accepts an allowlisted OSI license', () => {
-    expect(checkLicense('Apache-2.0')).toEqual([])
+  it('allows exactly the documented set, no more and no less', () => {
+    expect([...ALLOWED_LICENSES]).toEqual([...EXPECTED_LICENSES])
   })
 
-  it('accepts an allowlisted Creative Commons license', () => {
-    expect(checkLicense('CC-BY-4.0')).toEqual([])
+  it.each(EXPECTED_LICENSES)('accepts %s', (license) => {
+    expect(checkLicense(license)).toEqual([])
   })
 
   it('rejects a license not on the allowlist', () => {
@@ -548,7 +568,7 @@ export function checkLicense(license: string): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/licenses.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 15 tests (1 exact-set assertion, 11 allowlist entries, 3 rejection cases).
 
 - [ ] **Step 5: Commit**
 
@@ -1560,7 +1580,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 51 tests.
+Expected: PASS, 8 files, 61 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -1812,7 +1832,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 55 tests.
+Expected: PASS, 9 files, 65 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -1970,7 +1990,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 60 tests, typecheck exits 0.
+Expected: PASS, 10 files, 70 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -1983,7 +2003,7 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 60 tests across 10 files.
+- `pnpm test` passes with 70 tests across 10 files.
 - `pnpm typecheck` exits 0.
 - `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.

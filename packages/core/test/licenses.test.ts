@@ -1,13 +1,33 @@
 import { describe, it, expect } from 'vitest'
-import { checkLicense } from '../src/licenses.js'
+import { checkLicense, ALLOWED_LICENSES } from '../src/licenses.js'
+
+/**
+ * An independent copy of the allowlist, deliberately NOT derived from
+ * ALLOWED_LICENSES. Driving the cases off the source would be tautological:
+ * deleting an entry would delete its own test and the suite would stay green.
+ * Changing the licensing policy should require editing this list too.
+ */
+const EXPECTED_LICENSES = [
+  'Apache-2.0',
+  'MIT',
+  'BSD-2-Clause',
+  'BSD-3-Clause',
+  'CC0-1.0',
+  'CC-BY-4.0',
+  'CC-BY-SA-4.0',
+  'GPL-3.0-only',
+  'GPL-3.0-or-later',
+  'LGPL-3.0-only',
+  'MPL-2.0',
+] as const
 
 describe('checkLicense', () => {
-  it('accepts an allowlisted OSI license', () => {
-    expect(checkLicense('Apache-2.0')).toEqual([])
+  it('allows exactly the documented set, no more and no less', () => {
+    expect([...ALLOWED_LICENSES]).toEqual([...EXPECTED_LICENSES])
   })
 
-  it('accepts an allowlisted Creative Commons license', () => {
-    expect(checkLicense('CC-BY-4.0')).toEqual([])
+  it.each(EXPECTED_LICENSES)('accepts %s', (license) => {
+    expect(checkLicense(license)).toEqual([])
   })
 
   it('rejects a license not on the allowlist', () => {
