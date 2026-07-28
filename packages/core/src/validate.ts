@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises'
+import { readFile, realpath, stat } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { parseManifest, type Manifest } from './manifest.js'
 import { checkLicense } from './licenses.js'
@@ -23,17 +23,30 @@ async function readIfPresent(path: string): Promise<string | undefined> {
   }
 }
 
+function escapes(root: string, target: string): boolean {
+  const rel = relative(root, target)
+  return rel === '' || rel.startsWith('..') || isAbsolute(rel)
+}
+
 /**
  * Resolves a package-relative path, or undefined if it escapes the package.
- * The manifest schema already rejects such paths, but this is the layer that
- * actually touches the filesystem, so it does not delegate its own safety:
+ * The manifest schema already rejects ".." and absolute paths, but this is the
+ * layer that actually opens files, so it does not delegate its own safety:
  * validatePackage runs over packages submitted by strangers.
+ *
+ * Checked twice, before and after following symlinks. `resolve` is purely
+ * lexical, so a link sitting inside the package but pointing outside it passes
+ * a lexical check untouched. That is the classic bypass.
  */
-function resolveInside(root: string, candidate: string): string | undefined {
-  const full = resolve(root, candidate)
-  const rel = relative(resolve(root), full)
-  if (rel === '' || rel.startsWith('..') || isAbsolute(rel)) return undefined
-  return full
+async function resolveInside(root: string, candidate: string): Promise<string | undefined> {
+  const realRoot = await realpath(root).catch(() => resolve(root))
+  const full = resolve(realRoot, candidate)
+  if (escapes(realRoot, full)) return undefined
+
+  const real = await realpath(full).catch(() => undefined)
+  // Nonexistent path: nothing to follow, and the caller reports it as missing.
+  if (real === undefined) return full
+  return escapes(realRoot, real) ? undefined : real
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -87,7 +100,7 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
     })
   }
   for (const artifact of manifest.artifacts) {
-    const full = resolveInside(dir, artifact.path)
+    const full = await resolveInside(dir, artifact.path)
     if (full === undefined) {
       findings.push({
         check: 'artifacts.present',
@@ -113,7 +126,7 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   checksRun.push('content.forbidden')
   for (const artifact of manifest.artifacts) {
-    const full = resolveInside(dir, artifact.path)
+    const full = await resolveInside(dir, artifact.path)
     if (full === undefined) continue
     const content = await readIfPresent(full)
     if (content !== undefined) findings.push(...scanContent(artifact.path, content))

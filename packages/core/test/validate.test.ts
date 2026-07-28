@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, sep } from 'node:path'
 import { validatePackage } from '../src/validate.js'
@@ -92,6 +92,26 @@ describe('validatePackage', () => {
     // Rejected by the manifest schema before the filesystem is ever touched.
     expect(result.report.findings.some((f) => f.message.match(/stay inside the package/))).toBe(true)
     expect(JSON.stringify(result)).not.toMatch(/CONFIDENTIAL/)
+
+    await rm(outside, { recursive: true, force: true })
+  })
+
+  it('does not follow a symlink that points outside the package', async () => {
+    // This path is clean by inspection, so the manifest schema admits it. Only
+    // the validator's post-symlink check can catch it, which makes this the
+    // test that actually exercises that second layer.
+    const outside = await mkdtemp(join(tmpdir(), 'oq-outside-'))
+    await writeFile(join(outside, 'secret.txt'), 'CONFIDENTIAL', 'utf8')
+
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', README)
+    await mkdir(join(dir, 'cql'), { recursive: true })
+    await symlink(join(outside, 'secret.txt'), join(dir, 'cql', 'M.cql'))
+
+    const result = await validatePackage(dir)
+    expect(JSON.stringify(result)).not.toMatch(/CONFIDENTIAL/)
+    expect(result.report.findings.some((f) => f.message.match(/resolves outside the package/))).toBe(true)
+    expect(result.level).toBe(0)
 
     await rm(outside, { recursive: true, force: true })
   })
