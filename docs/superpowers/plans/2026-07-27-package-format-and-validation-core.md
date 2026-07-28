@@ -631,6 +631,15 @@ describe('checkValueSetRefs', () => {
     const findings = checkValueSetRefs([{ oid: 'not.an.oid.x' }, {}, { url: 'ftp://x' }])
     expect(findings).toHaveLength(3)
   })
+
+  it('tells an author to strip a urn:oid: prefix copied from their CQL', () => {
+    const findings = checkValueSetRefs([{ oid: 'urn:oid:2.16.840.1.113883.3.464.1003.103.12.1001' }])
+    expect(findings).toHaveLength(1)
+    expect(findings[0].check).toBe('valuesets.referenced')
+    expect(findings[0].message).toMatch(/urn:oid:/)
+    // The message must name the corrected value, not just reject the input.
+    expect(findings[0].message).toMatch(/use 2\.16\.840\.1\.113883\.3\.464\.1003\.103\.12\.1001/)
+  })
 })
 ```
 
@@ -646,6 +655,8 @@ import type { Finding } from './report.js'
 
 /** Dotted decimal OID: digit groups separated by single dots, no empty groups. */
 const OID = /^\d+(\.\d+)+$/
+
+const URN_OID_PREFIX = 'urn:oid:'
 
 export interface ValueSetRef {
   oid?: string
@@ -668,7 +679,20 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
         path: 'openquality.yaml',
       })
     }
-    if (ref.oid && !OID.test(ref.oid)) {
+    // Called out separately because CQL writes value sets as
+    // 'urn:oid:2.16.840...', so copying one straight across from the package's
+    // own .cql file into the manifest is the likeliest mistake an author makes.
+    if (ref.oid?.startsWith(URN_OID_PREFIX)) {
+      findings.push({
+        check: 'valuesets.referenced',
+        severity: 'error',
+        message:
+          `value set oid "${ref.oid}" must not carry the urn:oid: prefix. ` +
+          `CQL writes them that way, the manifest does not: use ` +
+          `${ref.oid.slice(URN_OID_PREFIX.length)}`,
+        path: 'openquality.yaml',
+      })
+    } else if (ref.oid && !OID.test(ref.oid)) {
       findings.push({
         check: 'valuesets.referenced',
         severity: 'error',
@@ -693,7 +717,7 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/valuesets.test.ts`
-Expected: PASS, 7 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -757,6 +781,28 @@ describe('checkReadmeSections', () => {
     const findings = checkReadmeSections('# T\n\n## Intent\nSee provenance and known limitations below.\n')
     expect(findings).toHaveLength(2)
   })
+
+  it('does not let a heading that merely contains a required word satisfy it', () => {
+    // "Unintentional" contains "intent". Accepting it would score a package
+    // Level 1 without it ever documenting what the measure does.
+    const findings = checkReadmeSections('# T\n\n## Unintentional Data Loss\ntext\n')
+    expect(findings).toHaveLength(3)
+    expect(findings.map((f) => f.message).join(' ')).toMatch(/intent/)
+  })
+
+  it('accepts a heading that qualifies a required word', () => {
+    const findings = checkReadmeSections(
+      '## Intent and Scope\nx\n\n## Known Limitations\nx\n\n## 3. Provenance\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
+
+  it('recognises Setext headings, which are valid Markdown', () => {
+    const findings = checkReadmeSections(
+      'My Measure\n==========\n\nIntent\n------\nx\n\nKnown Limitations\n-----------------\nx\n\nProvenance\n----------\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
 })
 ```
 
@@ -772,19 +818,46 @@ import type { Finding } from './report.js'
 
 export const REQUIRED_SECTIONS = ['intent', 'known limitations', 'provenance'] as const
 
-/** Returns lowercased text of every ATX heading in the document. */
+/** Escapes a literal so it can be embedded in a RegExp. */
+function escapeRegExp(literal: string): string {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
+ * Lowercased text of every heading, both ATX (`## Foo`) and Setext (`Foo` sitting
+ * above a rule of `=` or `-`). Setext is valid Markdown and shows up in
+ * hand-written READMEs, so ignoring it would falsely block a compliant package.
+ */
 function headings(markdown: string): string[] {
-  return markdown
-    .split('\n')
-    .map((line) => line.match(/^#{1,6}\s+(.*)$/)?.[1])
-    .filter((text): text is string => !!text)
-    .map((text) => text.trim().toLowerCase())
+  const lines = markdown.split('\n')
+  const found: string[] = []
+
+  lines.forEach((line, index) => {
+    const atx = line.match(/^#{1,6}\s+(.*)$/)
+    if (atx) {
+      found.push(atx[1].trim().toLowerCase())
+      return
+    }
+    const underline = lines[index + 1]
+    if (line.trim() && !line.startsWith('#') && underline && /^(=+|-+)\s*$/.test(underline)) {
+      found.push(line.trim().toLowerCase())
+    }
+  })
+
+  return found
 }
 
 export function checkReadmeSections(readme: string | undefined): Finding[] {
   const found = readme ? headings(readme) : []
   return REQUIRED_SECTIONS
-    .filter((required) => !found.some((h) => h.includes(required)))
+    .filter((required) => {
+      // Whole-word rather than substring. "Unintentional Data Loss" contains
+      // "intent", and letting that satisfy the requirement would score a package
+      // Level 1 without it ever documenting what it measures. Word boundaries
+      // still admit the natural variations, "Intent and Scope" or "1. Intent".
+      const pattern = new RegExp(`\\b${escapeRegExp(required)}\\b`)
+      return !found.some((heading) => pattern.test(heading))
+    })
     .map((required) => ({
       check: 'readme.sections' as const,
       severity: 'error' as const,
@@ -797,7 +870,7 @@ export function checkReadmeSections(readme: string | undefined): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/readme.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1580,7 +1653,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 61 tests.
+Expected: PASS, 8 files, 65 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -1832,7 +1905,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 65 tests.
+Expected: PASS, 9 files, 69 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -1990,7 +2063,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 70 tests, typecheck exits 0.
+Expected: PASS, 10 files, 74 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -2003,7 +2076,7 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 70 tests across 10 files.
+- `pnpm test` passes with 74 tests across 10 files.
 - `pnpm typecheck` exits 0.
 - `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
