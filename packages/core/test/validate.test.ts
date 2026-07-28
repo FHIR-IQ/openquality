@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { validatePackage } from '../src/validate.js'
 
 let dir: string
@@ -75,6 +75,25 @@ describe('validatePackage', () => {
     const result = await validatePackage(dir)
     expect(result.report.findings.some((f) => f.check === 'content.forbidden' && f.severity === 'error')).toBe(true)
     expect(result.level).toBe(0)
+  })
+
+  it('never reads a file outside the package directory', async () => {
+    // The registry runs this over packages submitted by strangers, so a
+    // manifest must not be able to turn the validator into a file-read gadget.
+    const outside = await mkdtemp(join(tmpdir(), 'oq-outside-'))
+    await writeFile(join(outside, 'secret.txt'), 'CONFIDENTIAL', 'utf8')
+    const escape = join('..', outside.split(sep).pop()!, 'secret.txt')
+
+    await write('openquality.yaml', MANIFEST.replace('cql/M.cql', escape))
+    await write('README.md', README)
+
+    const result = await validatePackage(dir)
+    expect(result.level).toBe(0)
+    // Rejected by the manifest schema before the filesystem is ever touched.
+    expect(result.report.findings.some((f) => f.message.match(/stay inside the package/))).toBe(true)
+    expect(JSON.stringify(result)).not.toMatch(/CONFIDENTIAL/)
+
+    await rm(outside, { recursive: true, force: true })
   })
 
   it('drops to level 0 when the README is missing required sections', async () => {

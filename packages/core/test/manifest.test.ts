@@ -78,6 +78,24 @@ artifacts:
     expect(result.findings.some((f) => f.message.match(/dialect/))).toBe(true)
   })
 
+  it.each([
+    ['../../etc/passwd', 'a parent directory'],
+    ['/etc/passwd', 'an absolute path'],
+    ['cql/../../../secrets.txt', 'a buried parent segment'],
+  ])('rejects an artifact path escaping the package via %s', (path) => {
+    const result = parseManifest(`
+id: a/b
+version: 1.0.0
+license: MIT
+artifacts:
+  - path: "${path}"
+    type: doc
+`)
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(result.findings.some((f) => f.message.match(/stay inside the package/))).toBe(true)
+  })
+
   it('reports a finding rather than throwing on malformed yaml', () => {
     const result = parseManifest('id: [unclosed')
     expect(result.ok).toBe(false)

@@ -1,5 +1,5 @@
 import { readFile, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { parseManifest, type Manifest } from './manifest.js'
 import { checkLicense } from './licenses.js'
 import { checkValueSetRefs } from './valuesets.js'
@@ -21,6 +21,19 @@ async function readIfPresent(path: string): Promise<string | undefined> {
   } catch {
     return undefined
   }
+}
+
+/**
+ * Resolves a package-relative path, or undefined if it escapes the package.
+ * The manifest schema already rejects such paths, but this is the layer that
+ * actually touches the filesystem, so it does not delegate its own safety:
+ * validatePackage runs over packages submitted by strangers.
+ */
+function resolveInside(root: string, candidate: string): string | undefined {
+  const full = resolve(root, candidate)
+  const rel = relative(resolve(root), full)
+  if (rel === '' || rel.startsWith('..') || isAbsolute(rel)) return undefined
+  return full
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -74,7 +87,15 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
     })
   }
   for (const artifact of manifest.artifacts) {
-    if (!(await exists(join(dir, artifact.path)))) {
+    const full = resolveInside(dir, artifact.path)
+    if (full === undefined) {
+      findings.push({
+        check: 'artifacts.present',
+        severity: 'error',
+        message: `declared artifact ${artifact.path} resolves outside the package`,
+        path: artifact.path,
+      })
+    } else if (!(await exists(full))) {
       findings.push({
         check: 'artifacts.present',
         severity: 'error',
@@ -92,7 +113,9 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   checksRun.push('content.forbidden')
   for (const artifact of manifest.artifacts) {
-    const content = await readIfPresent(join(dir, artifact.path))
+    const full = resolveInside(dir, artifact.path)
+    if (full === undefined) continue
+    const content = await readIfPresent(full)
     if (content !== undefined) findings.push(...scanContent(artifact.path, content))
   }
 

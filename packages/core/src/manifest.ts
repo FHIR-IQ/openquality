@@ -11,9 +11,24 @@ const ARTIFACT_TYPES = [
 const DATA_MODELS = ['fhir-r4', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
 const MEASURE_TYPES = ['process', 'outcome', 'intermediate-outcome', 'structural', 'patient-reported-outcome'] as const
 
+/**
+ * An artifact path must stay inside the package. Rejected here as well as in
+ * the validator because a path escaping the root is structurally invalid, and
+ * because the registry runs this over packages submitted by strangers.
+ */
+function isContainedPath(path: string): boolean {
+  if (path.startsWith('/') || /^[a-zA-Z]:/.test(path)) return false
+  return !path.split(/[\\/]/).includes('..')
+}
+
 const ArtifactSchema = z
   .object({
-    path: z.string().min(1),
+    path: z
+      .string()
+      .min(1)
+      .refine(isContainedPath, {
+        message: 'artifact path must stay inside the package: no absolute paths, no ".." segments',
+      }),
     type: z.enum(ARTIFACT_TYPES),
     dialect: z.string().optional(),
   })
