@@ -1,6 +1,9 @@
+import { parse as parseYaml } from 'yaml'
 import type { Finding } from './report.js'
 
-const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12/i
+// The negative lookahead matters: without it the CPT arc also matches
+// urn:oid:2.16.840.1.113883.6.120, a different code system entirely.
+const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12(?!\d)/i
 
 /** Phrases that assert ownership, as opposed to merely naming a program. */
 const COPYRIGHT_CLAIMS = [
@@ -13,7 +16,11 @@ const COPYRIGHT_CLAIMS = [
 function hasEmbeddedExpansion(content: string): boolean {
   let doc: unknown
   try {
-    doc = JSON.parse(content)
+    // Parsed as YAML rather than JSON, because YAML is a superset of JSON and
+    // detection must not depend on the file extension. Gating on `.json` let an
+    // author bypass the one error-severity check in this scanner by renaming
+    // the file, which is the licensing risk the registry cannot host.
+    doc = parseYaml(content)
   } catch {
     return false
   }
@@ -42,7 +49,7 @@ function hasEmbeddedExpansion(content: string): boolean {
 export function scanContent(path: string, content: string): Finding[] {
   const findings: Finding[] = []
 
-  if (path.endsWith('.json') && hasEmbeddedExpansion(content)) {
+  if (hasEmbeddedExpansion(content)) {
     findings.push({
       check: 'content.forbidden',
       severity: 'error',

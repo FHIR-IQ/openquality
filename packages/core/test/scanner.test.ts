@@ -45,4 +45,34 @@ describe('scanContent', () => {
   it('does not crash on malformed JSON', () => {
     expect(() => scanContent('fhir/bad.json', '{not json')).not.toThrow()
   })
+
+  it('flags an embedded expansion regardless of file extension', () => {
+    // Detection must not be dodgeable by renaming the file, since this is the
+    // one error-severity check and the licensing risk the registry cannot host.
+    const vs = JSON.stringify({
+      resourceType: 'ValueSet',
+      expansion: { contains: [{ system: 'http://loinc.org', code: '4548-4' }] },
+    })
+    expect(scanContent('fhir/vs.yaml', vs)).toHaveLength(1)
+    expect(scanContent('vs.txt', vs)).toHaveLength(1)
+  })
+
+  it('flags an embedded expansion written as block-style YAML', () => {
+    const yaml = [
+      'resourceType: ValueSet',
+      'expansion:',
+      '  contains:',
+      '    - system: http://loinc.org',
+      "      code: '4548-4'",
+    ].join('\n')
+    const findings = scanContent('fhir/vs.yaml', yaml)
+    expect(findings).toHaveLength(1)
+    expect(findings[0].severity).toBe('error')
+  })
+
+  it('does not mistake a neighbouring OID for the CPT code system', () => {
+    // 6.120 is a different code system; only 6.12 is CPT.
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.120"}')).toEqual([])
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.12"}')).toHaveLength(1)
+  })
 })

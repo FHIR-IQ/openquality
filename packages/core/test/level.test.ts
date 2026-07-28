@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeLevel } from '../src/level.js'
+import { computeLevel, requiredDeepChecks } from '../src/level.js'
 import type { ValidationReport, CheckId } from '../src/report.js'
 import type { Manifest } from '../src/manifest.js'
 
@@ -98,6 +98,52 @@ describe('computeLevel', () => {
   it('lists blockers explaining what stands between the package and the next level', () => {
     const r = computeLevel(manifest({ dataModel: undefined }), report(L1_CHECKS))
     expect(r.level).toBe(0)
-    expect(r.blockers.length).toBeGreaterThan(0)
+    expect(r.blockers).toContain('manifest does not declare a dataModel')
+  })
+
+  it('caps a package at level 1 when an artifact type has no verifier', () => {
+    // Otherwise "Verified" is awarded to a package nothing verified, and an
+    // author reaches the top level by picking a type no validator understands.
+    const py = manifest({ artifacts: [{ path: 'm.py', type: 'python' }] })
+    const r = computeLevel(py, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('caps a mixed package at level 1 when only some artifacts are verifiable', () => {
+    const mixed = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'm.py', type: 'python' },
+      ],
+    })
+    const r = computeLevel(mixed, report([...L1_CHECKS, 'cql.translate']))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('does not let documentation alone earn Verified', () => {
+    const docs = manifest({ artifacts: [{ path: 'notes.md', type: 'doc' }] })
+    const r = computeLevel(docs, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('package has no artifact that any Level 2 validator can verify')
+  })
+
+  it('treats documentation as supporting material that never blocks', () => {
+    const withDocs = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'notes.md', type: 'doc' },
+      ],
+    })
+    expect(computeLevel(withDocs, report([...L1_CHECKS, 'cql.translate'])).level).toBe(2)
+  })
+
+  it('verifies a SQL on FHIR ViewDefinition with the FHIR validator', () => {
+    const view = manifest({
+      artifacts: [{ path: 'v.json', type: 'sql-on-fhir/ViewDefinition' }],
+    })
+    expect(requiredDeepChecks(view)).toEqual(['fhir.validate'])
+    expect(computeLevel(view, report([...L1_CHECKS, 'fhir.validate'])).level).toBe(2)
   })
 })
