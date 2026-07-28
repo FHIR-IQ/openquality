@@ -1,0 +1,10 @@
+{
+  "name": "@openquality/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@openquality/core": "workspace:*",
+    "commander": "^12.1.0"
+  }
+}
