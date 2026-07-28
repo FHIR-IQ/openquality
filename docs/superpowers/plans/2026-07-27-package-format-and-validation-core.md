@@ -35,8 +35,15 @@ Split by responsibility rather than by layer. Each check file owns one rule and 
 ### Task 1: Workspace scaffolding
 
 **Files:**
-- Create: `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `vitest.config.ts`
+- Create: `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `tsconfig.json`, `vitest.config.ts`
 - Create: `packages/core/package.json`, `packages/core/tsconfig.json`
+
+Nothing in this plan ever builds `dist`. Vitest runs the TypeScript sources directly and
+the CLI is tested by calling its command functions, not by executing a compiled binary.
+So TypeScript is configured for type checking only (`noEmit`), not for emit. Do not add
+`composite`, `declaration`, `outDir`, or project references: they require an emit
+pipeline that does not exist here, and `tsc -b` without a root `tsconfig.json` fails
+with TS5083.
 
 - [ ] **Step 1: Create the workspace root**
 
@@ -51,7 +58,7 @@ Split by responsibility rather than by layer. Each check file owns one rule and 
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
@@ -77,12 +84,20 @@ packages:
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "declaration": true,
-    "composite": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   }
+}
+```
+
+`tsconfig.json` (the entry point `pnpm typecheck` uses; covers every package at once):
+
+```json
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["packages/*/src/**/*.ts", "packages/*/test/**/*.ts", "vitest.config.ts"]
 }
 ```
 
@@ -107,8 +122,6 @@ export default defineConfig({
   "name": "@openquality/core",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": { ".": "./src/index.ts" },
   "dependencies": {
     "yaml": "^2.6.0",
@@ -121,12 +134,17 @@ export default defineConfig({
 }
 ```
 
-`packages/core/tsconfig.json`:
+There is deliberately no `main` or `types` field. Both would point into `dist`, which
+nothing in this plan builds, so they would be dead config that lies about the package.
+`exports` resolves to the TypeScript source, which is what Vitest and the workspace
+link in Task 11 actually consume.
+
+`packages/core/tsconfig.json` (for editors and per-package checks; the root config is
+what `pnpm typecheck` runs):
 
 ```json
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "outDir": "dist", "rootDir": "." },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
 ```
@@ -139,10 +157,13 @@ Expected: installs without error, creates `pnpm-lock.yaml`.
 Run: `pnpm test`
 Expected: `No test files found` and exit code 1. That is correct at this point, there are no tests yet.
 
+Run: `pnpm typecheck`
+Expected: exits 0 with no output. An empty `include` match is not an error.
+
 - [ ] **Step 4: Commit**
 
 ```bash
-git add package.json pnpm-workspace.yaml tsconfig.base.json vitest.config.ts pnpm-lock.yaml packages/core/package.json packages/core/tsconfig.json
+git add package.json pnpm-workspace.yaml tsconfig.base.json tsconfig.json vitest.config.ts pnpm-lock.yaml packages/core/package.json packages/core/tsconfig.json
 git commit -m "chore: scaffold pnpm workspace and core package"
 ```
 
@@ -258,7 +279,7 @@ describe('parseManifest', () => {
     expect(result.ok).toBe(true)
     if (!result.ok) return
     expect(result.manifest.id).toBe('gene/hba1c-poor-control')
-    expect(result.manifest.measure.steward).toBe('CMS')
+    expect(result.manifest.measure?.steward).toBe('CMS')
     expect(result.manifest.artifacts[0].type).toBe('cql')
   })
 
@@ -337,9 +358,24 @@ const ARTIFACT_TYPES = [
 const DATA_MODELS = ['fhir-r4', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
 const MEASURE_TYPES = ['process', 'outcome', 'intermediate-outcome', 'structural', 'patient-reported-outcome'] as const
 
+/**
+ * An artifact path must stay inside the package. Rejected here as well as in
+ * the validator because a path escaping the root is structurally invalid, and
+ * because the registry runs this over packages submitted by strangers.
+ */
+function isContainedPath(path: string): boolean {
+  if (path.startsWith('/') || /^[a-zA-Z]:/.test(path)) return false
+  return !path.split(/[\\/]/).includes('..')
+}
+
 const ArtifactSchema = z
   .object({
-    path: z.string().min(1),
+    path: z
+      .string()
+      .min(1)
+      .refine(isContainedPath, {
+        message: 'artifact path must stay inside the package: no absolute paths, no ".." segments',
+      }),
     type: z.enum(ARTIFACT_TYPES),
     dialect: z.string().optional(),
   })
@@ -347,15 +383,16 @@ const ArtifactSchema = z
     message: 'artifacts of type "sql" must declare a dialect',
   })
 
-const ValueSetSchema = z
-  .object({
-    oid: z.string().optional(),
-    url: z.string().optional(),
-    source: z.string().optional(),
-  })
-  .refine((v) => !!v.oid || !!v.url, {
-    message: 'each valueSets entry must have an oid or a url',
-  })
+// Deliberately no `.refine` requiring oid or url. That rule belongs to the
+// `valuesets.referenced` check in Task 5, not to schema parsing. Enforcing it
+// here would tag the finding `manifest.schema` and abort the whole run before
+// any other check executes, so an author would see one misattributed error
+// instead of every problem in their package at once.
+const ValueSetSchema = z.object({
+  oid: z.string().optional(),
+  url: z.string().optional(),
+  source: z.string().optional(),
+})
 
 const MeasureSchema = z.object({
   title: z.string().min(1),
@@ -369,7 +406,14 @@ const MeasureSchema = z.object({
 
 export const ManifestSchema = z.object({
   id: z.string().regex(PACKAGE_ID, 'id must be namespace/name, lowercase alphanumeric and hyphens'),
-  version: z.string().regex(SEMVER, 'version must be semver, for example 1.2.0'),
+  // Stringified first, because YAML parses a bare `version: 2026` as a number.
+  // Without this, Zod fails on the base type and reports "expected string,
+  // received number", which tells an author nothing about what is actually
+  // wrong. `1.2.0` is not a valid YAML number so it already arrives as a string.
+  version: z.preprocess(
+    (v) => (typeof v === 'number' ? String(v) : v),
+    z.string().regex(SEMVER, 'version must be semver, for example 1.2.0'),
+  ),
   license: z.string().min(1),
   measurementPeriod: z.number().int().min(1990).max(2100).optional(),
   measure: MeasureSchema.optional(),
@@ -423,7 +467,7 @@ export function parseManifest(source: string): ParseResult {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/manifest.test.ts`
-Expected: PASS, 6 tests.
+Expected: PASS, 9 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -444,15 +488,35 @@ git commit -m "feat(core): add openquality.yaml manifest schema and parser"
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { checkLicense } from '../src/licenses.js'
+import { checkLicense, ALLOWED_LICENSES } from '../src/licenses.js'
+
+/**
+ * An independent copy of the allowlist, deliberately NOT derived from
+ * ALLOWED_LICENSES. Driving the cases off the source would be tautological:
+ * deleting an entry would delete its own test and the suite would stay green.
+ * Changing the licensing policy should require editing this list too.
+ */
+const EXPECTED_LICENSES = [
+  'Apache-2.0',
+  'MIT',
+  'BSD-2-Clause',
+  'BSD-3-Clause',
+  'CC0-1.0',
+  'CC-BY-4.0',
+  'CC-BY-SA-4.0',
+  'GPL-3.0-only',
+  'GPL-3.0-or-later',
+  'LGPL-3.0-only',
+  'MPL-2.0',
+] as const
 
 describe('checkLicense', () => {
-  it('accepts an allowlisted OSI license', () => {
-    expect(checkLicense('Apache-2.0')).toEqual([])
+  it('allows exactly the documented set, no more and no less', () => {
+    expect([...ALLOWED_LICENSES]).toEqual([...EXPECTED_LICENSES])
   })
 
-  it('accepts an allowlisted Creative Commons license', () => {
-    expect(checkLicense('CC-BY-4.0')).toEqual([])
+  it.each(EXPECTED_LICENSES)('accepts %s', (license) => {
+    expect(checkLicense(license)).toEqual([])
   })
 
   it('rejects a license not on the allowlist', () => {
@@ -519,7 +583,7 @@ export function checkLicense(license: string): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/licenses.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 15 tests (1 exact-set assertion, 11 allowlist entries, 3 rejection cases).
 
 - [ ] **Step 5: Commit**
 
@@ -570,6 +634,27 @@ describe('checkValueSetRefs', () => {
   it('returns no findings when the package declares no value sets', () => {
     expect(checkValueSetRefs(undefined)).toEqual([])
   })
+
+  it('rejects an entry with neither an oid nor a url', () => {
+    const findings = checkValueSetRefs([{ source: 'vsac' }])
+    expect(findings).toHaveLength(1)
+    expect(findings[0].check).toBe('valuesets.referenced')
+    expect(findings[0].message).toMatch(/oid or a url/)
+  })
+
+  it('reports every bad entry, not just the first', () => {
+    const findings = checkValueSetRefs([{ oid: 'not.an.oid.x' }, {}, { url: 'ftp://x' }])
+    expect(findings).toHaveLength(3)
+  })
+
+  it('tells an author to strip a urn:oid: prefix copied from their CQL', () => {
+    const findings = checkValueSetRefs([{ oid: 'urn:oid:2.16.840.1.113883.3.464.1003.103.12.1001' }])
+    expect(findings).toHaveLength(1)
+    expect(findings[0].check).toBe('valuesets.referenced')
+    expect(findings[0].message).toMatch(/urn:oid:/)
+    // The message must name the corrected value, not just reject the input.
+    expect(findings[0].message).toMatch(/use 2\.16\.840\.1\.113883\.3\.464\.1003\.103\.12\.1001/)
+  })
 })
 ```
 
@@ -586,6 +671,8 @@ import type { Finding } from './report.js'
 /** Dotted decimal OID: digit groups separated by single dots, no empty groups. */
 const OID = /^\d+(\.\d+)+$/
 
+const URN_OID_PREFIX = 'urn:oid:'
+
 export interface ValueSetRef {
   oid?: string
   url?: string
@@ -597,7 +684,30 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
   const findings: Finding[] = []
 
   for (const ref of refs) {
-    if (ref.oid && !OID.test(ref.oid)) {
+    // The schema deliberately allows an entry with neither field so that this
+    // check owns the rule and the finding carries the right CheckId.
+    if (!ref.oid && !ref.url) {
+      findings.push({
+        check: 'valuesets.referenced',
+        severity: 'error',
+        message: 'each valueSets entry must have an oid or a url',
+        path: 'openquality.yaml',
+      })
+    }
+    // Called out separately because CQL writes value sets as
+    // 'urn:oid:2.16.840...', so copying one straight across from the package's
+    // own .cql file into the manifest is the likeliest mistake an author makes.
+    if (ref.oid?.startsWith(URN_OID_PREFIX)) {
+      findings.push({
+        check: 'valuesets.referenced',
+        severity: 'error',
+        message:
+          `value set oid "${ref.oid}" must not carry the urn:oid: prefix. ` +
+          `CQL writes them that way, the manifest does not: use ` +
+          `${ref.oid.slice(URN_OID_PREFIX.length)}`,
+        path: 'openquality.yaml',
+      })
+    } else if (ref.oid && !OID.test(ref.oid)) {
       findings.push({
         check: 'valuesets.referenced',
         severity: 'error',
@@ -622,7 +732,7 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/valuesets.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -686,6 +796,28 @@ describe('checkReadmeSections', () => {
     const findings = checkReadmeSections('# T\n\n## Intent\nSee provenance and known limitations below.\n')
     expect(findings).toHaveLength(2)
   })
+
+  it('does not let a heading that merely contains a required word satisfy it', () => {
+    // "Unintentional" contains "intent". Accepting it would score a package
+    // Level 1 without it ever documenting what the measure does.
+    const findings = checkReadmeSections('# T\n\n## Unintentional Data Loss\ntext\n')
+    expect(findings).toHaveLength(3)
+    expect(findings.map((f) => f.message).join(' ')).toMatch(/intent/)
+  })
+
+  it('accepts a heading that qualifies a required word', () => {
+    const findings = checkReadmeSections(
+      '## Intent and Scope\nx\n\n## Known Limitations\nx\n\n## 3. Provenance\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
+
+  it('recognises Setext headings, which are valid Markdown', () => {
+    const findings = checkReadmeSections(
+      'My Measure\n==========\n\nIntent\n------\nx\n\nKnown Limitations\n-----------------\nx\n\nProvenance\n----------\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
 })
 ```
 
@@ -701,19 +833,46 @@ import type { Finding } from './report.js'
 
 export const REQUIRED_SECTIONS = ['intent', 'known limitations', 'provenance'] as const
 
-/** Returns lowercased text of every ATX heading in the document. */
+/** Escapes a literal so it can be embedded in a RegExp. */
+function escapeRegExp(literal: string): string {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
+ * Lowercased text of every heading, both ATX (`## Foo`) and Setext (`Foo` sitting
+ * above a rule of `=` or `-`). Setext is valid Markdown and shows up in
+ * hand-written READMEs, so ignoring it would falsely block a compliant package.
+ */
 function headings(markdown: string): string[] {
-  return markdown
-    .split('\n')
-    .map((line) => line.match(/^#{1,6}\s+(.*)$/)?.[1])
-    .filter((text): text is string => !!text)
-    .map((text) => text.trim().toLowerCase())
+  const lines = markdown.split('\n')
+  const found: string[] = []
+
+  lines.forEach((line, index) => {
+    const atx = line.match(/^#{1,6}\s+(.*)$/)
+    if (atx) {
+      found.push(atx[1].trim().toLowerCase())
+      return
+    }
+    const underline = lines[index + 1]
+    if (line.trim() && !line.startsWith('#') && underline && /^(=+|-+)\s*$/.test(underline)) {
+      found.push(line.trim().toLowerCase())
+    }
+  })
+
+  return found
 }
 
 export function checkReadmeSections(readme: string | undefined): Finding[] {
   const found = readme ? headings(readme) : []
   return REQUIRED_SECTIONS
-    .filter((required) => !found.some((h) => h.includes(required)))
+    .filter((required) => {
+      // Whole-word rather than substring. "Unintentional Data Loss" contains
+      // "intent", and letting that satisfy the requirement would score a package
+      // Level 1 without it ever documenting what it measures. Word boundaries
+      // still admit the natural variations, "Intent and Scope" or "1. Intent".
+      const pattern = new RegExp(`\\b${escapeRegExp(required)}\\b`)
+      return !found.some((heading) => pattern.test(heading))
+    })
     .map((required) => ({
       check: 'readme.sections' as const,
       severity: 'error' as const,
@@ -726,7 +885,7 @@ export function checkReadmeSections(readme: string | undefined): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/readme.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -795,6 +954,36 @@ describe('scanContent', () => {
   it('does not crash on malformed JSON', () => {
     expect(() => scanContent('fhir/bad.json', '{not json')).not.toThrow()
   })
+
+  it('flags an embedded expansion regardless of file extension', () => {
+    // Detection must not be dodgeable by renaming the file, since this is the
+    // one error-severity check and the licensing risk the registry cannot host.
+    const vs = JSON.stringify({
+      resourceType: 'ValueSet',
+      expansion: { contains: [{ system: 'http://loinc.org', code: '4548-4' }] },
+    })
+    expect(scanContent('fhir/vs.yaml', vs)).toHaveLength(1)
+    expect(scanContent('vs.txt', vs)).toHaveLength(1)
+  })
+
+  it('flags an embedded expansion written as block-style YAML', () => {
+    const yaml = [
+      'resourceType: ValueSet',
+      'expansion:',
+      '  contains:',
+      '    - system: http://loinc.org',
+      "      code: '4548-4'",
+    ].join('\n')
+    const findings = scanContent('fhir/vs.yaml', yaml)
+    expect(findings).toHaveLength(1)
+    expect(findings[0].severity).toBe('error')
+  })
+
+  it('does not mistake a neighbouring OID for the CPT code system', () => {
+    // 6.120 is a different code system; only 6.12 is CPT.
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.120"}')).toEqual([])
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.12"}')).toHaveLength(1)
+  })
 })
 ```
 
@@ -806,9 +995,12 @@ Expected: FAIL, cannot resolve `../src/scanner.js`.
 - [ ] **Step 3: Write the implementation**
 
 ```typescript
+import { parse as parseYaml } from 'yaml'
 import type { Finding } from './report.js'
 
-const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12/i
+// The negative lookahead matters: without it the CPT arc also matches
+// urn:oid:2.16.840.1.113883.6.120, a different code system entirely.
+const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12(?!\d)/i
 
 /** Phrases that assert ownership, as opposed to merely naming a program. */
 const COPYRIGHT_CLAIMS = [
@@ -821,7 +1013,11 @@ const COPYRIGHT_CLAIMS = [
 function hasEmbeddedExpansion(content: string): boolean {
   let doc: unknown
   try {
-    doc = JSON.parse(content)
+    // Parsed as YAML rather than JSON, because YAML is a superset of JSON and
+    // detection must not depend on the file extension. Gating on `.json` let an
+    // author bypass the one error-severity check in this scanner by renaming
+    // the file, which is the licensing risk the registry cannot host.
+    doc = parseYaml(content)
   } catch {
     return false
   }
@@ -850,7 +1046,7 @@ function hasEmbeddedExpansion(content: string): boolean {
 export function scanContent(path: string, content: string): Finding[] {
   const findings: Finding[] = []
 
-  if (path.endsWith('.json') && hasEmbeddedExpansion(content)) {
+  if (hasEmbeddedExpansion(content)) {
     findings.push({
       check: 'content.forbidden',
       severity: 'error',
@@ -889,7 +1085,7 @@ export function scanContent(path: string, content: string): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/scanner.test.ts`
-Expected: PASS, 7 tests.
+Expected: PASS, 10 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -912,7 +1108,7 @@ Pure logic over a manifest and a report. This is the heart of the package model,
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { computeLevel } from '../src/level.js'
+import { computeLevel, requiredDeepChecks } from '../src/level.js'
 import type { ValidationReport, CheckId } from '../src/report.js'
 import type { Manifest } from '../src/manifest.js'
 
@@ -1011,7 +1207,53 @@ describe('computeLevel', () => {
   it('lists blockers explaining what stands between the package and the next level', () => {
     const r = computeLevel(manifest({ dataModel: undefined }), report(L1_CHECKS))
     expect(r.level).toBe(0)
-    expect(r.blockers.length).toBeGreaterThan(0)
+    expect(r.blockers).toContain('manifest does not declare a dataModel')
+  })
+
+  it('caps a package at level 1 when an artifact type has no verifier', () => {
+    // Otherwise "Verified" is awarded to a package nothing verified, and an
+    // author reaches the top level by picking a type no validator understands.
+    const py = manifest({ artifacts: [{ path: 'm.py', type: 'python' }] })
+    const r = computeLevel(py, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('caps a mixed package at level 1 when only some artifacts are verifiable', () => {
+    const mixed = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'm.py', type: 'python' },
+      ],
+    })
+    const r = computeLevel(mixed, report([...L1_CHECKS, 'cql.translate']))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('does not let documentation alone earn Verified', () => {
+    const docs = manifest({ artifacts: [{ path: 'notes.md', type: 'doc' }] })
+    const r = computeLevel(docs, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('package has no artifact that any Level 2 validator can verify')
+  })
+
+  it('treats documentation as supporting material that never blocks', () => {
+    const withDocs = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'notes.md', type: 'doc' },
+      ],
+    })
+    expect(computeLevel(withDocs, report([...L1_CHECKS, 'cql.translate'])).level).toBe(2)
+  })
+
+  it('verifies a SQL on FHIR ViewDefinition with the FHIR validator', () => {
+    const view = manifest({
+      artifacts: [{ path: 'v.json', type: 'sql-on-fhir/ViewDefinition' }],
+    })
+    expect(requiredDeepChecks(view)).toEqual(['fhir.validate'])
+    expect(computeLevel(view, report([...L1_CHECKS, 'fhir.validate'])).level).toBe(2)
   })
 })
 ```
@@ -1039,11 +1281,20 @@ const LEVEL_1_CHECKS: CheckId[] = [
   'content.forbidden',
 ]
 
+/**
+ * Supporting material rather than measure logic. Documentation neither needs
+ * verifying nor counts as something that was verified.
+ */
+const SUPPORTING_TYPES = new Set(['doc'])
+
 /** Maps an artifact type to the deep check Level 2 requires for it. */
 function deepCheckFor(artifactType: string): CheckId | undefined {
   if (artifactType === 'cql') return 'cql.translate'
   if (artifactType === 'sql') return 'sql.parse'
-  if (artifactType.startsWith('fhir/')) return 'fhir.validate'
+  // A ViewDefinition is itself a FHIR resource, so the FHIR validator covers it.
+  if (artifactType.startsWith('fhir/') || artifactType === 'sql-on-fhir/ViewDefinition') {
+    return 'fhir.validate'
+  }
   return undefined
 }
 
@@ -1055,6 +1306,19 @@ export function requiredDeepChecks(manifest: Manifest): CheckId[] {
     if (check) required.add(check)
   }
   return [...required]
+}
+
+/**
+ * Artifact types carrying measure logic that no validator can check, currently
+ * python, r and notebook. They must block Level 2: "Verified" has to mean
+ * something was actually verified, and without this an author reaches the top
+ * level by choosing a type nothing knows how to inspect.
+ */
+export function unverifiableArtifactTypes(manifest: Manifest): string[] {
+  const types = manifest.artifacts
+    .filter((a) => !deepCheckFor(a.type) && !SUPPORTING_TYPES.has(a.type))
+    .map((a) => a.type)
+  return [...new Set(types)]
 }
 
 export interface LevelResult {
@@ -1092,7 +1356,20 @@ export function computeLevel(manifest: Manifest, report: ValidationReport): Leve
     return { level: 0, blockers: level1Blockers }
   }
 
-  const level2Blockers = evaluate(requiredDeepChecks(manifest), report)
+  const deepChecks = requiredDeepChecks(manifest)
+  const level2Blockers = evaluate(deepChecks, report)
+
+  for (const type of unverifiableArtifactTypes(manifest)) {
+    level2Blockers.push(`artifact type "${type}" has no defined Level 2 verification`)
+  }
+
+  // A package of nothing but documentation has no logic to verify, so Verified
+  // would be an empty claim. Level 2 requires at least one artifact that some
+  // validator actually inspected.
+  if (deepChecks.length === 0) {
+    level2Blockers.push('package has no artifact that any Level 2 validator can verify')
+  }
+
   if (level2Blockers.length > 0) {
     return { level: 1, blockers: level2Blockers }
   }
@@ -1104,7 +1381,7 @@ export function computeLevel(manifest: Manifest, report: ValidationReport): Leve
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/level.test.ts`
-Expected: PASS, 10 tests.
+Expected: PASS, 15 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1227,8 +1504,8 @@ Expected: FAIL, cannot resolve `../src/validate.js`.
 `packages/core/src/validate.ts`:
 
 ```typescript
-import { readFile, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { readFile, realpath, stat } from 'node:fs/promises'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { parseManifest, type Manifest } from './manifest.js'
 import { checkLicense } from './licenses.js'
 import { checkValueSetRefs } from './valuesets.js'
@@ -1250,6 +1527,32 @@ async function readIfPresent(path: string): Promise<string | undefined> {
   } catch {
     return undefined
   }
+}
+
+function escapes(root: string, target: string): boolean {
+  const rel = relative(root, target)
+  return rel === '' || rel.startsWith('..') || isAbsolute(rel)
+}
+
+/**
+ * Resolves a package-relative path, or undefined if it escapes the package.
+ * The manifest schema already rejects ".." and absolute paths, but this is the
+ * layer that actually opens files, so it does not delegate its own safety:
+ * validatePackage runs over packages submitted by strangers.
+ *
+ * Checked twice, before and after following symlinks. `resolve` is purely
+ * lexical, so a link sitting inside the package but pointing outside it passes
+ * a lexical check untouched. That is the classic bypass.
+ */
+async function resolveInside(root: string, candidate: string): Promise<string | undefined> {
+  const realRoot = await realpath(root).catch(() => resolve(root))
+  const full = resolve(realRoot, candidate)
+  if (escapes(realRoot, full)) return undefined
+
+  const real = await realpath(full).catch(() => undefined)
+  // Nonexistent path: nothing to follow, and the caller reports it as missing.
+  if (real === undefined) return full
+  return escapes(realRoot, real) ? undefined : real
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -1303,7 +1606,15 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
     })
   }
   for (const artifact of manifest.artifacts) {
-    if (!(await exists(join(dir, artifact.path)))) {
+    const full = await resolveInside(dir, artifact.path)
+    if (full === undefined) {
+      findings.push({
+        check: 'artifacts.present',
+        severity: 'error',
+        message: `declared artifact ${artifact.path} resolves outside the package`,
+        path: artifact.path,
+      })
+    } else if (!(await exists(full))) {
       findings.push({
         check: 'artifacts.present',
         severity: 'error',
@@ -1321,7 +1632,9 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   checksRun.push('content.forbidden')
   for (const artifact of manifest.artifacts) {
-    const content = await readIfPresent(join(dir, artifact.path))
+    const full = await resolveInside(dir, artifact.path)
+    if (full === undefined) continue
+    const content = await readIfPresent(full)
     if (content !== undefined) findings.push(...scanContent(artifact.path, content))
   }
 
@@ -1334,7 +1647,7 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/validate.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 7 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1509,7 +1822,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 49 tests.
+Expected: PASS, 8 files, 78 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -1536,7 +1849,7 @@ git commit -m "feat(core): add deterministic package tarball creation"
   "name": "@openquality/cli",
   "version": "0.1.0",
   "type": "module",
-  "bin": { "oq": "./dist/index.js" },
+  "exports": { ".": "./src/index.ts" },
   "dependencies": {
     "@openquality/core": "workspace:*",
     "commander": "^12.1.0"
@@ -1544,16 +1857,22 @@ git commit -m "feat(core): add deterministic package tarball creation"
 }
 ```
 
+As with core, there is no `bin` field pointing into `dist`, because nothing builds
+`dist`. The CLI is exercised in tests by importing and calling its command functions
+directly. Wiring a real `oq` executable is a packaging concern for a later plan.
+
 `packages/cli/tsconfig.json`:
 
 ```json
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "outDir": "dist", "rootDir": "." },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "references": [{ "path": "../core" }]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
 ```
+
+No `references` entry. Project references belong to `tsc -b` composite builds, which
+this repo does not use; the root `tsconfig.json` already type checks core and cli
+together in one pass.
 
 Run: `pnpm install`
 Expected: links `@openquality/core` into the CLI package.
@@ -1657,12 +1976,20 @@ export async function runValidate(dir: string, write: Writer): Promise<number> {
 
   const errors = report.findings.filter((f) => f.severity === 'error')
   const warnings = report.findings.filter((f) => f.severity === 'warning')
+  const infos = report.findings.filter((f) => f.severity === 'info')
 
   for (const finding of errors) {
     write(`error  ${finding.path ?? ''} ${finding.message}`)
   }
   for (const finding of warnings) {
     write(`warn   ${finding.path ?? ''} ${finding.message}`)
+  }
+  // Printed rather than dropped: Severity includes 'info' because the deep
+  // validators in the next plan need it (an unreachable VSAC reports the value
+  // set as unverified rather than failing the package). A severity the CLI
+  // silently swallows is a latent bug, so every finding gets printed.
+  for (const finding of infos) {
+    write(`info   ${finding.path ?? ''} ${finding.message}`)
   }
 
   write('')
@@ -1747,7 +2074,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 53 tests.
+Expected: PASS, 9 files, 82 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -1905,7 +2232,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 58 tests, typecheck exits 0.
+Expected: PASS, 10 files, 91 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -1918,9 +2245,11 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 58 tests across 10 files.
+- `pnpm test` passes with 91 tests across 10 files.
 - `pnpm typecheck` exits 0.
-- `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
+- `pnpm oq validate <dir>` reports a conformance level, lists errors, warnings and
+  infos, and names blockers for the next level. Run via the root `oq` script,
+  which uses tsx: nothing builds `dist`, so there is no standalone binary yet.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
 - A real CMS eCQM package validates cleanly to Level 1 with `cql.translate` as its only blocker to Level 2.
 

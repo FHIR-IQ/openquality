@@ -1,0 +1,14 @@
+{
+  "name": "@openquality/core",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "yaml": "^2.6.0",
+    "zod": "^3.23.0",
+    "tar": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/tar": "^6.1.13"
+  }
+}
