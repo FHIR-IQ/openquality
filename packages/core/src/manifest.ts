@@ -21,15 +21,16 @@ const ArtifactSchema = z
     message: 'artifacts of type "sql" must declare a dialect',
   })
 
-const ValueSetSchema = z
-  .object({
-    oid: z.string().optional(),
-    url: z.string().optional(),
-    source: z.string().optional(),
-  })
-  .refine((v) => !!v.oid || !!v.url, {
-    message: 'each valueSets entry must have an oid or a url',
-  })
+// Deliberately no `.refine` requiring oid or url. That rule belongs to the
+// `valuesets.referenced` check in Task 5, not to schema parsing. Enforcing it
+// here would tag the finding `manifest.schema` and abort the whole run before
+// any other check executes, so an author would see one misattributed error
+// instead of every problem in their package at once.
+const ValueSetSchema = z.object({
+  oid: z.string().optional(),
+  url: z.string().optional(),
+  source: z.string().optional(),
+})
 
 const MeasureSchema = z.object({
   title: z.string().min(1),
