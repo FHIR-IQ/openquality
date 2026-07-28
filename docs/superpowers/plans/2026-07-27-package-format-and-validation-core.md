@@ -1684,12 +1684,20 @@ export async function runValidate(dir: string, write: Writer): Promise<number> {
 
   const errors = report.findings.filter((f) => f.severity === 'error')
   const warnings = report.findings.filter((f) => f.severity === 'warning')
+  const infos = report.findings.filter((f) => f.severity === 'info')
 
   for (const finding of errors) {
     write(`error  ${finding.path ?? ''} ${finding.message}`)
   }
   for (const finding of warnings) {
     write(`warn   ${finding.path ?? ''} ${finding.message}`)
+  }
+  // Printed rather than dropped: Severity includes 'info' because the deep
+  // validators in the next plan need it (an unreachable VSAC reports the value
+  // set as unverified rather than failing the package). A severity the CLI
+  // silently swallows is a latent bug, so every finding gets printed.
+  for (const finding of infos) {
+    write(`info   ${finding.path ?? ''} ${finding.message}`)
   }
 
   write('')
