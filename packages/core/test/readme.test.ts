@@ -40,4 +40,26 @@ describe('checkReadmeSections', () => {
     const findings = checkReadmeSections('# T\n\n## Intent\nSee provenance and known limitations below.\n')
     expect(findings).toHaveLength(2)
   })
+
+  it('does not let a heading that merely contains a required word satisfy it', () => {
+    // "Unintentional" contains "intent". Accepting it would score a package
+    // Level 1 without it ever documenting what the measure does.
+    const findings = checkReadmeSections('# T\n\n## Unintentional Data Loss\ntext\n')
+    expect(findings).toHaveLength(3)
+    expect(findings.map((f) => f.message).join(' ')).toMatch(/intent/)
+  })
+
+  it('accepts a heading that qualifies a required word', () => {
+    const findings = checkReadmeSections(
+      '## Intent and Scope\nx\n\n## Known Limitations\nx\n\n## 3. Provenance\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
+
+  it('recognises Setext headings, which are valid Markdown', () => {
+    const findings = checkReadmeSections(
+      'My Measure\n==========\n\nIntent\n------\nx\n\nKnown Limitations\n-----------------\nx\n\nProvenance\n----------\nx\n',
+    )
+    expect(findings).toEqual([])
+  })
 })

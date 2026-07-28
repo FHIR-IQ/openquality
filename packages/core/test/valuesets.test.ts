@@ -39,4 +39,13 @@ describe('checkValueSetRefs', () => {
     const findings = checkValueSetRefs([{ oid: 'not.an.oid.x' }, {}, { url: 'ftp://x' }])
     expect(findings).toHaveLength(3)
   })
+
+  it('tells an author to strip a urn:oid: prefix copied from their CQL', () => {
+    const findings = checkValueSetRefs([{ oid: 'urn:oid:2.16.840.1.113883.3.464.1003.103.12.1001' }])
+    expect(findings).toHaveLength(1)
+    expect(findings[0].check).toBe('valuesets.referenced')
+    expect(findings[0].message).toMatch(/urn:oid:/)
+    // The message must name the corrected value, not just reject the input.
+    expect(findings[0].message).toMatch(/use 2\.16\.840\.1\.113883\.3\.464\.1003\.103\.12\.1001/)
+  })
 })
