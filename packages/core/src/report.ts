@@ -9,6 +9,7 @@ export type CheckId =
   | 'manifest.schema'
   | 'manifest.license'
   | 'manifest.dataModel'
+  | 'manifest.measure'
   | 'artifacts.present'
   | 'artifacts.typed'
   | 'valuesets.referenced'

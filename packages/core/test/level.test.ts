@@ -4,7 +4,7 @@ import type { ValidationReport, CheckId } from '../src/report.js'
 import type { Manifest } from '../src/manifest.js'
 
 const L1_CHECKS: CheckId[] = [
-  'manifest.schema', 'manifest.license', 'manifest.dataModel',
+  'manifest.schema', 'manifest.license', 'manifest.dataModel', 'manifest.measure',
   'artifacts.present', 'artifacts.typed', 'valuesets.referenced',
   'readme.sections', 'content.forbidden',
 ]
@@ -96,9 +96,16 @@ describe('computeLevel', () => {
   })
 
   it('lists blockers explaining what stands between the package and the next level', () => {
-    const r = computeLevel(manifest({ dataModel: undefined }), report(L1_CHECKS))
+    // dataModel is no longer special-cased here. The orchestrator emits it as a
+    // finding like every other Level 1 requirement, so this reads it that way.
+    const r = computeLevel(
+      manifest({ dataModel: undefined }),
+      report(L1_CHECKS, [
+        { check: 'manifest.dataModel', severity: 'error', message: 'no dataModel' },
+      ]),
+    )
     expect(r.level).toBe(0)
-    expect(r.blockers).toContain('manifest does not declare a dataModel')
+    expect(r.blockers).toContain('manifest.dataModel reported an error')
   })
 
   it('caps a package at level 1 when an artifact type has no verifier', () => {

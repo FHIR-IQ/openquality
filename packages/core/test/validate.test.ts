@@ -116,6 +116,59 @@ describe('validatePackage', () => {
     await rm(outside, { recursive: true, force: true })
   })
 
+  it('scans files the manifest never declared, since packing ships them anyway', async () => {
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', README)
+    await write('cql/M.cql', 'library M\n')
+    // Never listed in artifacts, but packPackage would put it in the tarball.
+    await write('extra/hidden.json', JSON.stringify({
+      resourceType: 'ValueSet',
+      expansion: { contains: [{ system: 'http://loinc.org', code: '1' }] },
+    }))
+
+    const result = await validatePackage(dir)
+    const forbidden = result.report.findings.filter((f) => f.check === 'content.forbidden')
+    expect(forbidden).toHaveLength(1)
+    expect(forbidden[0].path).toBe('extra/hidden.json')
+    expect(result.level).toBe(0)
+  })
+
+  it('scans the README too', async () => {
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', `${README}\n\nCopyright 2026 NCQA. All rights reserved.\n`)
+    await write('cql/M.cql', 'library M\n')
+
+    const result = await validatePackage(dir)
+    expect(result.report.findings.some(
+      (f) => f.check === 'content.forbidden' && f.path === 'README.md',
+    )).toBe(true)
+  })
+
+  it('reports a missing dataModel as an error, not just a blocker', async () => {
+    // It is a Level 1 requirement like any other, so it must set the exit code.
+    await write('openquality.yaml', MANIFEST.replace('dataModel: fhir-r4\n', ''))
+    await write('README.md', README)
+    await write('cql/M.cql', 'library M\n')
+
+    const result = await validatePackage(dir)
+    expect(result.level).toBe(0)
+    expect(result.report.findings.some(
+      (f) => f.check === 'manifest.dataModel' && f.severity === 'error',
+    )).toBe(true)
+  })
+
+  it('requires the package to say which measure it implements', async () => {
+    await write('openquality.yaml', MANIFEST.replace(/measure:\n  title:.*\n  steward:.*\n/, ''))
+    await write('README.md', README)
+    await write('cql/M.cql', 'library M\n')
+
+    const result = await validatePackage(dir)
+    expect(result.level).toBe(0)
+    expect(result.report.findings.some(
+      (f) => f.check === 'manifest.measure' && f.severity === 'error',
+    )).toBe(true)
+  })
+
   it('drops to level 0 when the README is missing required sections', async () => {
     await write('openquality.yaml', MANIFEST)
     await write('README.md', '# Just a title\n')

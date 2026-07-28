@@ -7,6 +7,7 @@ const LEVEL_0_CHECKS: CheckId[] = ['manifest.schema', 'manifest.license', 'artif
 const LEVEL_1_CHECKS: CheckId[] = [
   ...LEVEL_0_CHECKS,
   'manifest.dataModel',
+  'manifest.measure',
   'artifacts.typed',
   'valuesets.referenced',
   'readme.sections',
@@ -83,7 +84,6 @@ export function computeLevel(manifest: Manifest, report: ValidationReport): Leve
     LEVEL_1_CHECKS.filter((c) => !LEVEL_0_CHECKS.includes(c)),
     report,
   )
-  if (!manifest.dataModel) level1Blockers.push('manifest does not declare a dataModel')
   if (level1Blockers.length > 0) {
     return { level: 0, blockers: level1Blockers }
   }

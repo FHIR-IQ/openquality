@@ -13,6 +13,19 @@ export interface PackResult {
   files: string[]
 }
 
+/**
+ * Every file the package contains, as sorted package-relative POSIX paths.
+ * Shared with the validator on purpose: the set of files scanned for forbidden
+ * content must be the same set that ends up in the tarball, or an author can
+ * ship content the scanner never looked at.
+ */
+export async function listPackageFiles(dir: string): Promise<string[]> {
+  const files: string[] = []
+  await collect(dir, dir, files)
+  files.sort()
+  return files
+}
+
 async function collect(root: string, dir: string, out: string[]): Promise<void> {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (EXCLUDED_DIRS.has(entry.name)) continue
@@ -40,9 +53,7 @@ export async function packPackage(dir: string): Promise<PackResult> {
     throw new Error(`cannot pack ${dir}: openquality.yaml not found at the package root`)
   }
 
-  const files: string[] = []
-  await collect(dir, dir, files)
-  files.sort()
+  const files = await listPackageFiles(dir)
 
   const stream = create(
     {

@@ -6,6 +6,7 @@ import { checkValueSetRefs } from './valuesets.js'
 import { checkReadmeSections } from './readme.js'
 import { scanContent } from './scanner.js'
 import { computeLevel } from './level.js'
+import { listPackageFiles } from './pack.js'
 import type { CheckId, ConformanceLevel, Finding, ValidationReport } from './report.js'
 
 export interface ValidationResult {
@@ -88,7 +89,33 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
   checksRun.push('manifest.license')
   findings.push(...checkLicense(manifest.license))
 
+  // Emitted as a Finding rather than handled specially inside computeLevel, so
+  // it behaves like every other Level 1 requirement: it prints under `error`
+  // and it sets the CLI exit code. It previously did neither.
   checksRun.push('manifest.dataModel')
+  if (!manifest.dataModel) {
+    findings.push({
+      check: 'manifest.dataModel',
+      severity: 'error',
+      message:
+        'manifest does not declare a dataModel, which Level 1 requires. Without it, ' +
+        'shared SQL is unreadable to anyone but its author.',
+      path: 'openquality.yaml',
+    })
+  }
+
+  // Spec 4.2 lists machine readable measure identity as a Level 1 requirement
+  // alongside dataModel. Nothing enforced it, so a package could be Described
+  // without saying which measure it implements.
+  checksRun.push('manifest.measure')
+  if (!manifest.measure?.title) {
+    findings.push({
+      check: 'manifest.measure',
+      severity: 'error',
+      message: 'manifest does not declare measure.title, so the package does not say which measure it implements',
+      path: 'openquality.yaml',
+    })
+  }
 
   checksRun.push('artifacts.present', 'artifacts.typed')
   if (manifest.artifacts.length === 0) {
@@ -124,12 +151,16 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
   checksRun.push('readme.sections')
   findings.push(...checkReadmeSections(await readIfPresent(join(dir, 'README.md'))))
 
+  // Scans every file in the package, not only the declared artifacts. packPackage
+  // ships the whole directory, so scanning only what the manifest lists would let
+  // an author carry an embedded expansion in an undeclared file, or NCQA copyright
+  // text in the README, straight past the one error-severity check there is.
   checksRun.push('content.forbidden')
-  for (const artifact of manifest.artifacts) {
-    const full = await resolveInside(dir, artifact.path)
+  for (const relPath of await listPackageFiles(dir)) {
+    const full = await resolveInside(dir, relPath)
     if (full === undefined) continue
     const content = await readIfPresent(full)
-    if (content !== undefined) findings.push(...scanContent(artifact.path, content))
+    if (content !== undefined) findings.push(...scanContent(relPath, content))
   }
 
   const report: ValidationReport = { checksRun, findings }
