@@ -368,15 +368,16 @@ const ArtifactSchema = z
     message: 'artifacts of type "sql" must declare a dialect',
   })
 
-const ValueSetSchema = z
-  .object({
-    oid: z.string().optional(),
-    url: z.string().optional(),
-    source: z.string().optional(),
-  })
-  .refine((v) => !!v.oid || !!v.url, {
-    message: 'each valueSets entry must have an oid or a url',
-  })
+// Deliberately no `.refine` requiring oid or url. That rule belongs to the
+// `valuesets.referenced` check in Task 5, not to schema parsing. Enforcing it
+// here would tag the finding `manifest.schema` and abort the whole run before
+// any other check executes, so an author would see one misattributed error
+// instead of every problem in their package at once.
+const ValueSetSchema = z.object({
+  oid: z.string().optional(),
+  url: z.string().optional(),
+  source: z.string().optional(),
+})
 
 const MeasureSchema = z.object({
   title: z.string().min(1),
@@ -598,6 +599,18 @@ describe('checkValueSetRefs', () => {
   it('returns no findings when the package declares no value sets', () => {
     expect(checkValueSetRefs(undefined)).toEqual([])
   })
+
+  it('rejects an entry with neither an oid nor a url', () => {
+    const findings = checkValueSetRefs([{ source: 'vsac' }])
+    expect(findings).toHaveLength(1)
+    expect(findings[0].check).toBe('valuesets.referenced')
+    expect(findings[0].message).toMatch(/oid or a url/)
+  })
+
+  it('reports every bad entry, not just the first', () => {
+    const findings = checkValueSetRefs([{ oid: 'not.an.oid.x' }, {}, { url: 'ftp://x' }])
+    expect(findings).toHaveLength(3)
+  })
 })
 ```
 
@@ -625,6 +638,16 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
   const findings: Finding[] = []
 
   for (const ref of refs) {
+    // The schema deliberately allows an entry with neither field so that this
+    // check owns the rule and the finding carries the right CheckId.
+    if (!ref.oid && !ref.url) {
+      findings.push({
+        check: 'valuesets.referenced',
+        severity: 'error',
+        message: 'each valueSets entry must have an oid or a url',
+        path: 'openquality.yaml',
+      })
+    }
     if (ref.oid && !OID.test(ref.oid)) {
       findings.push({
         check: 'valuesets.referenced',
@@ -650,7 +673,7 @@ export function checkValueSetRefs(refs: ValueSetRef[] | undefined): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/valuesets.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 7 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1537,7 +1560,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 49 tests.
+Expected: PASS, 8 files, 51 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -1789,7 +1812,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 53 tests.
+Expected: PASS, 9 files, 55 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -1947,7 +1970,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 58 tests, typecheck exits 0.
+Expected: PASS, 10 files, 60 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -1960,7 +1983,7 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 58 tests across 10 files.
+- `pnpm test` passes with 60 tests across 10 files.
 - `pnpm typecheck` exits 0.
 - `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
