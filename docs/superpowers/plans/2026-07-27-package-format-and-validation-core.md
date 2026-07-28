@@ -279,7 +279,7 @@ describe('parseManifest', () => {
     expect(result.ok).toBe(true)
     if (!result.ok) return
     expect(result.manifest.id).toBe('gene/hba1c-poor-control')
-    expect(result.manifest.measure.steward).toBe('CMS')
+    expect(result.manifest.measure?.steward).toBe('CMS')
     expect(result.manifest.artifacts[0].type).toBe('cql')
   })
 
@@ -390,7 +390,14 @@ const MeasureSchema = z.object({
 
 export const ManifestSchema = z.object({
   id: z.string().regex(PACKAGE_ID, 'id must be namespace/name, lowercase alphanumeric and hyphens'),
-  version: z.string().regex(SEMVER, 'version must be semver, for example 1.2.0'),
+  // Stringified first, because YAML parses a bare `version: 2026` as a number.
+  // Without this, Zod fails on the base type and reports "expected string,
+  // received number", which tells an author nothing about what is actually
+  // wrong. `1.2.0` is not a valid YAML number so it already arrives as a string.
+  version: z.preprocess(
+    (v) => (typeof v === 'number' ? String(v) : v),
+    z.string().regex(SEMVER, 'version must be semver, for example 1.2.0'),
+  ),
   license: z.string().min(1),
   measurementPeriod: z.number().int().min(1990).max(2100).optional(),
   measure: MeasureSchema.optional(),
