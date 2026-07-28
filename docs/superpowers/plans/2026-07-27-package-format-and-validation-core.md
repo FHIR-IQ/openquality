@@ -35,8 +35,15 @@ Split by responsibility rather than by layer. Each check file owns one rule and 
 ### Task 1: Workspace scaffolding
 
 **Files:**
-- Create: `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `vitest.config.ts`
+- Create: `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `tsconfig.json`, `vitest.config.ts`
 - Create: `packages/core/package.json`, `packages/core/tsconfig.json`
+
+Nothing in this plan ever builds `dist`. Vitest runs the TypeScript sources directly and
+the CLI is tested by calling its command functions, not by executing a compiled binary.
+So TypeScript is configured for type checking only (`noEmit`), not for emit. Do not add
+`composite`, `declaration`, `outDir`, or project references: they require an emit
+pipeline that does not exist here, and `tsc -b` without a root `tsconfig.json` fails
+with TS5083.
 
 - [ ] **Step 1: Create the workspace root**
 
@@ -51,7 +58,7 @@ Split by responsibility rather than by layer. Each check file owns one rule and 
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
@@ -77,12 +84,20 @@ packages:
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "declaration": true,
-    "composite": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   }
+}
+```
+
+`tsconfig.json` (the entry point `pnpm typecheck` uses; covers every package at once):
+
+```json
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["packages/*/src/**/*.ts", "packages/*/test/**/*.ts", "vitest.config.ts"]
 }
 ```
 
@@ -107,8 +122,6 @@ export default defineConfig({
   "name": "@openquality/core",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": { ".": "./src/index.ts" },
   "dependencies": {
     "yaml": "^2.6.0",
@@ -121,12 +134,17 @@ export default defineConfig({
 }
 ```
 
-`packages/core/tsconfig.json`:
+There is deliberately no `main` or `types` field. Both would point into `dist`, which
+nothing in this plan builds, so they would be dead config that lies about the package.
+`exports` resolves to the TypeScript source, which is what Vitest and the workspace
+link in Task 11 actually consume.
+
+`packages/core/tsconfig.json` (for editors and per-package checks; the root config is
+what `pnpm typecheck` runs):
 
 ```json
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "outDir": "dist", "rootDir": "." },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
 ```
@@ -139,10 +157,13 @@ Expected: installs without error, creates `pnpm-lock.yaml`.
 Run: `pnpm test`
 Expected: `No test files found` and exit code 1. That is correct at this point, there are no tests yet.
 
+Run: `pnpm typecheck`
+Expected: exits 0 with no output. An empty `include` match is not an error.
+
 - [ ] **Step 4: Commit**
 
 ```bash
-git add package.json pnpm-workspace.yaml tsconfig.base.json vitest.config.ts pnpm-lock.yaml packages/core/package.json packages/core/tsconfig.json
+git add package.json pnpm-workspace.yaml tsconfig.base.json tsconfig.json vitest.config.ts pnpm-lock.yaml packages/core/package.json packages/core/tsconfig.json
 git commit -m "chore: scaffold pnpm workspace and core package"
 ```
 
@@ -1536,7 +1557,7 @@ git commit -m "feat(core): add deterministic package tarball creation"
   "name": "@openquality/cli",
   "version": "0.1.0",
   "type": "module",
-  "bin": { "oq": "./dist/index.js" },
+  "exports": { ".": "./src/index.ts" },
   "dependencies": {
     "@openquality/core": "workspace:*",
     "commander": "^12.1.0"
@@ -1544,16 +1565,22 @@ git commit -m "feat(core): add deterministic package tarball creation"
 }
 ```
 
+As with core, there is no `bin` field pointing into `dist`, because nothing builds
+`dist`. The CLI is exercised in tests by importing and calling its command functions
+directly. Wiring a real `oq` executable is a packaging concern for a later plan.
+
 `packages/cli/tsconfig.json`:
 
 ```json
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "outDir": "dist", "rootDir": "." },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "references": [{ "path": "../core" }]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
 ```
+
+No `references` entry. Project references belong to `tsc -b` composite builds, which
+this repo does not use; the root `tsconfig.json` already type checks core and cli
+together in one pass.
 
 Run: `pnpm install`
 Expected: links `@openquality/core` into the CLI package.
