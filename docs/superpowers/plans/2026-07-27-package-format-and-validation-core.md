@@ -2232,7 +2232,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 87 tests, typecheck exits 0.
+Expected: PASS, 10 files, 91 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -2245,9 +2245,11 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 87 tests across 10 files.
+- `pnpm test` passes with 91 tests across 10 files.
 - `pnpm typecheck` exits 0.
-- `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
+- `pnpm oq validate <dir>` reports a conformance level, lists errors, warnings and
+  infos, and names blockers for the next level. Run via the root `oq` script,
+  which uses tsx: nothing builds `dist`, so there is no standalone binary yet.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
 - A real CMS eCQM package validates cleanly to Level 1 with `cql.translate` as its only blocker to Level 2.
 
