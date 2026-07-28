@@ -939,6 +939,36 @@ describe('scanContent', () => {
   it('does not crash on malformed JSON', () => {
     expect(() => scanContent('fhir/bad.json', '{not json')).not.toThrow()
   })
+
+  it('flags an embedded expansion regardless of file extension', () => {
+    // Detection must not be dodgeable by renaming the file, since this is the
+    // one error-severity check and the licensing risk the registry cannot host.
+    const vs = JSON.stringify({
+      resourceType: 'ValueSet',
+      expansion: { contains: [{ system: 'http://loinc.org', code: '4548-4' }] },
+    })
+    expect(scanContent('fhir/vs.yaml', vs)).toHaveLength(1)
+    expect(scanContent('vs.txt', vs)).toHaveLength(1)
+  })
+
+  it('flags an embedded expansion written as block-style YAML', () => {
+    const yaml = [
+      'resourceType: ValueSet',
+      'expansion:',
+      '  contains:',
+      '    - system: http://loinc.org',
+      "      code: '4548-4'",
+    ].join('\n')
+    const findings = scanContent('fhir/vs.yaml', yaml)
+    expect(findings).toHaveLength(1)
+    expect(findings[0].severity).toBe('error')
+  })
+
+  it('does not mistake a neighbouring OID for the CPT code system', () => {
+    // 6.120 is a different code system; only 6.12 is CPT.
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.120"}')).toEqual([])
+    expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.12"}')).toHaveLength(1)
+  })
 })
 ```
 
@@ -950,9 +980,12 @@ Expected: FAIL, cannot resolve `../src/scanner.js`.
 - [ ] **Step 3: Write the implementation**
 
 ```typescript
+import { parse as parseYaml } from 'yaml'
 import type { Finding } from './report.js'
 
-const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12/i
+// The negative lookahead matters: without it the CPT arc also matches
+// urn:oid:2.16.840.1.113883.6.120, a different code system entirely.
+const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12(?!\d)/i
 
 /** Phrases that assert ownership, as opposed to merely naming a program. */
 const COPYRIGHT_CLAIMS = [
@@ -965,7 +998,11 @@ const COPYRIGHT_CLAIMS = [
 function hasEmbeddedExpansion(content: string): boolean {
   let doc: unknown
   try {
-    doc = JSON.parse(content)
+    // Parsed as YAML rather than JSON, because YAML is a superset of JSON and
+    // detection must not depend on the file extension. Gating on `.json` let an
+    // author bypass the one error-severity check in this scanner by renaming
+    // the file, which is the licensing risk the registry cannot host.
+    doc = parseYaml(content)
   } catch {
     return false
   }
@@ -994,7 +1031,7 @@ function hasEmbeddedExpansion(content: string): boolean {
 export function scanContent(path: string, content: string): Finding[] {
   const findings: Finding[] = []
 
-  if (path.endsWith('.json') && hasEmbeddedExpansion(content)) {
+  if (hasEmbeddedExpansion(content)) {
     findings.push({
       check: 'content.forbidden',
       severity: 'error',
@@ -1033,7 +1070,7 @@ export function scanContent(path: string, content: string): Finding[] {
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/scanner.test.ts`
-Expected: PASS, 7 tests.
+Expected: PASS, 10 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1056,7 +1093,7 @@ Pure logic over a manifest and a report. This is the heart of the package model,
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { computeLevel } from '../src/level.js'
+import { computeLevel, requiredDeepChecks } from '../src/level.js'
 import type { ValidationReport, CheckId } from '../src/report.js'
 import type { Manifest } from '../src/manifest.js'
 
@@ -1155,7 +1192,53 @@ describe('computeLevel', () => {
   it('lists blockers explaining what stands between the package and the next level', () => {
     const r = computeLevel(manifest({ dataModel: undefined }), report(L1_CHECKS))
     expect(r.level).toBe(0)
-    expect(r.blockers.length).toBeGreaterThan(0)
+    expect(r.blockers).toContain('manifest does not declare a dataModel')
+  })
+
+  it('caps a package at level 1 when an artifact type has no verifier', () => {
+    // Otherwise "Verified" is awarded to a package nothing verified, and an
+    // author reaches the top level by picking a type no validator understands.
+    const py = manifest({ artifacts: [{ path: 'm.py', type: 'python' }] })
+    const r = computeLevel(py, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('caps a mixed package at level 1 when only some artifacts are verifiable', () => {
+    const mixed = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'm.py', type: 'python' },
+      ],
+    })
+    const r = computeLevel(mixed, report([...L1_CHECKS, 'cql.translate']))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('artifact type "python" has no defined Level 2 verification')
+  })
+
+  it('does not let documentation alone earn Verified', () => {
+    const docs = manifest({ artifacts: [{ path: 'notes.md', type: 'doc' }] })
+    const r = computeLevel(docs, report(L1_CHECKS))
+    expect(r.level).toBe(1)
+    expect(r.blockers).toContain('package has no artifact that any Level 2 validator can verify')
+  })
+
+  it('treats documentation as supporting material that never blocks', () => {
+    const withDocs = manifest({
+      artifacts: [
+        { path: 'm.cql', type: 'cql' },
+        { path: 'notes.md', type: 'doc' },
+      ],
+    })
+    expect(computeLevel(withDocs, report([...L1_CHECKS, 'cql.translate'])).level).toBe(2)
+  })
+
+  it('verifies a SQL on FHIR ViewDefinition with the FHIR validator', () => {
+    const view = manifest({
+      artifacts: [{ path: 'v.json', type: 'sql-on-fhir/ViewDefinition' }],
+    })
+    expect(requiredDeepChecks(view)).toEqual(['fhir.validate'])
+    expect(computeLevel(view, report([...L1_CHECKS, 'fhir.validate'])).level).toBe(2)
   })
 })
 ```
@@ -1183,11 +1266,20 @@ const LEVEL_1_CHECKS: CheckId[] = [
   'content.forbidden',
 ]
 
+/**
+ * Supporting material rather than measure logic. Documentation neither needs
+ * verifying nor counts as something that was verified.
+ */
+const SUPPORTING_TYPES = new Set(['doc'])
+
 /** Maps an artifact type to the deep check Level 2 requires for it. */
 function deepCheckFor(artifactType: string): CheckId | undefined {
   if (artifactType === 'cql') return 'cql.translate'
   if (artifactType === 'sql') return 'sql.parse'
-  if (artifactType.startsWith('fhir/')) return 'fhir.validate'
+  // A ViewDefinition is itself a FHIR resource, so the FHIR validator covers it.
+  if (artifactType.startsWith('fhir/') || artifactType === 'sql-on-fhir/ViewDefinition') {
+    return 'fhir.validate'
+  }
   return undefined
 }
 
@@ -1199,6 +1291,19 @@ export function requiredDeepChecks(manifest: Manifest): CheckId[] {
     if (check) required.add(check)
   }
   return [...required]
+}
+
+/**
+ * Artifact types carrying measure logic that no validator can check, currently
+ * python, r and notebook. They must block Level 2: "Verified" has to mean
+ * something was actually verified, and without this an author reaches the top
+ * level by choosing a type nothing knows how to inspect.
+ */
+export function unverifiableArtifactTypes(manifest: Manifest): string[] {
+  const types = manifest.artifacts
+    .filter((a) => !deepCheckFor(a.type) && !SUPPORTING_TYPES.has(a.type))
+    .map((a) => a.type)
+  return [...new Set(types)]
 }
 
 export interface LevelResult {
@@ -1236,7 +1341,20 @@ export function computeLevel(manifest: Manifest, report: ValidationReport): Leve
     return { level: 0, blockers: level1Blockers }
   }
 
-  const level2Blockers = evaluate(requiredDeepChecks(manifest), report)
+  const deepChecks = requiredDeepChecks(manifest)
+  const level2Blockers = evaluate(deepChecks, report)
+
+  for (const type of unverifiableArtifactTypes(manifest)) {
+    level2Blockers.push(`artifact type "${type}" has no defined Level 2 verification`)
+  }
+
+  // A package of nothing but documentation has no logic to verify, so Verified
+  // would be an empty claim. Level 2 requires at least one artifact that some
+  // validator actually inspected.
+  if (deepChecks.length === 0) {
+    level2Blockers.push('package has no artifact that any Level 2 validator can verify')
+  }
+
   if (level2Blockers.length > 0) {
     return { level: 1, blockers: level2Blockers }
   }
@@ -1248,7 +1366,7 @@ export function computeLevel(manifest: Manifest, report: ValidationReport): Leve
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm vitest run packages/core/test/level.test.ts`
-Expected: PASS, 10 tests.
+Expected: PASS, 15 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1653,7 +1771,7 @@ export * from './pack.js'
 - [ ] **Step 5: Run the full suite**
 
 Run: `pnpm test`
-Expected: PASS, 8 files, 65 tests.
+Expected: PASS, 8 files, 73 tests.
 
 - [ ] **Step 6: Commit**
 
@@ -1905,7 +2023,7 @@ await program.parseAsync()
 - [ ] **Step 7: Verify the whole suite and the type build**
 
 Run: `pnpm test`
-Expected: PASS, 9 files, 69 tests.
+Expected: PASS, 9 files, 77 tests.
 
 Run: `pnpm typecheck`
 Expected: exits 0.
@@ -2063,7 +2181,7 @@ If the third test fails with an unexpected blocker, the manifest or a check is w
 - [ ] **Step 5: Run everything**
 
 Run: `pnpm test && pnpm typecheck`
-Expected: PASS, 10 files, 74 tests, typecheck exits 0.
+Expected: PASS, 10 files, 82 tests, typecheck exits 0.
 
 - [ ] **Step 6: Commit**
 
@@ -2076,7 +2194,7 @@ git commit -m "test(core): validate against real CMS122 eCQM content"
 
 ## Definition of Done
 
-- `pnpm test` passes with 74 tests across 10 files.
+- `pnpm test` passes with 82 tests across 10 files.
 - `pnpm typecheck` exits 0.
 - `oq validate <dir>` reports a conformance level, lists errors and warnings, and names blockers for the next level.
 - `oq pack <dir>` writes a tarball whose digest is stable across runs.
