@@ -187,9 +187,9 @@
   <div class="status-pill"><span class="dot"></span> Pre-launch &middot; validation core is running, registry is next</div>
   <h1>OPEN<br>QUALITY</h1>
   <p class="lede">
-    An open community for healthcare quality measurement. Publish a measure in CQL,
-    SQL, or SQL&#8209;on&#8209;FHIR. Get it validated. Get real feedback. Stop rebuilding
-    the same logic inside every organization that does this.
+    An open registry for healthcare quality measures. Publish in CQL, SQL, or
+    SQL&#8209;on&#8209;FHIR, get it validated, and get review from people who have solved
+    the same problem. Today every organization rebuilds this logic on its own.
   </p>
   <div class="hero-cta">
     <a class="btn" href="https://github.com/FHIR-IQ/openquality">Read the spec</a>
@@ -216,9 +216,9 @@
         query is really a lateral join running dozens of semi&#8209;joins. Rewrite it this way.
       </p>
       <p>
-        That review was worth more than most documentation on the subject. It reached four
-        people. It is not searchable, not attached to any measure, and not findable by the
-        next person with the same problem next month.
+        That review answered the question completely. Four people read it. It is not
+        searchable, it is not attached to any measure, and the next person with the same
+        problem will not find it.
       </p>
     </div>
     <div>
@@ -236,7 +236,7 @@
         reaches a patient.
       </p>
       <p>
-        Open Quality is the place that thread should have happened in public.
+        Open Quality is where that answer should live.
       </p>
     </div>
   </div>
@@ -353,8 +353,8 @@
     <div class="step">
       <span class="num">LEVEL 0</span>
       <h3>Shared</h3>
-      <p>A valid manifest, an open license, at least one artifact. Any language. The bar is
-      deliberately low, because code nobody can find helps nobody.</p>
+      <p>A valid manifest, an open license, and at least one artifact. Any language. The bar
+      is low on purpose, so that unfinished work can still be shared.</p>
     </div>
     <div class="step">
       <span class="num">LEVEL 1</span>
@@ -371,9 +371,8 @@
     </div>
   </div>
   <p style="margin-top:26px; color:var(--muted); max-width:720px; font-size:14.5px">
-    Most organizations doing quality measurement write SQL against a warehouse, not CQL. A
-    ladder that treats FHIR as the only path to the top would lock out the majority of the
-    people this is meant to serve, so it does not.
+    Most organizations that do quality measurement write SQL against a warehouse, not CQL. A
+    level system that required FHIR to reach the top would exclude them.
   </p>
 </section>
 
@@ -401,7 +400,7 @@
       </tr>
       <tr>
         <td>Deep validators</td><td class="state">next</td>
-        <td>CQL&#8209;to&#8209;ELM, FHIR profile validation, SQL parsing, VSAC resolution. Unlocks Level 2.</td>
+        <td>CQL&#8209;to&#8209;ELM, FHIR profile validation, SQL parsing, VSAC resolution. Level 2 needs these.</td>
       </tr>
       <tr>
         <td>Registry</td><td class="state">planned</td>
@@ -435,10 +434,10 @@ To reach the next level:
       review.</p>
     </div>
     <div>
-      <p><strong>No HEDIS logic, ever.</strong> NCQA holds copyright on those specifications.
-      What can be shared is community-authored work against public specifications, plus the
-      feedback and test cases — which is often the part an employer will actually approve
-      releasing.</p>
+      <p><strong>No HEDIS logic.</strong> NCQA holds copyright on those specifications. You
+      can publish your own implementation written against a public specification. You can also
+      publish test cases and review comments. Many employers approve releasing that even when
+      they will not release the SQL.</p>
     </div>
   </div>
 </section>
