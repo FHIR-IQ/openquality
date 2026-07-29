@@ -13,8 +13,12 @@ Answering you both in one message.
 
 Two things are live since I last wrote.
 
-The registry code is public: https://github.com/FHIR-IQ/openquality
+The registry code is public and MIT licensed: https://github.com/FHIR-IQ/openquality
 The site is up: https://openquality.vercel.app
+
+Clone it and run `pnpm install && pnpm test` for 91 tests, then
+`pnpm oq validate packages/core/test/fixtures/cms122` to see it validate a real
+CMS eCQM.
 
 Preston, I also filed an enhancement issue against cql-studio for the 3.x
 series rather than describe it in email:
