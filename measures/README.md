@@ -44,10 +44,19 @@ manifest and the artifacts it declares — the format is in [`../spec/`](../spec
 sets are referenced by OID or canonical URL and never embedded, which keeps licensed
 terminology out of the repository.
 
-Where measures in a collection share logic, they share a common library rather than copying
-it, the same way the eCQM content repositories share `FHIRHelpers`, `FHIRCommon`, and
-`QICoreCommon`. Prefer reusing the published cqframework common libraries over writing new
-ones.
+Where measures share logic, prefer reusing a published cqframework common library such as
+`FHIRHelpers` or `QICoreCommon` over writing a new one.
+
+A package **vendors** the libraries its logic includes, rather than referencing them as
+separate packages. A measure that includes `FHIRHelpers` carries `cql/FHIRHelpers.cql` inside
+its own directory and declares it as an artifact. The same library file therefore appears in
+many packages: `FHIRHelpers.cql` is currently in all 52 packages of `cms-fhir-2026`.
+
+That duplication is deliberate. A package that cannot be read or evaluated without fetching
+six others is not a unit of exchange. The alternative, publishing each shared library as its
+own package, would require a `measure.title` for something that is not a measure, since
+Level 1 demands one. The trade-off and its open questions are recorded in
+[`../knowledge/cms122/2026-007-vendored-library-duplication.md`](../knowledge/cms122/2026-007-vendored-library-duplication.md).
 
 ## Contributing a measure
 
