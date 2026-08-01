@@ -81,7 +81,7 @@ strengthen the corpus. Reviewing is how contributors earn maintainer status — 
 
 ```bash
 pnpm install
-pnpm test          # 91 tests
+pnpm test
 pnpm oq validate <package-dir>
 ```
 
