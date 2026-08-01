@@ -1,4 +1,4 @@
-import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rm, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { parseHeader } from './cql.js'
 import { emitManifest, emitReadme, type PackagePlan } from './emit.js'
@@ -78,9 +78,24 @@ async function writePackage(
 }
 
 /**
+ * Removes every generated package subdirectory under MEASURES_DIR, so a
+ * measure that disappears upstream disappears here too and the drift check
+ * stays meaningful. Only directories are removed: MEASURES_DIR also holds a
+ * hand-authored README.md, which is not the importer's output and must
+ * survive a re-import untouched, or every re-run (including CI's drift
+ * check) would wipe it.
+ */
+async function clearGeneratedPackages(dir: string): Promise<void> {
+  await mkdir(dir, { recursive: true })
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) await rm(join(dir, entry.name), { recursive: true, force: true })
+  }
+}
+
+/**
  * Imports the pinned upstream content into measures/. Removes the generated
- * directories first, so a measure that disappears upstream disappears here too
- * and the drift check stays meaningful.
+ * package directories first, so a measure that disappears upstream disappears
+ * here too and the drift check stays meaningful.
  */
 export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): Promise<ImportSummary> {
   const root = await fetchUpstream(ref)
@@ -91,7 +106,7 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
     cqlByLibrary.set(basename(path, '.cql'), await readText(path))
   }
 
-  await rm(MEASURES_DIR, { recursive: true, force: true })
+  await clearGeneratedPackages(MEASURES_DIR)
 
   const imported: string[] = []
   const skipped: Skip[] = []
