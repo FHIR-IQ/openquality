@@ -1,9 +1,6 @@
 import { parse as parseYaml } from 'yaml'
 import type { Finding } from './report.js'
-
-// The negative lookahead matters: without it the CPT arc also matches
-// urn:oid:2.16.840.1.113883.6.120, a different code system entirely.
-const CPT_SYSTEM = /ama-assn\.org\/go\/cpt|urn:oid:2\.16\.840\.1\.113883\.6\.12(?!\d)/i
+import { CPT_SYSTEM, checkTerminology } from './terminology.js'
 
 /** Phrases that assert ownership, as opposed to merely naming a program. */
 const COPYRIGHT_CLAIMS = [
@@ -80,6 +77,8 @@ export function scanContent(path: string, content: string): Finding[] {
       break
     }
   }
+
+  findings.push(...checkTerminology(path, content))
 
   return findings
 }
