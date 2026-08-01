@@ -4,7 +4,7 @@
 
 **Goal:** Fill `measures/` and `knowledge/` with real, validated content imported from a CC0 upstream source, plus the format and tooling changes that real content forces.
 
-**Architecture:** Four phases. Format changes to `@openquality/core` first (provenance field, `qi-core` data model, terminology scanner). Then a new `packages/importer` that reads a pinned upstream commit and emits package directories, with its output committed to git and a CI drift check proving the tree is the importer's output. Then CI, including one slice of the deferred validator subsystem (`cql.translate`) so packages can reach Level 2. Hand-authored showcase content last.
+**Architecture:** Four phases. Format changes to `@openquality/core` first (provenance field, `qi-core` data model, terminology scanner). Then a new `packages/importer` that reads a pinned upstream commit and emits package directories, with its output committed to git and a CI drift check proving the tree is the importer's output. Then CI. Hand-authored showcase content last. The validator subsystem stays out entirely, so the corpus ships at Level 1.
 
 **Tech Stack:** TypeScript, Node 22, pnpm workspaces, Vitest, Zod, `yaml`. GitHub Actions. A JVM in CI for the cqframework CQL-to-ELM translator.
 
@@ -50,7 +50,7 @@ Three conventions in this codebase you must follow:
 | `measure.ts` | Read a FHIR `Measure` resource into a flat record. Pure |
 | `naming.ts` | Slugs, package ids, semver normalization. Pure |
 | `emit.ts` | Build manifest and README text for one package. Pure |
-| `plan.ts` | Decide what to import and what to skip. Pure |
+| `plan.ts` | Decide what to import and what to skip, and resolve included libraries. Pure |
 | `run.ts` | Orchestration and file writing |
 | `cli.ts` | Command entry point |
 
@@ -1580,7 +1580,7 @@ const PLAN: PackagePlan = {
       oid: '2.16.840.1.113883.3.464.1003.103.12.1001',
     },
   ],
-  dependencies: [{ id: 'cqframework/fhir-helpers', version: '4.4.0' }],
+  libraryFileNames: ['FHIRHelpers.cql', 'QICoreCommon.cql'],
   provenance: {
     upstream: 'https://github.com/cqframework/ecqm-content-qicore-2025',
     ref: 'd4e0edd01b7da2a3b43d5360156b43761438190a',
@@ -1609,11 +1609,18 @@ describe('emitManifest', () => {
     expect(manifest.measure.steward).toBe('National Committee for Quality Assurance')
   })
 
-  it('declares the CQL artifact under cql/', () => {
+  it('declares the measure CQL and every vendored library as artifacts', () => {
     const manifest = parse(emitManifest(PLAN))
     expect(manifest.artifacts).toEqual([
       { path: 'cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql', type: 'cql' },
+      { path: 'cql/FHIRHelpers.cql', type: 'cql' },
+      { path: 'cql/QICoreCommon.cql', type: 'cql' },
     ])
+  })
+
+  it('emits no dependencies, because libraries are vendored not referenced', () => {
+    const manifest = parse(emitManifest(PLAN))
+    expect(manifest.dependencies).toBeUndefined()
   })
 
   it('references value sets by oid and url, never embedding them', () => {
@@ -1717,8 +1724,13 @@ export interface PackagePlan {
   measurementPeriod?: number
   dataModel: string
   cqlFileName: string
+  /**
+   * Included libraries vendored into this package's cql/ directory, resolved
+   * transitively. They are artifacts of this package, not dependencies on other
+   * packages: see the note in emitManifest.
+   */
+  libraryFileNames: string[]
   valueSets: CqlValueSet[]
-  dependencies: { id: string; version: string }[]
   provenance: PlanProvenance
 }
 
@@ -1739,7 +1751,19 @@ export function emitManifest(plan: PackagePlan): string {
   manifest.measure = measure
 
   manifest.dataModel = plan.dataModel
-  manifest.artifacts = [{ path: `cql/${plan.cqlFileName}`, type: 'cql' }]
+
+  // The measure library first, then every library it includes. All are real
+  // files in this package, so all are declared: `artifacts.present` then checks
+  // each one exists, which is the guarantee that a vendored package is complete.
+  //
+  // Deliberately NOT emitted as `dependencies`. A shared CQL library is not a
+  // measure, and the manifest requires `measure.title` for Level 1, so
+  // publishing FHIRHelpers as its own package would mean inventing measure
+  // identity for something that is not a measure.
+  manifest.artifacts = [
+    { path: `cql/${plan.cqlFileName}`, type: 'cql' },
+    ...plan.libraryFileNames.map((name) => ({ path: `cql/${name}`, type: 'cql' })),
+  ]
 
   // Only value sets that resolved to an OID or a URL are emitted. The core
   // check rejects an entry with neither, and a value set the parser could not
@@ -1754,8 +1778,6 @@ export function emitManifest(plan: PackagePlan): string {
       return entry
     })
   if (valueSets.length > 0) manifest.valueSets = valueSets
-
-  if (plan.dependencies.length > 0) manifest.dependencies = plan.dependencies
 
   const provenance: Record<string, unknown> = {
     upstream: plan.provenance.upstream,
@@ -1852,7 +1874,7 @@ Create `packages/importer/test/plan.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest'
-import { planPackage } from '../src/plan.js'
+import { planPackage, resolveLibraries } from '../src/plan.js'
 import type { UpstreamMeasure } from '../src/measure.js'
 
 const MEASURE: UpstreamMeasure = {
@@ -1885,9 +1907,9 @@ describe('planPackage', () => {
     expect(result.plan?.dataModel).toBe('qi-core')
   })
 
-  it('wires includes to cqframework dependency packages', () => {
+  it('leaves libraryFileNames empty; the caller vendors them', () => {
     const result = planPackage(MEASURE, CQL, CONTEXT)
-    expect(result.plan?.dependencies).toEqual([{ id: 'cqframework/fhir-helpers', version: '4.4.0' }])
+    expect(result.plan?.libraryFileNames).toEqual([])
   })
 
   it('marks the package derived and lists what was stripped', () => {
@@ -1932,6 +1954,47 @@ describe('planPackage', () => {
     expect(result.skipped?.measure).toBe('CMS122FHIRDiabetesAssessGreaterThan9Percent')
   })
 })
+
+describe('resolveLibraries', () => {
+  const available = new Map([
+    ['FHIRHelpers', `library FHIRHelpers version '4.4.000'`],
+    ['QICoreCommon', [`library QICoreCommon version '4.0.000'`, `include FHIRHelpers version '4.4.000'`].join('\n')],
+    ['Deep', `library Deep version '1.0.000'\ninclude QICoreCommon version '4.0.000'`],
+  ])
+
+  it('resolves a direct include', () => {
+    const { resolved, missing } = resolveLibraries(`include FHIRHelpers version '4.4.000'`, available)
+    expect(resolved).toEqual(['FHIRHelpers'])
+    expect(missing).toEqual([])
+  })
+
+  it('resolves transitively', () => {
+    const { resolved } = resolveLibraries(`include Deep version '1.0.000'`, available)
+    expect(resolved).toEqual(['Deep', 'FHIRHelpers', 'QICoreCommon'])
+  })
+
+  it('returns a stable sorted order so importer output is deterministic', () => {
+    const a = resolveLibraries(`include Deep version '1.0.000'`, available).resolved
+    const b = resolveLibraries(`include Deep version '1.0.000'`, available).resolved
+    expect(a).toEqual(b)
+    expect(a).toEqual([...a].sort())
+  })
+
+  it('reports a missing library rather than guessing', () => {
+    const { resolved, missing } = resolveLibraries(`include Absent version '1.0.000'`, available)
+    expect(resolved).toEqual([])
+    expect(missing).toEqual(['Absent'])
+  })
+
+  it('terminates on a circular include', () => {
+    const cyclic = new Map([
+      ['A', `library A version '1.0.000'\ninclude B version '1.0.000'`],
+      ['B', `library B version '1.0.000'\ninclude A version '1.0.000'`],
+    ])
+    const { resolved } = resolveLibraries(`include A version '1.0.000'`, cyclic)
+    expect(resolved).toEqual(['A', 'B'])
+  })
+})
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1967,8 +2030,6 @@ export interface PlanResult {
   skipped?: Skip
 }
 
-/** The namespace shared CQL libraries are published under. */
-export const LIBRARY_NAMESPACE = 'cqframework'
 /** The namespace seeded CMS-programme measures are published under. */
 export const MEASURE_NAMESPACE = 'cms'
 
@@ -1984,6 +2045,37 @@ function dataModelFor(model: string | undefined): string | undefined {
  * on purpose: a measure that cannot be mapped is reported, never guessed at.
  * Silent truncation would read as complete coverage.
  */
+/**
+ * Every library this CQL includes, transitively. Returned in a stable sorted
+ * order so the importer's output is deterministic and the CI drift check does
+ * not fire on ordering alone.
+ *
+ * A library that is included but missing from `available` is left out rather
+ * than guessed at; the caller turns that into a skip.
+ */
+export function resolveLibraries(
+  cqlSource: string,
+  available: Map<string, string>,
+): { resolved: string[]; missing: string[] } {
+  const resolved = new Set<string>()
+  const missing = new Set<string>()
+  const queue = parseIncludes(cqlSource).map((i) => i.library)
+
+  while (queue.length > 0) {
+    const name = queue.shift() as string
+    if (resolved.has(name) || missing.has(name)) continue
+    const source = available.get(name)
+    if (!source) {
+      missing.add(name)
+      continue
+    }
+    resolved.add(name)
+    for (const include of parseIncludes(source)) queue.push(include.library)
+  }
+
+  return { resolved: [...resolved].sort(), missing: [...missing].sort() }
+}
+
 export function planPackage(
   measure: UpstreamMeasure,
   cqlSource: string,
@@ -2009,15 +2101,6 @@ export function planPackage(
 
   const { cql, removed } = stripRestrictedDisplays(cqlSource)
 
-  const dependencies = parseIncludes(cqlSource)
-    .map((include) => {
-      const dependencyVersion = normalizeVersion(include.version)
-      return dependencyVersion
-        ? { id: packageId(LIBRARY_NAMESPACE, slugFor(include.library)), version: dependencyVersion }
-        : undefined
-    })
-    .filter((d): d is { id: string; version: string } => d !== undefined)
-
   const slug = slugFor(measure.title)
 
   const plan: PackagePlan = {
@@ -2031,8 +2114,8 @@ export function planPackage(
     measurementPeriod: measure.measurementPeriod,
     dataModel,
     cqlFileName: `${header.name}.cql`,
+    libraryFileNames: [],
     valueSets: parseValueSets(cqlSource),
-    dependencies,
     provenance: {
       upstream: context.upstream,
       ref: context.ref,
@@ -2090,28 +2173,26 @@ describe('renderImportReport', () => {
     const report = renderImportReport({
       ...base,
       imported: ['cms/a', 'cms/b'],
-      libraries: ['cqframework/fhir-helpers'],
       skipped: [{ measure: 'CMS999Broken', reason: 'no parseable version' }],
     })
     expect(report).toContain('2 measures')
-    expect(report).toContain('1 shared library')
     expect(report).toContain('1 skipped')
     expect(report).toContain('CMS999Broken')
     expect(report).toContain('no parseable version')
   })
 
   it('states the pinned commit', () => {
-    const report = renderImportReport({ ...base, imported: [], libraries: [], skipped: [] })
+    const report = renderImportReport({ ...base, imported: [], skipped: [] })
     expect(report).toContain('abc123')
   })
 
   it('says so plainly when nothing was skipped', () => {
-    const report = renderImportReport({ ...base, imported: ['cms/a'], libraries: [], skipped: [] })
+    const report = renderImportReport({ ...base, imported: ['cms/a'], skipped: [] })
     expect(report).toContain('Nothing was skipped')
   })
 
   it('is generated, and says so, so nobody hand-edits it', () => {
-    const report = renderImportReport({ ...base, imported: [], libraries: [], skipped: [] })
+    const report = renderImportReport({ ...base, imported: [], skipped: [] })
     expect(report).toContain('Generated by')
   })
 })
@@ -2133,11 +2214,10 @@ import { parseHeader } from './cql.js'
 import { emitManifest, emitReadme, type PackagePlan } from './emit.js'
 import { readMeasure } from './measure.js'
 import { normalizeVersion, packageId, slugFor } from './naming.js'
-import { LIBRARY_NAMESPACE, planPackage, type ImportContext, type Skip } from './plan.js'
+import { planPackage, resolveLibraries, type ImportContext, type Skip } from './plan.js'
 import { UPSTREAM, fetchUpstream, listCqlFiles, listMeasureFiles, readText } from './upstream.js'
 
 export const MEASURES_DIR = 'measures/cms-fhir-2026'
-export const LIBRARIES_DIR = 'measures/cqframework-shared'
 export const REPORT_PATH = 'measures/import-report.md'
 
 export interface ImportSummary {
@@ -2145,7 +2225,6 @@ export interface ImportSummary {
   ref: string
   retrieved: string
   imported: string[]
-  libraries: string[]
   skipped: Skip[]
 }
 
@@ -2163,7 +2242,6 @@ export function renderImportReport(summary: ImportSummary): string {
     '## Result',
     '',
     `- ${summary.imported.length} measures imported`,
-    `- ${summary.libraries.length} shared library packages imported`,
     `- ${summary.skipped.length} skipped`,
     '',
   ]
@@ -2186,11 +2264,27 @@ export function renderImportReport(summary: ImportSummary): string {
   return lines.join('\n')
 }
 
-async function writePackage(dir: string, plan: PackagePlan, cql: string): Promise<void> {
+/**
+ * Writes one self-contained package: the manifest, the README, the measure CQL,
+ * and every library the measure includes. Vendoring the libraries is what makes
+ * the package readable and evaluable on its own, which is the whole point of a
+ * package. The alternative, publishing each shared library as its own package,
+ * would require inventing a `measure.title` for something that is not a measure.
+ */
+async function writePackage(
+  dir: string,
+  plan: PackagePlan,
+  cql: string,
+  libraries: Map<string, string>,
+): Promise<void> {
   await mkdir(join(dir, 'cql'), { recursive: true })
   await writeFile(join(dir, 'openquality.yaml'), emitManifest(plan))
   await writeFile(join(dir, 'README.md'), emitReadme(plan))
   await writeFile(join(dir, 'cql', plan.cqlFileName), cql)
+  for (const name of plan.libraryFileNames) {
+    const source = libraries.get(name.replace(/\.cql$/, ''))
+    if (source !== undefined) await writeFile(join(dir, 'cql', name), source)
+  }
 }
 
 /**
@@ -2208,11 +2302,9 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
   }
 
   await rm(MEASURES_DIR, { recursive: true, force: true })
-  await rm(LIBRARIES_DIR, { recursive: true, force: true })
 
   const imported: string[] = []
   const skipped: Skip[] = []
-  const usedLibraries = new Set<string>()
 
   for (const path of await listMeasureFiles(root)) {
     const measure = readMeasure(await readText(path))
@@ -2233,66 +2325,33 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
       continue
     }
 
-    await writePackage(join(MEASURES_DIR, plan.slug), plan, cql)
-    imported.push(plan.id)
-    for (const dependency of plan.dependencies) usedLibraries.add(dependency.id)
-  }
+    // Libraries are vendored, so a missing one means the package would be
+    // incomplete. Skip rather than ship something that cannot be evaluated.
+    const { resolved, missing } = resolveLibraries(source, cqlByLibrary)
+    if (missing.length > 0) {
+      skipped.push({
+        measure: measure.name,
+        reason: `includes libraries not present upstream: ${missing.join(', ')}`,
+      })
+      continue
+    }
+    plan.libraryFileNames = resolved.map((name) => `${name}.cql`)
 
-  const libraries = await writeLibraryPackages(cqlByLibrary, usedLibraries, context)
+    await writePackage(join(MEASURES_DIR, plan.slug), plan, cql, cqlByLibrary)
+    imported.push(plan.id)
+  }
 
   const summary: ImportSummary = {
     upstream: UPSTREAM.url,
     ref,
     retrieved,
     imported: imported.sort(),
-    libraries: libraries.sort(),
     skipped,
   }
   await writeFile(REPORT_PATH, renderImportReport(summary))
   return summary
 }
 
-/**
- * Writes the shared CQL libraries that measures depend on as their own
- * packages, so a measure references a library rather than copying it. This is
- * what measures/README.md already says the collection should do.
- */
-async function writeLibraryPackages(
-  cqlByLibrary: Map<string, string>,
-  used: Set<string>,
-  context: ImportContext,
-): Promise<string[]> {
-  const written: string[] = []
-
-  for (const [name, source] of cqlByLibrary) {
-    const id = packageId(LIBRARY_NAMESPACE, slugFor(name))
-    if (!used.has(id)) continue
-
-    const header = parseHeader(source)
-    const version = normalizeVersion(header?.version)
-    if (!header || !version) continue
-
-    const { plan, cql, skipped } = planPackage(
-      {
-        name,
-        version: header.version,
-        title: name,
-        description: `Shared CQL library \`${name}\`, referenced by measures in this collection.`,
-        identifiers: [],
-        library: name,
-      },
-      source,
-      context,
-    )
-    if (!plan || !cql || skipped) continue
-
-    plan.id = id
-    await writePackage(join(LIBRARIES_DIR, slugFor(name)), plan, cql)
-    written.push(id)
-  }
-
-  return written
-}
 ```
 
 - [ ] **Step 4: Write the CLI entry point**
@@ -2318,7 +2377,7 @@ if (!retrieved || !/^\d{4}-\d{2}-\d{2}$/.test(retrieved)) {
 }
 
 const summary = await runImport(retrieved)
-console.log(`imported ${summary.imported.length} measures, ${summary.libraries.length} libraries`)
+console.log(`imported ${summary.imported.length} measures`)
 console.log(`skipped ${summary.skipped.length}`)
 for (const skip of summary.skipped) console.log(`  ${skip.measure}: ${skip.reason}`)
 ```
@@ -2357,7 +2416,6 @@ This is the first task that produces content. Expect to find real problems here:
 
 **Files:**
 - Create: `measures/cms-fhir-2026/**` (generated)
-- Create: `measures/cqframework-shared/**` (generated)
 - Create: `measures/import-report.md` (generated)
 - Delete: `measures/cms-fhir-2026/diabetes-hba1c-poor-control/`
 
@@ -2372,7 +2430,7 @@ git rm -r measures/cms-fhir-2026/diabetes-hba1c-poor-control
 - [ ] **Step 2: Run the import**
 
 Run: `pnpm oq-import 2026-08-01`
-Expected: about 53 measures imported, plus the shared libraries, plus a skip list. The first download is about 450 MB and takes a few minutes.
+Expected: about 53 measures imported, each with its included libraries vendored into its own `cql/`, plus a skip list. The first download is about 450 MB and takes a few minutes.
 
 - [ ] **Step 3: Read the import report before anything else**
 
@@ -2385,7 +2443,7 @@ Read every skip. A skip is a finding, not noise. If a whole class of measures sk
 Run:
 
 ```bash
-for dir in measures/cms-fhir-2026/*/ measures/cqframework-shared/*/; do
+for dir in measures/cms-fhir-2026/*/; do
   pnpm oq validate "$dir" > /dev/null || echo "FAILED: $dir"
 done
 ```
@@ -2770,7 +2828,7 @@ Expected: PASS.
 
 - [ ] **Step 6: Verify against the real corpus**
 
-Run: `pnpm oq validate-all measures/cms-fhir-2026 measures/cqframework-shared`
+Run: `pnpm oq validate-all measures/cms-fhir-2026`
 Expected: `0 below Level 1`.
 
 - [ ] **Step 7: Commit**
@@ -2826,7 +2884,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Every package reaches Level 1
-        run: pnpm oq validate-all measures/cms-fhir-2026 measures/cqframework-shared
+        run: pnpm oq validate-all measures/cms-fhir-2026
       - name: No licensed display text
         run: |
           if grep -rn 'from "CPT"' measures/ | grep -q display; then
@@ -2895,150 +2953,32 @@ git commit -m "ci: add test, corpus validation and importer drift checks"
 
 ---
 
-## Task 17: CQL translation in CI
+## Task 17: REMOVED — CQL translation in CI
 
-The one slice taken from the deferred validator subsystem. Without it every package caps at Level 1 and the top rung of the conformance ladder is empty in the project's own flagship corpus.
+**Do not implement this task.** It was cut during execution after two assumptions
+behind it were tested and both failed.
 
-**Files:**
-- Modify: `.github/workflows/ci.yml`
-- Create: `packages/importer/src/translate.ts`
-- Test: `packages/importer/test/translate.test.ts`
+**There is no runnable translator artifact.** The plan pinned
+`info.cqframework:cql-to-elm:3.11.0-jar-with-dependencies`. That returns 404.
+The current release is 3.29.0, the runnable artifact is `cql-to-elm-cli`, and
+neither publishes a `jar-with-dependencies`. The `clinical_quality_language`
+GitHub release carries source only, with no assets. Running the translator in CI
+therefore means assembling a Maven classpath or building from source.
 
-- [ ] **Step 1: Write the failing test**
+**Per-package translation could not work as written.** The job ran
+`--input "$dir/cql"` per package, but a measure library includes shared
+libraries. CMS122 includes seven. Under the original design those lived in
+separate packages, so translation would have failed on nearly every measure.
 
-Create `packages/importer/test/translate.test.ts`:
+Together these turned "one small slice of the validator subsystem" into a JVM, a
+dependency-resolution step, a version pin to maintain, and a new class of CI
+flakiness, for a project maintained by one person. What it bought was a badge.
 
-```ts
-import { describe, expect, it } from 'vitest'
-import { parseTranslatorOutput } from '../src/translate.js'
+The corpus therefore ships at **Level 1**, and says so. Upstream cqframework
+already validates that this content translates, so re-running it here proved
+little. Level 2 is deferred with the rest of the validator subsystem.
 
-describe('parseTranslatorOutput', () => {
-  it('reports no findings when the translator emits no errors', () => {
-    expect(parseTranslatorOutput('cql/A.cql', '')).toEqual([])
-  })
-
-  it('turns a translator error into a cql.translate error finding', () => {
-    const output = 'Example.cql:12:5: Could not resolve identifier Foo'
-    const findings = parseTranslatorOutput('cql/Example.cql', output)
-    expect(findings).toHaveLength(1)
-    expect(findings[0].check).toBe('cql.translate')
-    expect(findings[0].severity).toBe('error')
-    expect(findings[0].path).toBe('cql/Example.cql')
-    expect(findings[0].message).toContain('Could not resolve identifier Foo')
-  })
-
-  it('reports every error, not only the first', () => {
-    const output = ['A.cql:1:1: first problem', 'A.cql:2:1: second problem'].join('\n')
-    expect(parseTranslatorOutput('cql/A.cql', output)).toHaveLength(2)
-  })
-
-  it('ignores warnings, which never change the conformance level', () => {
-    const output = 'A.cql:1:1: warning: unused define'
-    expect(parseTranslatorOutput('cql/A.cql', output)).toEqual([])
-  })
-})
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `pnpm vitest run packages/importer/test/translate.test.ts`
-Expected: FAIL, cannot resolve `../src/translate.js`.
-
-- [ ] **Step 3: Write the output parser**
-
-Create `packages/importer/src/translate.ts`:
-
-```ts
-import type { Finding } from '@openquality/core'
-
-/**
- * A translator diagnostic line: `<file>:<line>:<col>: <message>`. Warnings
- * carry a "warning:" prefix on the message and are dropped, because only
- * errors change the conformance level.
- */
-const DIAGNOSTIC = /^[^\s:]+\.cql:\d+:\d+:\s*(.+)$/
-
-export function parseTranslatorOutput(path: string, output: string): Finding[] {
-  const findings: Finding[] = []
-  for (const line of output.split('\n')) {
-    const match = line.trim().match(DIAGNOSTIC)
-    if (!match) continue
-    const message = match[1].trim()
-    if (/^warning:/i.test(message)) continue
-    findings.push({ check: 'cql.translate', severity: 'error', message, path })
-  }
-  return findings
-}
-```
-
-- [ ] **Step 4: Run the tests**
-
-Run: `pnpm vitest run packages/importer/test/translate.test.ts`
-Expected: PASS, 4 tests.
-
-- [ ] **Step 5: Add the translation job to CI**
-
-Append this job to `.github/workflows/ci.yml`:
-
-```yaml
-  cql-translate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Download the cqframework CQL to ELM translator
-        run: |
-          mkdir -p .cache/tools
-          curl -sL -o .cache/tools/cql-to-elm.jar \
-            "https://repo1.maven.org/maven2/info/cqframework/cql-to-elm/3.11.0/cql-to-elm-3.11.0-jar-with-dependencies.jar"
-      - name: Translate every imported CQL library
-        run: |
-          set -e
-          failed=0
-          for dir in measures/cms-fhir-2026/*/ measures/cqframework-shared/*/; do
-            if ! java -jar .cache/tools/cql-to-elm.jar \
-                 --input "$dir/cql" \
-                 --model QICore \
-                 --output /tmp/elm 2> /tmp/err; then
-              echo "FAIL $dir"
-              cat /tmp/err
-              failed=1
-            fi
-          done
-          exit $failed
-```
-
-- [ ] **Step 6: Verify the translator version resolves**
-
-Run:
-
-```bash
-curl -sI "https://repo1.maven.org/maven2/info/cqframework/cql-to-elm/3.11.0/cql-to-elm-3.11.0-jar-with-dependencies.jar" | head -1
-```
-
-Expected: `HTTP/2 200`. If it is 404, list the available versions and pin the newest 3.x:
-
-```bash
-curl -s "https://repo1.maven.org/maven2/info/cqframework/cql-to-elm/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | tail -20
-```
-
-Update the URL in the workflow to the version you confirm, then re-run this step.
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add .github/workflows/ci.yml packages/importer/src/translate.ts packages/importer/test/translate.test.ts
-git commit -m "ci: translate imported CQL to ELM so packages can reach Level 2"
-```
+`packages/importer/src/translate.ts` is not created.
 
 ---
 
@@ -3188,7 +3128,7 @@ Hand-written, because the value of this corpus is knowledge that is not written 
 - Create: `knowledge/cms122/2026-004-steward-is-ncqa-not-cms.md`
 - Create: `knowledge/cms122/test-cases/2026-005-no-result-counts-as-numerator.md`
 - Create: `knowledge/cms122/2026-006-draft-versioning-of-seeded-packages.md`
-- Create: `knowledge/cms122/2026-007-shared-library-version-drift.md`
+- Create: `knowledge/cms122/2026-007-vendored-library-duplication.md`
 - Modify: `knowledge/cms122/2026-001-missing-hba1c-counts-as-poor-control.md`
 
 - [ ] **Step 1: Write the value set divergence entry**
@@ -3477,7 +3417,7 @@ should be superseded rather than edited.
 
 - [ ] **Step 6: Write the dependency drift entry**
 
-Create `knowledge/cms122/2026-007-shared-library-version-drift.md`:
+Create `knowledge/cms122/2026-007-vendored-library-duplication.md`:
 
 ```markdown
 ---
@@ -3493,50 +3433,55 @@ reporter: aks129
 
 ## Summary
 
-Measure packages declare exact dependency versions taken from their CQL
-`include` statements. The CQL itself resolves includes by name and version at
-translation time. Those two resolutions can disagree, and nothing currently
-detects it.
+Every package vendors the CQL libraries its measure includes, so the same library
+file appears in many packages. Different packages can carry different versions of
+the same library, and nothing in the corpus surfaces that.
 
 ## Detail
 
-`CMS122FHIRDiabetesAssessGreaterThan9Percent.cql` declares:
+`CMS122FHIRDiabetesAssessGreaterThan9Percent.cql` includes seven libraries:
 
 ```
 include FHIRHelpers version '4.4.000' called FHIRHelpers
+include QICoreCommon version '4.0.000' called QICoreCommon
 include AdvancedIllnessandFrailty version '1.27.000' called AIFrailLTCF
 ```
 
-The importer turns each into a manifest dependency, normalising the version:
-`cqframework/fhir-helpers` at `4.4.0`. The manifest and the CQL agree at import
-time because both come from the same upstream commit.
+Those files are copied into the package's own `cql/` directory and declared as
+artifacts. The package is then complete: it can be read and evaluated without
+fetching anything else. That is deliberate, and it is why the alternative was
+rejected. Publishing each shared library as its own package would have required a
+`measure.title` for something that is not a measure, which Level 1 demands.
 
-They can stop agreeing in two ways:
-
-1. A shared library package is republished at a different version while the
-   measure's CQL is unchanged. The manifest is updated; the `include` line is
-   not.
-2. Two measures include the same library at different versions. Both dependency
-   packages cannot exist at the same path, so the corpus holds whichever version
-   the importer wrote last.
-
-Case 2 is live in this corpus today. Check it with:
+The cost is duplication, and duplication hides disagreement. Two measures can
+include the same library at different versions, and a reader comparing them will
+not notice unless they look. Check the current state with:
 
 ```bash
-grep -h 'version:' measures/cqframework-shared/*/openquality.yaml | sort | uniq -c
+for f in $(find measures -name '*.cql'); do
+  basename "$f" .cql | tr '\n' ' '
+  head -1 "$f" | sed -E "s/.*version '([^']*)'.*/\1/"
+done | sort -u | awk '{print $1}' | uniq -d
 ```
+
+Any library name printed by that command exists at more than one version in the
+corpus.
+
+## Why this is recorded rather than fixed
+
+Two measures legitimately built against different versions of a shared library
+are not in conflict. Forcing them onto one version would change measure logic to
+serve tidiness, which is the wrong trade. The gap is that the disagreement is
+invisible, not that it exists.
+
+Upstream has the same question and answers it differently, by shipping every
+library version in one flat directory. A package registry cannot do that.
 
 ## Resolution
 
-Open. The honest short-term answer is that the drift check catches case 1,
-because any divergence between the manifest and the CQL means the committed
-tree is no longer the importer's output. Case 2 needs either multi-version
-package directories or a documented rule that the corpus holds one version per
-shared library. Neither is decided.
-
-Worth raising with cqframework: the upstream content repository has the same
-question and solves it by shipping every library version in one flat directory,
-which a package registry cannot do.
+Open. The likely answer is a report rather than a rule: the importer could list
+libraries carried at more than one version, the way `import-report.md` lists
+skips. Nothing is decided.
 ```
 
 - [ ] **Step 7: Correct the existing entry**
@@ -3596,8 +3541,7 @@ In `README.md`, replace the `Deep validators` row and add a row, so the table re
 | Validation core | shipped | Validates a package directory and computes its level |
 | `oq` CLI | shipped | `oq validate`, `oq validate-all` and `oq pack` |
 | Seed corpus | shipped | ~53 CC0 eCQM packages imported from cqframework, with a CI drift check |
-| CQL translation | shipped | Runs in CI, so seeded CQL packages reach Level 2 |
-| Deep validators | next | FHIR profile validation, SQL parsing, VSAC resolution |
+| Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
 | Typed feedback | planned | Questions, interpretation issues, defect reports, implementation notes |
 ```
@@ -3613,8 +3557,8 @@ Local validation stops at Level 1. Level 2 needs the deep validators.
 with:
 
 ```
-Local validation stops at Level 1. Level 2 needs the deep validators, of which
-only CQL translation exists today and runs in CI rather than locally.
+Local validation stops at Level 1, and so does the seeded corpus. Level 2 needs
+the deep validators, which do not exist yet.
 ```
 
 - [ ] **Step 3: Update the try-it section**
@@ -3624,7 +3568,7 @@ Replace the `pnpm test` line's comment and the validate example with:
 ```bash
 pnpm install
 pnpm test
-pnpm oq validate-all measures/cms-fhir-2026 measures/cqframework-shared
+pnpm oq validate-all measures/cms-fhir-2026
 ```
 
 Remove the stale `# 91 tests` comment: the count changed in this plan and a hardcoded number in a README goes stale on the next commit. Do the same in `CONTRIBUTING.md`, which also says `pnpm test # 91 tests`.
@@ -3639,7 +3583,7 @@ Add this row to the repository map table:
 
 - [ ] **Step 5: Verify**
 
-Run: `pnpm test && pnpm oq validate-all measures/cms-fhir-2026 measures/cqframework-shared measures/community`
+Run: `pnpm test && pnpm oq validate-all measures/cms-fhir-2026 measures/community`
 Expected: tests pass, `0 below Level 1`.
 
 - [ ] **Step 6: Commit**
@@ -3655,20 +3599,21 @@ git commit -m "docs: update status for the seed corpus and CQL translation"
 
 - [ ] `pnpm test` passes.
 - [ ] `pnpm typecheck` passes.
-- [ ] `pnpm oq validate-all measures/cms-fhir-2026 measures/cqframework-shared measures/community` reports `0 below Level 1`.
+- [ ] `pnpm oq validate-all measures/cms-fhir-2026 measures/community` reports `0 below Level 1`.
+- [ ] Every imported package contains every CQL library its measure includes, so it validates standalone.
 - [ ] `pnpm oq-import 2026-08-01 && git diff --exit-code -- measures/` produces no diff.
 - [ ] `grep -rn 'from "CPT"' measures/ | grep display` produces no output.
 - [ ] `measures/import-report.md` accounts for every upstream measure, imported or skipped.
 - [ ] At least one measure exists both as CQL and as a SQL-on-FHIR ViewDefinition.
 - [ ] Every `measure:` in `knowledge/` resolves to a package that exists.
 - [ ] At least six hand-written knowledge corpus entries exist, including one `test-case` that references upstream data by path and commit rather than copying it.
-- [ ] The CI workflow has run green on a pull request, including `cql-translate`.
+- [ ] The CI workflow has run green on a pull request.
 
 ## Known deferrals
 
 These are out of scope by design. Do not add them.
 
-- `fhir.validate`, `sql.parse` and VSAC resolution. The SQL-on-FHIR showcase package therefore sits at Level 1, which is the honest result.
+- The whole deep validator subsystem: `cql.translate`, `fhir.validate`, `sql.parse` and VSAC resolution. Every package in the corpus therefore sits at Level 1, which is the honest result. See the note on Task 17.
 - The CPT-to-SNOMED substitution table. Stripping display descriptors makes the corpus clean without it, and no free redistributable AMA cross map has been confirmed.
 - Tuva Health content. Recorded in the spec with the reasoning.
 - The hosted registry, publishing, and search.

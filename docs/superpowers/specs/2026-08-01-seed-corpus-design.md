@@ -11,9 +11,9 @@ a working corpus. It fills `measures/` and `knowledge/` with real content, and
 makes the small set of format and tooling changes that real content forces.
 
 The other three sub-projects stay out of scope and keep their own specs: the
-deep validator subsystem, the hosted registry, and the community launch. The one
-exception is `cql.translate`, taken from the validator subsystem for the reason
-given in section 7.
+deep validator subsystem, the hosted registry, and the community launch. Section
+7 explains why an earlier plan to take one slice of the validator subsystem was
+dropped.
 
 Today `measures/` holds one hand-written package and one empty placeholder, and
 `knowledge/` holds one entry. The registry design doc
@@ -37,7 +37,7 @@ launch risk and answers it with a seed import. This spec is that import.
 | Import mechanics | Generator script, output committed to git | Git is the registry until the hosted one exists, so the corpus has to be browsable and validate offline |
 | Drift detection | CI re-runs the importer and fails on any diff | "Unmodified redistribution" is a validated manifest claim, so it needs to be verifiable |
 | SQL side | Author SQL-on-FHIR ViewDefinitions | Uses the existing `sql-on-fhir` data model, needs no format change, and gives the same measure two ways |
-| Level 2 | Take `cql.translate` only | Without it every seeded package caps at Level 1 and the top rung of the ladder stays empty |
+| Level 2 | Out of scope; corpus ships at Level 1 | No runnable translator artifact is published, and per-package translation fails because measures include shared libraries. Cost far exceeded the badge it bought |
 | Provenance | Validated manifest field | Prose provenance cannot be queried or checked, which is the failure the knowledge corpus exists to prevent |
 | Bulk README scope | Import all measures, leave "Known limitations" empty | Empty and honest, and it doubles as the lowest-friction contribution ask |
 | Terminology | Per-system policy in `TERMINOLOGY.md` | License terms differ by code system, so one blanket rule is either too strict or too loose |
@@ -225,10 +225,22 @@ For each measure it emits `measures/cms-fhir-2026/<slug>/` containing:
 - `cql/<Library>.cql`, vendored and rewritten per section 4
 - `README.md`, generated
 
-For each shared CQL library it emits a package under a `cqframework/` namespace.
-Measures reference these through the existing `dependencies` field rather than
-copying the library into each package, which is what `measures/README.md` already
-says the collection should do.
+**Included libraries are vendored into the package that needs them**, not
+published as packages of their own. A measure that includes `FHIRHelpers`,
+`QICoreCommon`, and five others gets all of them under its own `cql/`, resolved
+transitively.
+
+An earlier draft made each shared library its own package, referenced through
+`dependencies`. That was wrong on principle: `manifest.measure.title` is required
+for Level 1, so publishing `FHIRHelpers` as a package meant inventing measure
+identity for something that is not a measure. A corpus whose value rests on being
+accurate about what things are cannot start by mislabelling seventeen of them.
+
+Vendoring costs duplication: the same library file appears in many packages. That
+is the correct trade. A package that cannot be read or evaluated without fetching
+six others is not a unit of exchange, and package managers already work this way.
+The drift check keeps every copy identical, and `dependencies` still records the
+relationship as metadata.
 
 It reads upstream `Measure` JSON for title, identifiers, and description but does
 **not** vendor it. Vendoring would add a `fhir/Measure` artifact, and
@@ -247,20 +259,31 @@ Generated README sections, matching the three `REQUIRED_SECTIONS` in
 
 Test data is referenced by upstream path and commit SHA, never copied.
 
-## 7. Level 2 and `cql.translate`
+## 7. Level 2 is out of scope, and the corpus ships at Level 1
 
-`computeLevel` caps a package at Level 1 when no deep check runs. A corpus seeded
-without any deep validator would show every one of about 53 packages at Level 1.
-The three-rung ladder the project uses to explain itself would then have nothing
-on its top rung.
+An earlier draft of this spec took one slice of the deferred validator
+subsystem, the cqframework CQL to ELM translator, so seeded packages could reach
+Level 2. Two facts checked during planning killed that.
 
-So this sub-project takes exactly one slice of the deferred validator subsystem:
-the cqframework CQL to ELM translator, run in CI, reporting through the existing
-`cql.translate` CheckId that `level.ts` already consumes. `fhir.validate`,
-`sql.parse`, and VSAC resolution stay deferred. The cost is a JVM in CI.
+**There is no runnable translator artifact.** Maven Central publishes
+`info.cqframework:cql-to-elm` and `cql-to-elm-cli`, but neither ships a
+`jar-with-dependencies`, and the `clinical_quality_language` GitHub release
+carries source only, no assets. Running the translator in CI therefore means
+assembling a Maven classpath or building from source.
 
-This also gives a standing signal on upstream breakage: if a future upstream
-revision stops translating, CI says so.
+**Per-package translation cannot work the obvious way.** A measure library
+includes shared libraries: CMS122 includes seven. Translating a package
+directory in isolation fails unless every included library sits beside it.
+
+Together those turn a "one small slice" into a JVM, a dependency-resolution
+step, a version pin to maintain, and a new class of CI flakiness, in a project
+maintained by one person. The benefit was a badge.
+
+So Level 2 stays deferred with the rest of the validator subsystem. The corpus
+ships at Level 1 and says why. This costs the flagship corpus its top rung, and
+that is the honest state: upstream cqframework already validates that this
+content translates, and re-running it here proves little. The README's status
+table already says deep validators are next.
 
 ## 8. Showcase packages
 
@@ -302,7 +325,6 @@ reason. Skip conditions:
 2. No `Measure.description` to generate Intent from.
 3. Display text from a code system not listed in section 4, so the license status
    is unknown.
-4. CQL that does not translate.
 
 Skips are written to a generated `import-report.md` listing each skipped measure
 and its reason. Silent truncation would read as complete coverage. The report is
@@ -310,13 +332,14 @@ committed alongside the packages.
 
 ## 11. CI
 
-Five jobs.
+Three jobs.
 
 1. `pnpm test`, the existing suite plus the new tests.
-2. `oq validate` over every package under `measures/`, with a Level 1 floor.
-3. CQL to ELM translation, which lifts seeded CQL packages to Level 2.
-4. Drift check: re-run the importer and `git diff --exit-code`.
-5. Terminology scan.
+2. `oq validate` over every package under `measures/`, with a Level 1 floor, plus
+   a terminology scan asserting no licensed display text survived.
+3. Drift check: re-run the importer and `git diff --exit-code`.
+
+No JVM and no CQL translation. Section 7 has the reasoning.
 
 Job 4 is what makes the `unmodified` and `derived` claims verifiable. Without it,
 a hand edit to a generated package silently falsifies a validated manifest field.
@@ -328,28 +351,26 @@ Unit tests, each transform in isolation:
 - provenance schema and the `manifest.provenance` check, valid and malformed
 - terminology scanner, one case per row of the section 4 table
 - CPT display stripping, including that the stripped CQL still parses
-- version mapping, `CMS122v13` to `13.0.0`, and the unparseable case
+- version normalization, `0.5.000` to `0.5.0`, and the unparseable case
 - canonical URL to OID derivation, including `urn:oid:` prefix stripping
-- dependency wiring to the `cqframework/` library packages
+- transitive resolution of included libraries, and vendoring them into the package
 - skip conditions, one test per condition in section 10
 
 One fully imported package is committed as a golden fixture so importer changes
 appear as reviewable diffs rather than as a silent change across 53 directories.
 
 The integration test is the corpus itself, which is what §5.8 of the registry
-design doc already calls for: every package validates in CI, and CQL packages
-reach Level 2.
+design doc already calls for: every package validates in CI at Level 1 or above.
 
 ## 13. Build order
 
 1. Format changes: `provenance`, `qi-core`, `TERMINOLOGY.md`, scanner. Small,
    testable, no content in play.
 2. The importer, the golden fixture, and the drift check.
-3. `cql.translate` in CI.
-4. Showcase packages and hand-written corpus entries, last, informed by what the
+3. Showcase packages and hand-written corpus entries, last, informed by what the
    import surfaces.
 
-Steps 1 through 3 are mechanical and reviewable. Step 4 is judgment work and
+Steps 1 and 2 are mechanical and reviewable. Step 3 is judgment work and
 benefits from everything the earlier steps expose.
 
 ## 14. Risks and open questions
@@ -380,9 +401,11 @@ it appears to. `TERMINOLOGY.md` states the dependency. Whether the manifest
 should carry a `terminologyDependencies` field is deferred until the corpus shows
 whether the prose statement is enough.
 
-**A JVM in CI.** New dependency, new failure mode, and slower CI. Accepted
-because the alternative is a corpus that cannot demonstrate its own top
-conformance level.
+**The corpus cannot demonstrate its own top conformance level.** Every seeded
+package sits at Level 1 because no deep validator runs. A visitor sees a
+three-rung ladder with nothing on the top rung. Accepted: the alternative was a
+fragile CI path to a badge, and claiming Verified without verifying anything
+would be the worse failure for this project specifically.
 
 **The annual update is untested until 2027.** The pinned commit and drift check
 are designed for it, but the design will not be proven until the 2027 content
@@ -391,7 +414,6 @@ lands.
 ## 15. Success criteria
 
 - About 53 measures imported, every one validating at Level 1 or higher in CI.
-- Every CQL package reaching Level 2.
 - Zero CPT display descriptors in the repository, enforced by the scanner.
 - The drift check passing, so every `unmodified` and `derived` claim is verified.
 - At least one measure implemented both in CQL and as a SQL-on-FHIR
