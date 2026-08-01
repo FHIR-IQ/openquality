@@ -1,7 +1,11 @@
 # cms-fhir-2026
 
-Community reimplementations of published CMS eCQMs against FHIR R4 / QI-Core, for the 2026
-measurement year. Seed content for Open Quality.
+CMS-program eCQMs against FHIR R4 / QI-Core for the 2026 measurement year, redistributed
+from the CC0 [cqframework/ecqm-content-qicore-2025](https://github.com/cqframework/ecqm-content-qicore-2025)
+content. Seed content for Open Quality.
+
+These are not reimplementations. Each package carries the upstream CQL, with a machine-readable
+`provenance` block naming the exact commit it came from and any modification made to it.
 
 **Status: Draft.** These packages are examples and works in progress, not final
 specifications or clinical guidance.
@@ -12,9 +16,15 @@ commit recorded there.
 
 ## Provenance
 
-Content is redistributed from public sources such as the eCQI Resource Center, with
-provenance stated in each package README. Open Quality is not a measure steward and is not
-affiliated with or endorsed by CMS.
+Content is redistributed from the upstream repository named above, under CC0-1.0, with the
+commit pinned in every package's `provenance` block and restated in its README. Open Quality
+is not a measure steward and is not affiliated with or endorsed by CMS, NCQA, or any other
+steward named on these packages.
+
+Six packages are marked `relationship: derived` rather than `unmodified`. In each, licensed
+CPT display descriptors were removed from the CQL, keeping the code and the code system. The
+`modifications` list in the manifest names every code affected. See
+[TERMINOLOGY](../../TERMINOLOGY.md).
 
 ## About the steward line
 
