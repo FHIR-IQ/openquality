@@ -58,11 +58,20 @@ The split between measures and shared libraries is roughly 53 measures to 17
 libraries. The importer derives the exact split from the `Measure` resources
 rather than from a hardcoded list.
 
-Sampled `Measure` resources (CMS122, CMS125, CMS165) carry `status: active`,
-`experimental: false`, a semver-shaped `version` in the 0.4 to 0.5 range,
-`effectivePeriod` of 2026-01-01 to 2026-12-31, and
-`publisher: National Committee for Quality Assurance`. Section 5.3 covers what
-follows from that.
+All 53 `Measure` resources were later read in full. Every one resolves a title,
+a description, and a library. Versions are semver-shaped in the 0.4 to 0.5 range
+except one, `CMSFHIR844HybridHospitalWideMortality`, whose version reads
+`Draft based on 0.5.001`; that measure becomes a skip under section 10.
+
+Stewards, from `Measure.publisher`, across all 53: CMS 19, National Committee for
+Quality Assurance 9, The Joint Commission 7, Alara Imaging 3, American Academy of
+Ophthalmology 3, American Heart Association 3, Oregon Urology 2, and one each
+from seven more organizations.
+
+Six of the 19 CMS entries spell the name with an HTML-encoded ampersand,
+`Centers for Medicare &amp; Medicaid Services (CMS)`, against a literal `&` in
+the other 13. Two strings for one organization, which would split any grouping by
+steward. The importer decodes the entity rather than passing it through.
 
 **`tuva-health/tuva-core`.** License Apache-2.0, actively maintained. Its
 `quality_measures` mart holds 8 measures. **Not used.** None of the 8 overlap the
@@ -187,15 +196,20 @@ this FHIR translation has not earned.
 `CMS122FHIR`. `measurementPeriod` comes from `effectivePeriod.start`, which is
 `2026-01-01`.
 
-**`measure.steward` is `Measure.publisher`, which is the National Committee for
-Quality Assurance, not CMS.** Verified on CMS122, CMS125, and CMS165. The
-existing hand-written package in `measures/cms-fhir-2026/` declares
-`steward: CMS`, version `13.0.0`, and the measure's former title. All three
-disagree with upstream, and the import corrects them.
+**`measure.steward` is `Measure.publisher`, and it is frequently not CMS.**
+An earlier draft of this spec claimed the steward was NCQA, generalizing from
+three sampled measures that all happened to be NCQA. Reading all 53 corrected
+that: CMS stewards 19, NCQA 9, The Joint Commission 7, and thirteen other
+organizations hold the rest. The importer records whatever upstream says.
+
+The existing hand-written package in `measures/cms-fhir-2026/` declares
+`steward: CMS`, version `13.0.0`, and the measure's former title. For CMS122
+specifically the steward is NCQA, so all three disagree with upstream, and the
+import corrects them.
 
 This needs saying plainly somewhere a reader will see it, because the content
-policy bans HEDIS and names NCQA as the reason: **these are CMS-program eCQMs
-that NCQA stewards, published under CC0 through MADiE. They are not HEDIS
+policy bans HEDIS and names NCQA as the reason: **the measures NCQA stewards
+here are CMS-program eCQMs published under CC0 through MADiE. They are not HEDIS
 measures.** Steward and licensor are different things. The note belongs in
 `measures/cms-fhir-2026/README.md`.
 
@@ -321,7 +335,9 @@ mechanical entries.
 The importer is fail-closed. A measure it cannot map is skipped with a recorded
 reason. Skip conditions:
 
-1. No parseable measure version.
+1. No parseable measure version. One measure hits this today:
+   `CMSFHIR844HybridHospitalWideMortality`, whose version is
+   `Draft based on 0.5.001`.
 2. No `Measure.description` to generate Intent from.
 3. Display text from a code system not listed in section 4, so the license status
    is unknown.
@@ -413,7 +429,7 @@ lands.
 
 ## 15. Success criteria
 
-- About 53 measures imported, every one validating at Level 1 or higher in CI.
+- 52 of the 53 upstream measures imported, every one validating at Level 1 or higher in CI, with the 53rd recorded as a skip and its reason stated.
 - Zero CPT display descriptors in the repository, enforced by the scanner.
 - The drift check passing, so every `unmodified` and `derived` claim is verified.
 - At least one measure implemented both in CQL and as a SQL-on-FHIR
