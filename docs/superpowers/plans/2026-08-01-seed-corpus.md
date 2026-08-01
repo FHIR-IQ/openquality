@@ -2935,14 +2935,26 @@ Expected: exit code 0, no diff. If there is a diff, the importer is not determin
 
 - [ ] **Step 3: Prove the check catches a hand edit**
 
+The obvious version of this test does not work, and the reason matters. If you
+edit a generated file without staging it, `runImport` clears and rewrites every
+package before the diff is ever taken. Because the importer is deterministic, the
+rewritten file is byte-identical to HEAD and the diff comes back empty, so the
+test reports failure when the check is actually fine.
+
+CI does not hit this, because there the edit is already committed. Reproduce that
+by staging the edit first:
+
 ```bash
-echo "# hand edit" >> measures/cms-fhir-2026/*/README.md
+target=$(ls -d measures/cms-fhir-2026/*/ | head -1)
+echo "# hand edit" >> "$target/README.md"
+git add "$target/README.md"
 pnpm oq-import 2026-08-01
 git diff --exit-code -- measures/ && echo "BROKEN: drift check did not fire" || echo "drift check works"
-git checkout -- measures/
+git reset -- measures/ && git checkout -- measures/
 ```
 
-Expected: `drift check works`.
+Expected: `drift check works`, and the fabricated line shown as removed in the
+diff. Confirm the working tree is clean afterwards.
 
 - [ ] **Step 4: Commit**
 

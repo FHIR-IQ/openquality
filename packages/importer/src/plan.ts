@@ -114,7 +114,10 @@ export function planPackage(
       relationship: removed.length > 0 ? 'derived' : 'unmodified',
       modifications:
         removed.length > 0
-          ? [`removed licensed display text from ${removed.length} code declarations: ${removed.join(', ')}`]
+          ? [
+              `removed licensed display text from ${removed.length} code ` +
+                `${removed.length === 1 ? 'declaration' : 'declarations'}: ${removed.join(', ')}`,
+            ]
           : undefined,
     },
   }
