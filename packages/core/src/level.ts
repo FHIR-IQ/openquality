@@ -8,6 +8,7 @@ const LEVEL_1_CHECKS: CheckId[] = [
   ...LEVEL_0_CHECKS,
   'manifest.dataModel',
   'manifest.measure',
+  'manifest.provenance',
   'artifacts.typed',
   'valuesets.referenced',
   'readme.sections',
