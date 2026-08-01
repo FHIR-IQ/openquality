@@ -1,0 +1,19 @@
+{
+  "resourceType": "Measure",
+  "id": "Example",
+  "version": "0.5.000",
+  "name": "Example",
+  "title": "Example Measure: Glycemic StatusFHIR",
+  "status": "active",
+  "publisher": "National Committee for Quality Assurance",
+  "description": "Percentage of patients 18-75 years of age with an example condition.",
+  "effectivePeriod": { "start": "2026-01-01", "end": "2026-12-31" },
+  "library": ["https://madie.cms.gov/Library/Example"],
+  "identifier": [
+    {
+      "type": { "coding": [{ "code": "short-name" }] },
+      "system": "https://madie.cms.gov/measure/shortName",
+      "value": "CMS999FHIR"
+    }
+  ]
+}
