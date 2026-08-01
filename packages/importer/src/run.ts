@@ -55,6 +55,23 @@ export function renderImportReport(summary: ImportSummary): string {
 }
 
 /**
+ * Upstream CQL carries Windows line endings. `.gitattributes` declares
+ * `* text=auto`, so git stores LF regardless. Writing CRLF here would leave the
+ * working tree permanently differing from the committed blobs: 152 files would
+ * show as modified after every import and never clear, and the drift check
+ * would pass on `git diff` while `git status` stayed dirty. Normalizing here
+ * makes the file on disk match what is committed.
+ *
+ * This is not a content modification and is deliberately not listed in the
+ * manifest's `modifications`. That list exists to name semantic changes, and
+ * burying the CPT strip under a line-ending note on every package would make
+ * the real modifications harder to find.
+ */
+function toLf(text: string): string {
+  return text.replace(/\r\n/g, '\n')
+}
+
+/**
  * Writes one self-contained package: the manifest, the README, the measure CQL,
  * and every library the measure includes. Vendoring the libraries is what makes
  * the package readable and evaluable on its own, which is the whole point of a
@@ -70,10 +87,10 @@ async function writePackage(
   await mkdir(join(dir, 'cql'), { recursive: true })
   await writeFile(join(dir, 'openquality.yaml'), emitManifest(plan))
   await writeFile(join(dir, 'README.md'), emitReadme(plan))
-  await writeFile(join(dir, 'cql', plan.cqlFileName), cql)
+  await writeFile(join(dir, 'cql', plan.cqlFileName), toLf(cql))
   for (const name of plan.libraryFileNames) {
     const source = libraries.get(name.replace(/\.cql$/, ''))
-    if (source !== undefined) await writeFile(join(dir, 'cql', name), source)
+    if (source !== undefined) await writeFile(join(dir, 'cql', name), toLf(source))
   }
 }
 
