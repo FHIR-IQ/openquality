@@ -41,8 +41,10 @@ The full format, the conformance levels, and the CRMI mapping are in [`spec/`](s
 **What gets accepted**
 
 - Open-licensed, publicly redistributable content only.
-- No HEDIS logic, no CPT codes, no redistributed VSAC expansions. You may publish your own
-  implementation written against a public specification.
+- No HEDIS logic, no redistributed VSAC expansions. No CPT display descriptors, which are
+  AMA licensed; a CPT code and code system may be referenced. Full rules per code system are
+  in [TERMINOLOGY](TERMINOLOGY.md). You may publish your own implementation written against
+  a public specification.
 - A published version is immutable. To change a package, publish a new version. Deprecate or
   withdraw an old version with a stated reason; nothing is deleted, because a measure cited
   in an audit has to stay resolvable.

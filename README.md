@@ -156,7 +156,9 @@ so the corpus is continuous with where implementers already file questions.
 
 ## Content policy
 
-Open licenses only. No HEDIS logic. No CPT codes. No redistributed VSAC expansions.
+Open licenses only. No HEDIS logic. No redistributed VSAC expansions. No CPT
+display descriptors, which are AMA licensed; a CPT code and code system may be
+referenced. Full rules per code system are in [TERMINOLOGY](TERMINOLOGY.md).
 
 NCQA holds copyright on the HEDIS specifications, so that logic cannot be published here.
 You can publish your own implementation written against a public specification. You can

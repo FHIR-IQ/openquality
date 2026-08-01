@@ -13,7 +13,7 @@ the community finds the conventions that work.
 
 | Collection | Description | Status |
 |------------|-------------|--------|
-| [`cms-fhir-2026/`](cms-fhir-2026/) | Community reimplementations of published CMS eCQMs against FHIR R4 / QI-Core, for the 2026 measurement year. Seed content. | Draft |
+| [`cms-fhir-2026/`](cms-fhir-2026/) | CMS eCQMs for the 2026 reporting year, redistributed from the CC0 cqframework QI-Core content with provenance on each package. Seed content. | Draft |
 | [`community/`](community/) | Contributed measures across clinical and functional areas, not tied to a single program. | Draft |
 
 More collections get added as content arrives — a `sql-on-fhir` collection for

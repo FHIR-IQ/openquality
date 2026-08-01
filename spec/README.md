@@ -24,13 +24,18 @@ measure:
   title: "Diabetes: Hemoglobin A1c Poor Control (> 9%)"
   steward: CMS                             # the measure steward, distinct from the publisher
   identifiers: [CMS122v13, NQF-0059]
-dataModel: fhir-r4                         # fhir-r4 | qi-core | omop | sql-on-fhir | custom
+dataModel: fhir-r4                         # fhir-r4 | qi-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
 artifacts:
   - path: cql/DiabetesHemoglobinA1cPoorControl.cql
     type: cql
 valueSets:                                 # referenced, never embedded
   - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
     source: vsac
+provenance:                                # required for redistributed content
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified                 # unmodified | derived
 dependencies:
   - id: cqframework/FHIRHelpers
     version: ^4.0.0
@@ -71,6 +76,7 @@ follows.
 | `dataModel` | The declared model (QI-Core, US Core, OMOP, SQL-on-FHIR ViewDefinition) |
 | `artifacts[type: cql]` | A `Library` with `Library.content` |
 | `valueSets` (OID reference) | A `depends-on` dependency, resolved through the version manifest; expansions never embedded |
+| `provenance` | `RelatedArtifact` of type `derived-from`, plus `Provenance` on the bundle |
 | `dependencies` | `relatedArtifact` of type `depends-on` / `composed-of` |
 | the package as a whole | A CRMI artifact Bundle whose first entry is an `asset-collection` Library (`CRMIManifestLibrary`) |
 
