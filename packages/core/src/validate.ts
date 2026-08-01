@@ -3,6 +3,7 @@ import { isAbsolute, join, relative, resolve } from 'node:path'
 import { parseManifest, type Manifest } from './manifest.js'
 import { checkLicense } from './licenses.js'
 import { checkValueSetRefs } from './valuesets.js'
+import { checkProvenance } from './provenance.js'
 import { checkReadmeSections } from './readme.js'
 import { scanContent } from './scanner.js'
 import { computeLevel } from './level.js'
@@ -116,6 +117,9 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
       path: 'openquality.yaml',
     })
   }
+
+  checksRun.push('manifest.provenance')
+  findings.push(...checkProvenance(manifest.provenance))
 
   checksRun.push('artifacts.present', 'artifacts.typed')
   if (manifest.artifacts.length === 0) {
