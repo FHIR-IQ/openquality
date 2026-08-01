@@ -46,6 +46,22 @@ importers:
         specifier: ^6.1.13
         version: 6.1.13
 
+  packages/importer:
+    dependencies:
+      '@openquality/core':
+        specifier: workspace:*
+        version: link:../core
+      tar:
+        specifier: ^7.4.0
+        version: 7.5.22
+      yaml:
+        specifier: ^2.6.0
+        version: 2.9.0
+    devDependencies:
+      '@types/tar':
+        specifier: ^6.1.13
+        version: 6.1.13
+
 packages:
 
   '@esbuild/aix-ppc64@0.21.5':
