@@ -1,8 +1,8 @@
 ---
 id: cms122-2026-001
 type: interpretation-issue
-measure: cms/diabetes-hba1c-poor-control
-measureVersion: "13.0.0"
+measure: cms/diabetes-glycemic-status-assessment-greater-than-9
+measureVersion: "0.5.0"
 measurementPeriod: 2026
 status: resolved
 categories: [measure-logic, cql]
@@ -37,3 +37,9 @@ numerator logic must count "missing result" as poor control. Implementations sho
 no-result branch in the numerator definition and test it with a patient who has no HbA1c
 observation. This entry is seeded as a worked example of the corpus format; corrections and
 additional detail are welcome.
+
+Repointed on 2026-08-01 from `cms/diabetes-hba1c-poor-control` version 13.0.0,
+which was a hand-written package that disagreed with the upstream content on
+steward, version and title. See [`cms122-2026-003`](2026-003-measure-renamed-and-retitled.md).
+The measure now also accepts a glucose management indicator result, so the
+no-result branch this entry describes must consider both.
