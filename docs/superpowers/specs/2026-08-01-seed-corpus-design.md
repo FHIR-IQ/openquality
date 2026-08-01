@@ -58,6 +58,12 @@ The split between measures and shared libraries is roughly 53 measures to 17
 libraries. The importer derives the exact split from the `Measure` resources
 rather than from a hardcoded list.
 
+Sampled `Measure` resources (CMS122, CMS125, CMS165) carry `status: active`,
+`experimental: false`, a semver-shaped `version` in the 0.4 to 0.5 range,
+`effectivePeriod` of 2026-01-01 to 2026-12-31, and
+`publisher: National Committee for Quality Assurance`. Section 5.3 covers what
+follows from that.
+
 **`tuva-health/tuva-core`.** License Apache-2.0, actively maintained. Its
 `quality_measures` mart holds 8 measures. **Not used.** None of the 8 overlap the
 eCQM set, so it gives no side-by-side comparison, and its claims schema is not in
@@ -164,12 +170,36 @@ Upstream CQL declares `using QICore version '6.0.0'`. The `DATA_MODELS` enum in
 sql-on-fhir | custom`, while `spec/README.md` documents `qi-core` as valid. Code
 and spec disagree today. Add `qi-core` and align both.
 
-### 5.3 Version mapping
+### 5.3 Version, identifiers, and steward
 
-The package version derives from the CMS measure version, so `CMS122v13` becomes
-`13.0.0`. The upstream CQL library version, `0.5.000` for CMS122, goes in the
-provenance block. A measure whose version cannot be parsed is skipped, per
-section 10.
+The upstream `Measure` resources do not carry a CMS measure version. Checked
+against `CMS122FHIRDiabetesAssessGreaterThan9Percent.json`: `version` is
+`0.5.000`, and the identifiers are a short name `CMS122FHIR` and a `cmsId` of
+`122FHIR`. There is no `v13` anywhere in the resource.
+
+So the package version is the upstream `Measure.version` normalized to semver:
+`0.5.000` becomes `0.5.0`. This is honest about what the content is. Upstream
+calls it draft, and a `0.x` version says so. Inventing `13.0.0` from the CMS
+eCQM numbering would assert a correspondence to the published QDM measure that
+this FHIR translation has not earned.
+
+`measure.identifiers` comes from the `cmsId` and short-name identifiers, giving
+`CMS122FHIR`. `measurementPeriod` comes from `effectivePeriod.start`, which is
+`2026-01-01`.
+
+**`measure.steward` is `Measure.publisher`, which is the National Committee for
+Quality Assurance, not CMS.** Verified on CMS122, CMS125, and CMS165. The
+existing hand-written package in `measures/cms-fhir-2026/` declares
+`steward: CMS`, version `13.0.0`, and the measure's former title. All three
+disagree with upstream, and the import corrects them.
+
+This needs saying plainly somewhere a reader will see it, because the content
+policy bans HEDIS and names NCQA as the reason: **these are CMS-program eCQMs
+that NCQA stewards, published under CC0 through MADiE. They are not HEDIS
+measures.** Steward and licensor are different things. The note belongs in
+`measures/cms-fhir-2026/README.md`.
+
+A measure whose version cannot be parsed is skipped, per section 10.
 
 ### 5.4 Value set reference form
 
@@ -181,7 +211,13 @@ importer must strip it rather than copy it across.
 
 ## 6. The importer
 
-`scripts/seed-import.ts`, reading a pinned upstream commit SHA.
+`packages/importer`, reading a pinned upstream commit SHA. It lives in
+`packages/` rather than `scripts/` so its tests match the existing
+`packages/*/test/**/*.test.ts` glob in `vitest.config.ts` and follow the
+convention `core` and `cli` already set.
+
+The pinned commit for the first import is
+`d4e0edd01b7da2a3b43d5360156b43761438190a`, dated 2026-05-13.
 
 For each measure it emits `measures/cms-fhir-2026/<slug>/` containing:
 
@@ -325,8 +361,18 @@ launch. Residual risk is accepted in the same way the content scanner's residual
 risk is accepted, and the takedown process backs it.
 
 **Upstream is draft content.** The source describes itself as draft measures as
-they existed in MADiE. Packages inherit that status and say so. The collection is
-already marked Draft.
+they existed in MADiE. Packages inherit that status and say so, and the package
+version is the upstream `0.x` version rather than a CMS measure number. The
+collection is already marked Draft.
+
+**NCQA appears as the steward on CC0 content.** A reader who knows the content
+policy bans HEDIS will see `steward: National Committee for Quality Assurance`
+and reasonably ask whether the policy is being broken. It is not: these are
+CMS-program eCQMs published under CC0 through MADiE, and HEDIS is a separate
+NCQA product. The distinction between steward and licensor needs stating on the
+collection README, not buried in this spec. If a future measure in this source
+turns out to carry NCQA license terms rather than CC0, it is skipped under
+section 10.
 
 **SNOMED CT is free to use, which is not the same as CC0.** A package declaring
 `CC0-1.0` while carrying SNOMED CT display text is making a narrower claim than
