@@ -1,0 +1,58 @@
+id: cms/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer
+version: 1.5.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Intravesical Bacillus-Calmette-Guerin for Non-Muscle Invasive Bladder Cancer
+  steward: Oregon Urology
+  identifiers:
+    - CMS646FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1248.353
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.353
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.354
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.354
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.355
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.355
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.358
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.358
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.120.12.1003
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.120.12.1003
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.363
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.363
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.364
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.364
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.365
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.365
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.351
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.351
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.369
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.369
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

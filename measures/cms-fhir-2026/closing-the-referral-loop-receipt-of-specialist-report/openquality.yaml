@@ -1,0 +1,59 @@
+id: cms/closing-the-referral-loop-receipt-of-specialist-report
+version: 0.4.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Closing the Referral Loop: Receipt of Specialist Report"
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS50FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS50FHIRCRLReceiptofSpecialistReport.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/Status.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1023
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1023
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.121.12.1006
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.121.12.1006
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1285
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1285
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1025
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1025
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1022
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1022
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1023
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1023
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1024
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1024
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1492
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1492
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1046
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1046
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: derived
+  modifications:
+    - "removed licensed display text from 5 code declarations: CPT 96112, CPT 96156, CPT 96136, CPT 96138, CPT 90839"

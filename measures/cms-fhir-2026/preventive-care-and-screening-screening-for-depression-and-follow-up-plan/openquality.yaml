@@ -1,0 +1,60 @@
+id: cms/preventive-care-and-screening-screening-for-depression-and-follow-up-plan
+version: 0.4.1
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Preventive Care and Screening: Screening for Depression and Follow-Up Plan"
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS2FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS2FHIRPCSDepressionScreenAndFollowUp.cql
+    type: cql
+  - path: cql/CumulativeMedicationDuration.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1567
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1567
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1566
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1566
+    source: vsac
+  - oid: 2.16.840.1.113883.3.67.1.101.1.128
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.67.1.101.1.128
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1916
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1916
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1569
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1569
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1568
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1568
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1007
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1007
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1022
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1022
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1570
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1570
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1571
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1571
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1080
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1080
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

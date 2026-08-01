@@ -1,0 +1,58 @@
+id: cms/colorectal-cancer-screening
+version: 0.4.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Colorectal Cancer Screening
+  steward: National Committee for Quality Assurance
+  identifiers:
+    - CMS130FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS130FHIRColorectalCancerScreening.cql
+    type: cql
+  - path: cql/AdultOutpatientEncounters.cql
+    type: cql
+  - path: cql/AdvancedIllnessandFrailty.cql
+    type: cql
+  - path: cql/CumulativeMedicationDuration.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/Hospice.cql
+    type: cql
+  - path: cql/PalliativeCare.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/Status.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.108.12.1020
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.108.12.1020
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.108.12.1038
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.108.12.1038
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1011
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1011
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.108.12.1039
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.108.12.1039
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1010
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1010
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.108.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.108.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1019
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1019
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

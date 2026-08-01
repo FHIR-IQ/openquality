@@ -1,0 +1,40 @@
+id: cms/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy
+version: 1.5.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Bone Density Evaluation for Patients with Prostate Cancer and Receiving Androgen Deprivation Therapy
+  steward: Oregon Urology
+  identifiers:
+    - CMS645FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1248.352
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.352
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.359
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.359
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1582
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1582
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.319
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.319
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

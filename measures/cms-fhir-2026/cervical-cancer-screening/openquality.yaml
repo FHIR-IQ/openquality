@@ -1,0 +1,61 @@
+id: cms/cervical-cancer-screening
+version: 0.4.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Cervical Cancer Screening
+  steward: National Committee for Quality Assurance
+  identifiers:
+    - CMS124FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS124FHIRCervicalCancerScreening.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/Hospice.cql
+    type: cql
+  - path: cql/PalliativeCare.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/Status.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.111.12.1016
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.111.12.1016
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1016
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1016
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.110.12.1059
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1059
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1014
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1014
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1089
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1089
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.108.12.1017
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.108.12.1017
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1025
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1025
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1023
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1023
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1080
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1080
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

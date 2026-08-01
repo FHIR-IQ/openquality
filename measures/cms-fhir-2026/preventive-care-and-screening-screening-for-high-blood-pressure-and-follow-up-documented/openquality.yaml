@@ -1,0 +1,70 @@
+id: cms/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented
+version: 0.3.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Preventive Care and Screening: Screening for High Blood Pressure and Follow-Up Documented"
+  steward: American Institutes for Research (AIR)
+  identifiers:
+    - CMS22FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS22FHIRPCSBPScreeningFollowUp.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.600.263
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.263
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1515
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1515
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1920
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1920
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1047.514
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1047.514
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1578
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1578
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1108.125
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1108.125
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1482
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1482
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1581
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1581
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1007
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1007
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1582
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1582
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.1577
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.1577
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1518
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1518
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1583
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1583
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1580
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1580
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1510
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1510
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

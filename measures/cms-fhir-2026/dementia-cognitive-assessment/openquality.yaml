@@ -1,0 +1,70 @@
+id: cms/dementia-cognitive-assessment
+version: 0.2.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Dementia: Cognitive Assessment"
+  steward: American Academy of Neurology
+  identifiers:
+    - CMS149FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS149FHIRDementiaCognitiveAssessment.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1023
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1023
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1014
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1014
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1332
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1332
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1005
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1005
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1048
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1048
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1016
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1016
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1011
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1011
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1492
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1492
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1496
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1496
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1006
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1006
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

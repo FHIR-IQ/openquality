@@ -1,0 +1,32 @@
+id: cms/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr
+version: 0.8.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Excessive Radiation Dose or Inadequate Image Quality for Diagnostic Computed Tomography in Adults - Facility OQR
+  steward: Alara Imaging, Inc.
+  identifiers:
+    - CMS1206FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS1206FHIRCTOQR.cql
+    type: cql
+  - path: cql/AlaraCommonFunctions.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

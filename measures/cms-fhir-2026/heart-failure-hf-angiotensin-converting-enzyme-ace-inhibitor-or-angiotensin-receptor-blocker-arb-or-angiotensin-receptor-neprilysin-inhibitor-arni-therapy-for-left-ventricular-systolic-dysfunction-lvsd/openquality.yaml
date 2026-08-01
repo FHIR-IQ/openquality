@@ -1,0 +1,54 @@
+id: cms/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd
+version: 0.4.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Heart Failure (HF): Angiotensin-Converting Enzyme (ACE) Inhibitor or Angiotensin Receptor Blocker (ARB) or Angiotensin Receptor-Neprilysin Inhibitor (ARNI) Therapy for Left Ventricular Systolic Dysfunction (LVSD)"
+  steward: American Heart Association
+  identifiers:
+    - CMS135FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS135FHIRHFACEIorARBorARNIforLVSD.cql
+    type: cql
+  - path: cql/AHAOverall.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1489
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1489
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1139
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1139
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1211
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1211
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1212
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1212
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1007
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1007
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1140
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1140
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.378
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.378
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1090
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1090
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

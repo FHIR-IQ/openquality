@@ -1,0 +1,66 @@
+id: cms/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd
+version: 1.5.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Heart Failure (HF): Beta-Blocker Therapy for Left Ventricular Systolic Dysfunction (LVSD)"
+  steward: American Heart Association
+  identifiers:
+    - CMS144FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS144FHIRHFBetaBlockerTherapyforLVSD.cql
+    type: cql
+  - path: cql/AHAOverall.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1177
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1177
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.366
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.366
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.362
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.362
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.367
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.367
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1184
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1184
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1493
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1493
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.412
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.412
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1178.53
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1178.53
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.368
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.368
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.370
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.370
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1178
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1178
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1007
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1007
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1008
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

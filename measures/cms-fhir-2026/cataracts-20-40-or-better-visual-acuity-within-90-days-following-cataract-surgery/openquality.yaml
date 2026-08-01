@@ -1,0 +1,199 @@
+id: cms/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery
+version: 0.2.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Cataracts: 20/40 or Better Visual Acuity within 90 Days Following Cataract Surgery"
+  steward: American Academy of Ophthalmology
+  identifiers:
+    - CMS133FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS133FHIRCataracts2040BCVAwithin90Days.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1241
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1241
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1448
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1448
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1560
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1560
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1409
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1409
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1412
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1412
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1413
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1413
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1414
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1414
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1410
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1410
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1411
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1411
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1428
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1428
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1415
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1415
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1450
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1450
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1451
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1451
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1452
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1452
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1416
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1416
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1417
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1417
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1418
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1418
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1453
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1453
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1454
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1454
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1455
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1455
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.327
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.327
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1419
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1419
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1457
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1457
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1458
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1458
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1459
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1459
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1460
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1460
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1423
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1423
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1461
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1461
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1462
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1462
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1424
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1424
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1463
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1463
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1426
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1426
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1427
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1427
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1559
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1559
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1558
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1558
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1465
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1465
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1430
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1430
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1466
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1466
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1467
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1467
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1468
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1468
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1469
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1469
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1471
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1471
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1473
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1473
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1480
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1480
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1432
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1432
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1433
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1433
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1475
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1475
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1477
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1477
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1478
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1478
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1479
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1479
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1438
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1438
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1226.1
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1226.1
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1482
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1482
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1443
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1443
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1444
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1444
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1445
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1445
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1483
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1483
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1446
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1446
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

@@ -1,0 +1,111 @@
+id: cms/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40
+version: 0.4.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Coronary Artery Disease (CAD): Beta-Blocker Therapy-Prior Myocardial Infarction (MI) or Left Ventricular Systolic Dysfunction (LVEF less than or equal to 40%)"
+  steward: American Heart Association
+  identifiers:
+    - CMS145FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD.cql
+    type: cql
+  - path: cql/AHAOverall.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.526.3.1177
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1177
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.366
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.366
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.362
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.362
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.367
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.367
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1174
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1174
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1184
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1184
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1493
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1493
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.412
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.412
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1178.53
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1178.53
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.368
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.368
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.371
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.371
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1014
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1014
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.369
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.369
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1134
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1134
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1048
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1048
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1016
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1016
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.370
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.370
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1178
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1178
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1007
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1007
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1092
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1092
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1090
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1090
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.403
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.403
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.1009
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1009
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

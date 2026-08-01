@@ -1,0 +1,37 @@
+id: cms/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia
+version: 1.5.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Urinary Symptom Score Change 6-12 Months After Diagnosis of Benign Prostatic Hyperplasia
+  steward: Large Urology Group Practice Association (LUGPA)
+  identifiers:
+    - CMS771FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1248.360
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.360
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.368
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.368
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.372
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.372
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

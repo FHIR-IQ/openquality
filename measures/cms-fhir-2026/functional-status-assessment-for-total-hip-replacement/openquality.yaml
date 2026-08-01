@@ -1,0 +1,61 @@
+id: cms/functional-status-assessment-for-total-hip-replacement
+version: 1.1.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Functional Status Assessment for Total Hip Replacement
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS56FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/Hospice.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/Status.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.1178
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1178
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1180
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1180
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1182
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1182
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1089
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1089
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1184
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1184
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1006
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1006
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1189
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1189
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1080
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1080
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: derived
+  modifications:
+    - "removed licensed display text from 1 code declarations: CPT 99024"
