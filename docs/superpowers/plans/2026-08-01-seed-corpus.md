@@ -6,7 +6,7 @@
 
 **Architecture:** Four phases. Format changes to `@openquality/core` first (provenance field, `qi-core` data model, terminology scanner). Then a new `packages/importer` that reads a pinned upstream commit and emits package directories, with its output committed to git and a CI drift check proving the tree is the importer's output. Then CI. Hand-authored showcase content last. The validator subsystem stays out entirely, so the corpus ships at Level 1.
 
-**Tech Stack:** TypeScript, Node 22, pnpm workspaces, Vitest, Zod, `yaml`. GitHub Actions. A JVM in CI for the cqframework CQL-to-ELM translator.
+**Tech Stack:** TypeScript, Node 22, pnpm workspaces, Vitest, Zod, `yaml`. GitHub Actions. No JVM: see the note on Task 17.
 
 **Spec:** [`docs/superpowers/specs/2026-08-01-seed-corpus-design.md`](../specs/2026-08-01-seed-corpus-design.md)
 

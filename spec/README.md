@@ -16,30 +16,46 @@ can consume. Open Quality tracks CRMI rather than inventing a parallel model.
 A package is a directory with an `openquality.yaml` manifest and the artifacts it declares.
 
 ```yaml
-id: cms/diabetes-hba1c-poor-control        # namespace/name
-version: 13.0.0                            # semver, immutable once published
+id: cms/diabetes-glycemic-status-assessment-greater-than-9   # namespace/name
+version: 0.5.0                             # semver, immutable once published
 license: CC0-1.0                           # SPDX id, from the allowlist
 measurementPeriod: 2026                    # the measurement year, not the package version
 measure:
-  title: "Diabetes: Hemoglobin A1c Poor Control (> 9%)"
-  steward: CMS                             # the measure steward, distinct from the publisher
-  identifiers: [CMS122v13, NQF-0059]
-dataModel: fhir-r4                         # fhir-r4 | qi-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
-artifacts:
-  - path: cql/DiabetesHemoglobinA1cPoorControl.cql
+  title: "Diabetes: Glycemic Status Assessment Greater Than 9%"
+  steward: National Committee for Quality Assurance   # the measure steward, not the publisher
+  identifiers: [CMS122FHIR]
+dataModel: qi-core                         # fhir-r4 | qi-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
+artifacts:                                 # the measure logic, plus every library it includes
+  - path: cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
     type: cql
 valueSets:                                 # referenced, never embedded
   - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001
     source: vsac
 provenance:                                # required for redistributed content
   upstream: https://github.com/cqframework/ecqm-content-qicore-2025
   ref: d4e0edd01b7da2a3b43d5360156b43761438190a
   retrieved: 2026-08-01
-  relationship: unmodified                 # unmodified | derived
-dependencies:
-  - id: cqframework/FHIRHelpers
-    version: ^4.0.0
+  relationship: derived                    # unmodified | derived
+  modifications:                           # required when derived; say exactly what changed
+    - "removed licensed display text from 3 code declarations: CPT 97804, CPT 97802, CPT 97803"
 ```
+
+This is a real package, trimmed. The full manifest is at
+[`measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/`](../measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/),
+where it declares nine CQL artifacts and nine value sets.
+
+Note what the example does **not** have: a `dependencies` entry pointing at a separate
+`FHIRHelpers` package. A package vendors the libraries its logic includes and declares them as
+its own artifacts, so it can be read and evaluated on its own. See
+[`../measures/README.md`](../measures/README.md).
+
+Note also that `relationship` is `derived`, not `unmodified`, because licensed CPT display
+descriptors were removed from the CQL. `unmodified` is a claim that the bytes match upstream,
+and CI checks it by re-running the importer and diffing. Do not write `unmodified` on content
+you changed.
 
 Two fields carry more weight than their size suggests. `dataModel` is what makes shared SQL
 usable by anyone other than its author. `valueSets` are references only — a licensing

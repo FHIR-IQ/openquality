@@ -56,8 +56,8 @@ Each entry is a Markdown file with a YAML front matter header, then a free-text 
 ---
 id: cms122-2026-002                       # stable, unique within the measure
 type: interpretation-issue                 # one of the types above
-measure: cms/diabetes-hba1c-poor-control   # the package id it concerns
-measureVersion: "13.0.0"                    # pin when the issue is version-specific
+measure: cms/diabetes-glycemic-status-assessment-greater-than-9   # the package id it concerns
+measureVersion: "0.5.0"                     # pin when the issue is version-specific
 measurementPeriod: 2026
 status: open                                # open | acknowledged | resolved | wont-fix
 # Optional cross-reference to where this was also filed, so the corpus stays

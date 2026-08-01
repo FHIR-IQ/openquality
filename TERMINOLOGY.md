@@ -32,10 +32,9 @@ blocks Level 1. See `packages/core/src/terminology.ts`.
 ## Attribution
 
 These are the terms that apply wherever this repository carries codes and
-display text from the systems below. As of this writing the repository holds
-one hand-written CQL file that references value sets by OID only and declares
-no LOINC or SNOMED CT codes; the terms below take effect as soon as content
-referencing those systems is added, seed corpus included.
+display text from the systems below. They apply now: the seeded corpus under
+`measures/cms-fhir-2026/` holds 301 CQL files, carrying 206 LOINC and 263
+SNOMED CT code declarations with their display text.
 
 Where this repository carries LOINC codes and names: LOINC is copyright
 Regenstrief Institute, Inc. and the LOINC Committee, and is available at no

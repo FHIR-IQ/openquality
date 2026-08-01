@@ -30,7 +30,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Every package reaches Level 1
-        run: pnpm oq validate-all measures/cms-fhir-2026
+        run: pnpm oq validate-all measures/cms-fhir-2026 measures/community
       - name: No licensed display text
         run: |
           if grep -rn 'from "CPT"' measures/ | grep -q display; then
