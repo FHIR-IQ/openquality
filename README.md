@@ -53,14 +53,16 @@ Pre-launch.
 
 | Piece | State | What it is |
 |-------|-------|------------|
-| Package format | shipped | Manifest schema, conformance levels, license policy, content scanning |
+| Package format | shipped | Manifest schema, conformance levels, license policy, content scanning, provenance |
 | Validation core | shipped | Validates a package directory and computes its level |
-| `oq` CLI | shipped | `oq validate` and `oq pack` |
+| `oq` CLI | shipped | `oq validate`, `oq validate-all` and `oq pack` |
+| Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
 | Typed feedback | planned | Questions, interpretation issues, defect reports, implementation notes |
 
-Local validation stops at Level 1. Level 2 needs the deep validators.
+Local validation stops at Level 1, and so does the seeded corpus. Level 2 needs
+the deep validators, which do not exist yet.
 
 ## Repository map
 
@@ -71,6 +73,7 @@ This is a single repository, laid out so the intent is legible at a glance.
 | [`spec/`](spec/) | The package format, the conformance levels, and the CRMI mapping |
 | [`measures/`](measures/) | Measure package collections, indexed by data model and year |
 | [`knowledge/`](knowledge/) | The interpretation-issue corpus — questions, defects, and test cases per measure |
+| [`TERMINOLOGY.md`](TERMINOLOGY.md) | Which code systems may be redistributed, and with or without display text |
 | `packages/` | The tooling: `@openquality/core` and the `oq` CLI |
 | `site/` | The openquality.vercel.app front end |
 | `docs/` | Design specs and implementation plans |
@@ -81,19 +84,14 @@ Requires Node 22 and pnpm.
 
 ```bash
 pnpm install
-pnpm test                                              # 91 tests
-pnpm oq validate packages/core/test/fixtures/cms122    # a real CMS eCQM
+pnpm test
+pnpm oq validate-all measures/cms-fhir-2026
 ```
 
 Expected output:
 
-```
-Level 1 (Described)
-
-To reach the next level:
-  - cql.translate did not run
-
-Note: cql.translate, fhir.validate, and sql.parse run on publish, not locally.
+```text
+Checked 52 packages, 0 below Level 1
 ```
 
 ## What a package looks like
@@ -102,22 +100,27 @@ A package is a directory with an `openquality.yaml` manifest and the artifacts t
 manifest declares.
 
 ```yaml
-id: cms/diabetes-hba1c-poor-control
-version: 13.0.0
+id: cms/diabetes-glycemic-status-assessment-greater-than-9
+version: 0.5.0
 license: CC0-1.0
 measurementPeriod: 2026
 measure:
-  title: "Diabetes: Hemoglobin A1c Poor Control (> 9%)"
-  steward: CMS
-  identifiers: [CMS122v13, NQF-0059]
-dataModel: fhir-r4
+  title: "Diabetes: Glycemic Status Assessment Greater Than 9%"
+  steward: National Committee for Quality Assurance
+  identifiers: [CMS122FHIR]
+dataModel: qi-core
 artifacts:
-  - path: cql/DiabetesHemoglobinA1cPoorControl.cql
+  - path: cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql
     type: cql
 valueSets:
-  - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1013
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013
     source: vsac
 ```
+
+Trimmed from the real package in
+[`measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/`](measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/),
+which declares nine artifacts and nine value sets in full.
 
 A package references value sets by OID and never embeds the expansions. This keeps VSAC
 and CPT licensed content out of the artifact, so the file is safe to publish.
@@ -156,7 +159,9 @@ so the corpus is continuous with where implementers already file questions.
 
 ## Content policy
 
-Open licenses only. No HEDIS logic. No CPT codes. No redistributed VSAC expansions.
+Open licenses only. No HEDIS logic. No redistributed VSAC expansions. No CPT
+display descriptors, which are AMA licensed; a CPT code and code system may be
+referenced. Full rules per code system are in [TERMINOLOGY](TERMINOLOGY.md).
 
 NCQA holds copyright on the HEDIS specifications, so that logic cannot be published here.
 You can publish your own implementation written against a public specification. You can

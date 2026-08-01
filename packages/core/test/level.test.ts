@@ -5,6 +5,7 @@ import type { Manifest } from '../src/manifest.js'
 
 const L1_CHECKS: CheckId[] = [
   'manifest.schema', 'manifest.license', 'manifest.dataModel', 'manifest.measure',
+  'manifest.provenance',
   'artifacts.present', 'artifacts.typed', 'valuesets.referenced',
   'readme.sections', 'content.forbidden',
 ]

@@ -1,0 +1,107 @@
+id: cms/hospital-harm-falls-with-injury
+version: 0.2.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Hospital Harm – Falls with Injury
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS1017FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS1017FHIRHHFI.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/CumulativeMedicationDuration.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1258.2
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1258.2
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.22
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.22
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.163
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.163
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.164
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.164
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.134
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.134
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.23
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.23
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.168
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.168
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.169
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.169
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.170
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.170
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.171
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.171
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1147.171
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1147.171
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.136
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.136
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.137
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.137
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1147.120
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1147.120
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.24
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.24
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1272.1
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1272.1
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.205
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.205
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.174
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.174
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1147.198
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1147.198
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.162
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.162
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.120
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.120
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1200.147
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1200.147
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.175
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.175
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1147.197
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1147.197
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.176
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.176
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.130
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.130
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

@@ -1,0 +1,15 @@
+{
+  "name": "@openquality/importer",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@openquality/core": "workspace:*",
+    "yaml": "^2.6.0",
+    "tar": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/tar": "^6.1.13"
+  }
+}

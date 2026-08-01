@@ -1,0 +1,63 @@
+id: cms/safe-use-of-opioids-concurrent-prescribing
+version: 0.3.7
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Safe Use of Opioids - Concurrent Prescribing
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS506FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS506FHIRSafeUseofOpioids.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1111.180
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.180
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.87
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.87
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1116.365
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1116.365
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.308
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.308
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.269
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.269
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.177
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.177
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.171
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.171
+    source: vsac
+  - oid: 2.16.840.1.113883.3.600.1.1579
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.600.1.1579
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.309
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.309
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.241
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.241
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1125.1
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1125.1
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.175
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.175
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

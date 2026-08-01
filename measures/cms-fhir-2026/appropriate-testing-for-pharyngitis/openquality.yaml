@@ -1,0 +1,92 @@
+id: cms/appropriate-testing-for-pharyngitis
+version: 0.3.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Appropriate Testing for Pharyngitis
+  steward: National Committee for Quality Assurance
+  identifiers:
+    - CMS146FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS146FHIRAppropriateTestingforPharyngitis.cql
+    type: cql
+  - path: cql/Antibiotic.cql
+    type: cql
+  - path: cql/CumulativeMedicationDuration.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/Hospice.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/Status.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.102.12.1011
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.102.12.1011
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.102.12.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.102.12.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.196.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.102.12.1025
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.102.12.1025
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.102.12.1017
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.102.12.1017
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1010
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1010
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1012
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1012
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1016
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1016
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1073
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1073
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1008
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1008
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1025
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1025
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1027
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1027
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1026
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1026
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1023
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1023
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1022
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1022
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1024
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1024
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1080
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1080
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1089
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1089
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: derived
+  modifications:
+    - "removed licensed display text from 1 code declaration: CPT 99429"

@@ -1,0 +1,64 @@
+id: cms/hospital-harm-acute-kidney-injury
+version: 0.2.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Hospital Harm -  Acute Kidney Injury
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS832FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS832HHAKIFHIR.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/CumulativeMedicationDuration.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/HospitalHarm.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1045.152
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.152
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.21
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.21
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.292
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.292
+    source: vsac
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+  - oid: 2.16.840.1.113883.17.4077.2.2038
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.2.2038
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.12
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.12
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.19
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.19
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.199
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.199
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.143
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.143
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.33
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.33
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1147.197
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1147.197
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

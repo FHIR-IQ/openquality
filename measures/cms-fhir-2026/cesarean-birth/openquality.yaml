@@ -1,0 +1,53 @@
+id: cms/cesarean-birth
+version: 0.6.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Cesarean Birth
+  steward: The Joint Commission
+  identifiers:
+    - CMS0334FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS0334FHIRPCCesareanBirth.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/PCMaternal.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1045.105
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.105
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.282
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.282
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1045.99
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.99
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1045.59
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.59
+    source: vsac
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.110.12.1049
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1049
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1110.37
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.37
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1110.68
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.68
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

@@ -1,0 +1,57 @@
+id: cms/emergency-care-access-timeliness-hoqr
+version: 0.4.1
+license: CC0-1.0
+measurementPeriod: 2027
+measure:
+  title: Emergency Care Access & Timeliness (HOQR)
+  steward: Centers for Medicare & Medicaid Services (CMS)
+  identifiers:
+    - CMS1244FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS1244FHIRECATHOQR.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1111.164
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.164
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.285
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.285
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.294
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.294
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.163
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.163
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1010
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1010
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.284
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.284
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.278
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.278
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.143
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.143
+    source: vsac
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1046.279
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1046.279
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

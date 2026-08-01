@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  validate-corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Every package reaches Level 1
+        run: pnpm oq validate-all measures/cms-fhir-2026 measures/community
+      - name: No licensed display text
+        run: |
+          if grep -rn 'from "CPT"' measures/ | grep -q display; then
+            echo "CPT display text found in measures/"
+            grep -rn 'from "CPT"' measures/ | grep display
+            exit 1
+          fi
+
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Cache the upstream tarball
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: upstream-d4e0edd01b7da2a3b43d5360156b43761438190a
+      - name: Re-run the importer
+        # The date must match what is recorded in the committed packages, or
+        # every provenance block differs and the diff is noise.
+        run: pnpm oq-import 2026-08-01
+      - name: Committed tree must equal importer output
+        run: |
+          if ! git diff --exit-code -- measures/; then
+            echo ""
+            echo "The committed corpus differs from what the importer produces."
+            echo "Generated packages must not be edited by hand: change the importer"
+            echo "in packages/importer and re-run 'pnpm oq-import 2026-08-01'."
+            exit 1
+          fi

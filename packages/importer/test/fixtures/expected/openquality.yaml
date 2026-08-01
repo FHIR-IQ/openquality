@@ -1,0 +1,24 @@
+id: cms/example-measure-glycemic-status
+version: 0.5.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Example Measure: Glycemic Status"
+  steward: National Committee for Quality Assurance
+  identifiers:
+    - CMS999FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/Example.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: derived
+  modifications:
+    - "removed licensed display text from 1 code declaration: CPT 97804"

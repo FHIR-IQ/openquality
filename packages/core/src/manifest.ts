@@ -8,7 +8,7 @@ const ARTIFACT_TYPES = [
   'cql', 'sql', 'fhir/Measure', 'fhir/Library', 'fhir/ValueSet',
   'sql-on-fhir/ViewDefinition', 'python', 'r', 'notebook', 'doc',
 ] as const
-const DATA_MODELS = ['fhir-r4', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
+const DATA_MODELS = ['fhir-r4', 'qi-core', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
 const MEASURE_TYPES = ['process', 'outcome', 'intermediate-outcome', 'structural', 'patient-reported-outcome'] as const
 
 /**
@@ -47,6 +47,17 @@ const ValueSetSchema = z.object({
   source: z.string().optional(),
 })
 
+// Every field optional, and no `.refine`. The rules live in provenance.ts so
+// the finding carries the `manifest.provenance` CheckId. Same reasoning as
+// ValueSetSchema above.
+const ProvenanceSchema = z.object({
+  upstream: z.string().optional(),
+  ref: z.string().optional(),
+  retrieved: z.string().optional(),
+  relationship: z.string().optional(),
+  modifications: z.array(z.string()).optional(),
+})
+
 const MeasureSchema = z.object({
   title: z.string().min(1),
   steward: z.string().optional(),
@@ -73,6 +84,7 @@ export const ManifestSchema = z.object({
   dataModel: z.enum(DATA_MODELS).optional(),
   artifacts: z.array(ArtifactSchema),
   valueSets: z.array(ValueSetSchema).optional(),
+  provenance: ProvenanceSchema.optional(),
   dependencies: z.array(z.object({ id: z.string(), version: z.string() })).optional(),
 })
 

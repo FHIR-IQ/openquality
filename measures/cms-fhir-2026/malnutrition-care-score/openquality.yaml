@@ -1,0 +1,72 @@
+id: cms/malnutrition-care-score
+version: 0.3.3
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Malnutrition Care Score
+  steward: Academy of Nutrition and Dietetics
+  identifiers:
+    - CMS986FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS986FHIRMalnutritionScore.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113883.3.117.1.7.1.292
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.292
+    source: vsac
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.101
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.101
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1116.365
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1116.365
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.91
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.91
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.55
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.55
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.92
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.92
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.89
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.89
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.34
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.34
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.21
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.21
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.47
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.47
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.96
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.96
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.43
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.43
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1095.93
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1095.93
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.143
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.143
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

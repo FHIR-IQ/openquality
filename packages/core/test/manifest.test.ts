@@ -103,3 +103,25 @@ artifacts:
     expect(result.findings[0].check).toBe('manifest.schema')
   })
 })
+
+describe('dataModel', () => {
+  const base = [
+    'id: cms/example',
+    'version: 0.5.0',
+    'license: CC0-1.0',
+    'artifacts:',
+    '  - path: cql/Example.cql',
+    '    type: cql',
+  ].join('\n')
+
+  it('accepts qi-core, which the upstream eCQM content declares', () => {
+    const result = parseManifest(`${base}\ndataModel: qi-core\n`)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.manifest.dataModel).toBe('qi-core')
+  })
+
+  it('still rejects an unknown data model', () => {
+    const result = parseManifest(`${base}\ndataModel: nonsense\n`)
+    expect(result.ok).toBe(false)
+  })
+})

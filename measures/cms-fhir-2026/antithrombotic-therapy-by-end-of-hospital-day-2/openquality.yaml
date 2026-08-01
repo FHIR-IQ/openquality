@@ -1,0 +1,53 @@
+id: cms/antithrombotic-therapy-by-end-of-hospital-day-2
+version: 0.7.2
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: Antithrombotic Therapy By End of Hospital Day 2
+  steward: The Joint Commission
+  identifiers:
+    - CMS72FHIR
+dataModel: qi-core
+artifacts:
+  - path: cql/CMS72FHIRSTKAntithromboticDay2.cql
+    type: cql
+  - path: cql/CQMCommon.cql
+    type: cql
+  - path: cql/FHIRHelpers.cql
+    type: cql
+  - path: cql/QICoreCommon.cql
+    type: cql
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+  - path: cql/TJCOverall.cql
+    type: cql
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1110.62
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.62
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.213
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.213
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1110.21
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.21
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1045.21
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.21
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.473
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.473
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.93
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.93
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1110.52
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.52
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.226
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.226
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

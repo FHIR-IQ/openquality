@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
 import { runValidate } from './commands/validate.js'
+import { runValidateAll } from './commands/validate-all.js'
 import { runPack } from './commands/pack.js'
 
 const write = (line: string) => console.log(line)
@@ -14,6 +15,15 @@ program
   .argument('[dir]', 'package directory', '.')
   .action(async (dir: string) => {
     process.exitCode = await runValidate(dir, write)
+  })
+
+program
+  .command('validate-all')
+  .description('Validate every package under one or more collection roots')
+  .argument('<roots...>', 'collection directories')
+  .option('--floor <level>', 'minimum acceptable conformance level', '1')
+  .action(async (roots: string[], opts: { floor: string }) => {
+    process.exitCode = await runValidateAll(roots, Number(opts.floor), write)
   })
 
 program
