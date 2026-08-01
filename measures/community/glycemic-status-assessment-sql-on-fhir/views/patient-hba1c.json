@@ -1,0 +1,23 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "patient_hba1c",
+  "status": "draft",
+  "resource": "Observation",
+  "select": [
+    {
+      "column": [
+        { "name": "observation_id", "path": "getResourceKey()", "type": "string" },
+        { "name": "patient_id", "path": "subject.getReferenceKey(Patient)", "type": "string" },
+        { "name": "effective_date_time", "path": "effective.ofType(dateTime)", "type": "dateTime" },
+        { "name": "value_quantity", "path": "value.ofType(Quantity).value", "type": "decimal" },
+        { "name": "value_unit", "path": "value.ofType(Quantity).unit", "type": "string" }
+      ]
+    }
+  ],
+  "where": [
+    {
+      "path": "code.coding.exists(system = 'http://loinc.org' and code in ('4548-4' | '17856-6' | '4549-2'))",
+      "description": "HbA1c results by LOINC code. The CQL implementation resolves the same concept through the HbA1c Laboratory Test value set rather than by enumerating codes, which is the difference this package exists to expose."
+    }
+  ]
+}

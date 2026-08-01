@@ -1,0 +1,23 @@
+id: community/glycemic-status-assessment-sql-on-fhir
+version: 0.1.0
+license: CC0-1.0
+measurementPeriod: 2026
+measure:
+  title: "Diabetes: Glycemic Status Assessment Greater Than 9% (SQL on FHIR)"
+  steward: National Committee for Quality Assurance
+  identifiers: [CMS122FHIR]
+  type: intermediate-outcome
+  improvementNotation: decrease
+  domain: [diabetes, chronic-care]
+  setting: [ambulatory]
+dataModel: sql-on-fhir
+artifacts:
+  - path: views/patient-hba1c.json
+    type: sql-on-fhir/ViewDefinition
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1013
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013
+    source: vsac
