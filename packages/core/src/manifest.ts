@@ -8,7 +8,7 @@ const ARTIFACT_TYPES = [
   'cql', 'sql', 'fhir/Measure', 'fhir/Library', 'fhir/ValueSet',
   'sql-on-fhir/ViewDefinition', 'python', 'r', 'notebook', 'doc',
 ] as const
-const DATA_MODELS = ['fhir-r4', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
+const DATA_MODELS = ['fhir-r4', 'qi-core', 'qdm-5.6', 'omop-5.4', 'sql-on-fhir', 'custom'] as const
 const MEASURE_TYPES = ['process', 'outcome', 'intermediate-outcome', 'structural', 'patient-reported-outcome'] as const
 
 /**
