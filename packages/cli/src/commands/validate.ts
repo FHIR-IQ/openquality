@@ -34,7 +34,11 @@ export async function runValidate(dir: string, write: Writer): Promise<number> {
     write('To reach the next level:')
     for (const blocker of blockers) write(`  - ${blocker}`)
     write('')
-    write('Note: cql.translate, fhir.validate, and sql.parse run on publish, not locally.')
+    // Future tense on purpose: these validators do not exist yet, so every
+    // package tops out at Level 1. Saying they "run on publish" would promise a
+    // check nothing performs.
+    write('Note: cql.translate, fhir.validate, and sql.parse will run on publish once')
+    write('the deep validators exist. Until then Level 1 is the ceiling.')
   }
 
   return errors.length > 0 ? 1 : 0
