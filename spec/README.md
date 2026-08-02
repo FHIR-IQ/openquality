@@ -71,7 +71,8 @@ Levels measure rigor, not FHIR adoption. A SQL-only package can reach the top.
 | 1 | Described | Level 0, plus a declared data model, typed artifacts, value sets resolvable by OID or canonical URL, and a README stating intent, known limitations, and provenance. |
 | 2 | Verified | Level 1, plus deep validation passing per artifact: CQL translates to ELM; FHIR resources validate against the CRMI and QI-Core profiles; SQL parses against its declared dialect and ships its schema. |
 
-Local validation reaches Level 1. Level 2 runs on publish, where the deep validators run.
+Local validation reaches Level 1, and today that is the ceiling for every package: the
+deep validators do not exist yet. Level 2 will be computed on publish once they do.
 
 ## Mapping to CRMI
 
@@ -115,7 +116,8 @@ manifest that pins the versions used, rather than by embedding expansions.
 
 ### Distribution
 
-A package can be emitted as a CRMI artifact bundle via the `$package` shape — the target
+A package is designed to be emitted as a CRMI artifact bundle via the `$package` shape
+(no emitter exists yet) — the target
 artifact plus its traced dependencies, first entry an outcome manifest that characterizes
 the bundle. This is what lets an Open Quality package be installed and evaluated by tooling
 that has never heard of `openquality.yaml`. Packaging measures as standard FHIR NPM

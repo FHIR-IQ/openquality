@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Open Quality — an open community for healthcare quality measurement</title>
-<meta name="description" content="A free, open registry of healthcare quality measure packages. Publish CQL, SQL, and SQL-on-FHIR measures, get feedback, and stop rebuilding the same logic in every organization.">
+<title>Open Quality — an open corpus of healthcare quality measures</title>
+<meta name="description" content="An open, MIT-licensed corpus of healthcare quality measures with verified provenance, plus a typed record of what implementers have learned about each one. CQL, SQL, and SQL-on-FHIR.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,12 +184,12 @@
 </nav>
 
 <header class="wrap">
-  <div class="status-pill"><span class="dot"></span> Pre-launch &middot; validation core is running, registry is next</div>
+  <div class="status-pill"><span class="dot"></span> Seed corpus shipped &middot; 52 CMS eCQM packages, provenance verified in CI &middot; registry planned</div>
   <h1>OPEN<br>QUALITY</h1>
   <p class="lede">
-    An open registry for healthcare quality measures. Publish in CQL, SQL, or
-    SQL&#8209;on&#8209;FHIR, get it validated, and get review from people who have solved
-    the same problem. Today every organization rebuilds this logic on its own.
+    An open corpus of healthcare quality measures — and a shared record of what
+    implementers have learned about each one. CQL, SQL, and SQL&#8209;on&#8209;FHIR.
+    Today every organization rebuilds this logic, and this knowledge, on its own.
   </p>
   <div class="hero-cta">
     <a class="btn" href="https://github.com/FHIR-IQ/openquality">Read the spec</a>
@@ -250,79 +250,80 @@
   <div class="grid">
 
     <article class="card">
-      <div class="code"><span class="c">// CMS122v13 — HbA1c Poor Control</span>
+      <div class="code"><span class="c">// CMS122 — glycemic status &gt; 9%</span>
 <span class="k">define</span> <span class="s">"Initial Population"</span>:
   AgeInYearsAt(<span class="k">start of</span>
     <span class="s">"Measurement Period"</span>)
     <span class="k">between</span> <span class="n">18</span> <span class="k">and</span> <span class="n">75</span>
     <span class="k">and exists</span> <span class="s">"Diabetes"</span>
 
+<span class="c">// no result counts as poor control —</span>
+<span class="c">// see knowledge/cms122/2026-001</span>
 <span class="k">define</span> <span class="s">"Numerator"</span>:
-  <span class="k">exists</span> <span class="s">"Most Recent HbA1c"</span> R
-    <span class="k">where</span> R.value <span class="k">as</span> Quantity
-      &gt; <span class="n">9.0</span> <span class="s">'%'</span></div>
+  <span class="s">"Most Recent Result Above 9"</span>
+    <span class="k">or not exists</span> <span class="s">"Result"</span></div>
       <div class="ident">
         <div class="avatar">CMS</div>
-        <div class="pkg">Diabetes: HbA1c Poor Control<small>@cms/diabetes-hba1c-poor-control</small></div>
-        <span class="lvl">L2</span>
+        <div class="pkg">Glycemic Status Assessment &gt; 9%<small>cms/diabetes-glycemic-status-assessment-greater-than-9</small></div>
+        <span class="lvl">L1</span>
       </div>
       <dl class="rows">
-        <div class="row"><dt>Steward</dt><dd>CMS</dd></div>
-        <div class="row"><dt>Data model</dt><dd>fhir-r4</dd></div>
+        <div class="row"><dt>Steward</dt><dd>NCQA</dd></div>
+        <div class="row"><dt>Data model</dt><dd>qi-core</dd></div>
         <div class="row"><dt>Period</dt><dd>2026</dd></div>
       </dl>
       <div class="checks">
-        <div class="chk">CQL<b>&check;</b></div>
-        <div class="chk">FHIR<b>&check;</b></div>
+        <div class="chk pending">CQL<b>&hellip;</b></div>
+        <div class="chk">FHIR<b>&mdash;</b></div>
         <div class="chk">SQL<b>&mdash;</b></div>
         <div class="chk">VS<b>&check;</b></div>
       </div>
     </article>
 
     <article class="card">
-      <div class="code"><span class="c">-- Colorectal cancer screening</span>
-<span class="c">-- SQL on FHIR / OMOP</span>
-<span class="k">SELECT</span> p.person_id,
-       <span class="k">MAX</span>(o.observation_date) <span class="k">AS</span> last_scr
-<span class="k">FROM</span> person p
-<span class="k">JOIN</span> observation o
-  <span class="k">ON</span> o.person_id = p.person_id
-<span class="k">WHERE</span> o.observation_concept_id
-      <span class="k">IN</span> (<span class="k">SELECT</span> concept_id
-          <span class="k">FROM</span> vs_colonoscopy)
-<span class="k">GROUP BY</span> p.person_id</div>
+      <div class="code"><span class="c">// same measure, SQL-on-FHIR</span>
+<span class="c">// ViewDefinition, runs on a warehouse</span>
+{ <span class="n">"resource"</span>: <span class="s">"Observation"</span>,
+  <span class="n">"select"</span>: [{ <span class="n">"column"</span>: [
+    { <span class="n">"name"</span>: <span class="s">"patient_id"</span> },
+    { <span class="n">"name"</span>: <span class="s">"value_quantity"</span> },
+    { <span class="n">"name"</span>: <span class="s">"effective_date_time"</span> }
+  ]}],
+  <span class="n">"where"</span>: [{ <span class="n">"path"</span>:
+    <span class="s">"code.coding.exists(
+      system = 'http://loinc.org')"</span> }] }</div>
       <div class="ident">
         <div class="avatar">OQ</div>
-        <div class="pkg">Colorectal Cancer Screening<small>@oq/crc-screening-omop</small></div>
+        <div class="pkg">The same measure, two ways<small>community/glycemic-status-assessment-sql-on-fhir</small></div>
         <span class="lvl">L1</span>
       </div>
       <dl class="rows">
-        <div class="row"><dt>Steward</dt><dd>community</dd></div>
-        <div class="row"><dt>Data model</dt><dd>omop-5.4</dd></div>
+        <div class="row"><dt>Steward</dt><dd>NCQA</dd></div>
+        <div class="row"><dt>Data model</dt><dd>sql-on-fhir</dd></div>
         <div class="row"><dt>Period</dt><dd>2026</dd></div>
       </dl>
       <div class="checks">
         <div class="chk">CQL<b>&mdash;</b></div>
-        <div class="chk">FHIR<b>&mdash;</b></div>
-        <div class="chk pending">SQL<b>&hellip;</b></div>
+        <div class="chk pending">FHIR<b>&hellip;</b></div>
+        <div class="chk">SQL<b>&mdash;</b></div>
         <div class="chk">VS<b>&check;</b></div>
       </div>
     </article>
 
     <article class="card">
-      <div class="code"><span class="c"># openquality.yaml</span>
-<span class="n">id</span>: cms/diabetes-hba1c-poor-control
-<span class="n">version</span>: <span class="s">13.0.0</span>
+      <div class="code"><span class="c"># openquality.yaml (real, trimmed)</span>
+<span class="n">id</span>: cms/diabetes-glycemic-status&hellip;
+<span class="n">version</span>: <span class="s">0.5.0</span>
 <span class="n">license</span>: CC0-1.0
-<span class="n">dataModel</span>: fhir-r4
-<span class="n">measure</span>:
-  <span class="n">steward</span>: CMS
-  <span class="n">identifiers</span>: [CMS122v13]
-<span class="n">artifacts</span>:
-  - <span class="n">path</span>: cql/HbA1c.cql
-    <span class="n">type</span>: cql
+<span class="n">dataModel</span>: qi-core
 <span class="n">valueSets</span>:            <span class="c"># referenced,</span>
-  - <span class="n">oid</span>: 2.16.840.1&hellip;  <span class="c"># never embedded</span></div>
+  - <span class="n">oid</span>: 2.16.840.1&hellip;  <span class="c"># never embedded</span>
+<span class="n">provenance</span>:           <span class="c"># CI-verified</span>
+  <span class="n">upstream</span>: github.com/cqframework/&hellip;
+  <span class="n">ref</span>: <span class="s">d4e0edd0&hellip;</span>
+  <span class="n">relationship</span>: derived
+  <span class="n">modifications</span>:
+    - removed CPT display text (3)</div>
       <div class="ident">
         <div class="avatar">YML</div>
         <div class="pkg">The manifest<small>openquality.yaml</small></div>
@@ -366,8 +367,9 @@
       <span class="num">LEVEL 2</span>
       <h3>Verified</h3>
       <p>Deep validation passes for every artifact. CQL translates to ELM. FHIR validates
-      against the CRMI and ECR profiles. SQL parses against its declared dialect and ships
-      its schema.</p>
+      against the CRMI and QI&#8209;Core profiles. SQL parses against its declared dialect and
+      ships its schema. The deep validators do not exist yet, so nothing has reached this
+      level — including our own seed corpus, which sits at Level 1 and says so.</p>
     </div>
   </div>
   <p style="margin-top:26px; color:var(--muted); max-width:720px; font-size:14.5px">
@@ -379,7 +381,7 @@
 <section id="status" class="wrap">
   <div class="sec-head">
     <h2>Honest status</h2>
-    <span class="sec-note">Nothing here is launched yet</span>
+    <span class="sec-note">What exists, what does not</span>
   </div>
   <table>
     <thead>
@@ -388,7 +390,7 @@
     <tbody>
       <tr>
         <td>Package format</td><td class="state shipped">shipped</td>
-        <td>Manifest schema, conformance levels, license policy, content scanning. 91 tests.</td>
+        <td>Manifest schema, conformance levels, license policy, terminology scanning, machine-readable provenance.</td>
       </tr>
       <tr>
         <td>Validation core</td><td class="state shipped">shipped</td>
@@ -396,7 +398,15 @@
       </tr>
       <tr>
         <td><code>oq</code> CLI</td><td class="state shipped">shipped</td>
-        <td><code>oq validate</code> and <code>oq pack</code>. Deterministic, content-addressed tarballs.</td>
+        <td><code>oq validate</code>, <code>oq validate-all</code>, <code>oq pack</code>. Deterministic, content-addressed tarballs.</td>
+      </tr>
+      <tr>
+        <td>Seed corpus</td><td class="state shipped">shipped</td>
+        <td>52 CC0 CMS eCQM packages for the 2026 reporting year, provenance pinned to the upstream commit and re-verified byte-for-byte in CI on every change.</td>
+      </tr>
+      <tr>
+        <td>Knowledge corpus</td><td class="state shipped">seeded</td>
+        <td>Typed interpretation issues, defects, and test cases, pinned to measure versions. Seven entries on one measure so far — growing it is the point, and the ask.</td>
       </tr>
       <tr>
         <td>Deep validators</td><td class="state">next</td>
@@ -407,21 +417,19 @@
         <td>Publish, search, install. Git-authored, registry-hosted, versions immutable.</td>
       </tr>
       <tr>
-        <td>Typed feedback</td><td class="state">planned</td>
-        <td>Questions, interpretation issues, defect reports, implementation notes — attached to a measure, searchable.</td>
+        <td>Registry-hosted feedback</td><td class="state">planned</td>
+        <td>The knowledge corpus, searchable and writable from a web UI instead of a pull request.</td>
       </tr>
     </tbody>
   </table>
 
   <div class="term" style="margin-top:34px"><span class="c"># what runs today</span>
-<span class="p">$</span> oq validate packages/core/test/fixtures/cms122
+<span class="p">$</span> oq validate-all measures/cms-fhir-2026
 
-Level 1 (Described)
+Checked 52 packages, 0 below Level 1
 
-To reach the next level:
-  - cql.translate did not run
-
-<span class="c">Note: cql.translate, fhir.validate, and sql.parse run on publish, not locally.</span></div>
+<span class="c"># cql.translate, fhir.validate, and sql.parse will run on publish.</span>
+<span class="c"># They do not exist yet, which is why nothing is Level 2.</span></div>
 </section>
 
 <section class="wrap">
