@@ -1,7 +1,7 @@
 # Open Quality
 
-An open, community-owned corpus of healthcare quality measures — and a shared record
-of what the community has learned about each one.
+An open, community-owned corpus of healthcare quality measures, and a shared record of
+what the community has learned about each one.
 
 Publish a measure in CQL, SQL, or SQL-on-FHIR. Everything is validated, versioned, and
 open for review. Alongside the measures sits the part that usually gets lost: a typed
@@ -15,12 +15,31 @@ Site: https://openquality.vercel.app
 Quality measurement is rebuilt from scratch inside every organization that does it.
 Payers, health systems, and vendors each staff teams to implement the same national
 measures against their own data, then pay auditors to certify the result. The same
-ambiguities in the same specifications are rediscovered independently, the code is
-almost never shared, and what one team learned about a measure never reaches the next.
+ambiguities in the same specifications get rediscovered independently, the code is rarely
+shared, and what one team learns about a measure rarely reaches the next.
 
 There is no common unit for exchanging measure logic, and no shared place to record what
-the community has figured out. Open Quality is an attempt at both — a package format
+the community has figured out. Open Quality is an attempt at both: a package format
 anyone can publish, and a knowledge corpus anyone can read.
+
+### Who this is for
+
+Today, getting an answer about a measure depends on knowing the right person.
+
+A recent example. A PhD candidate wrote a Hospital at Home eligibility library that ran
+at 30 to 40 seconds per patient. He could not tell whether the cause was his logic, his
+engine, or his data. Someone made an introduction to an engineer who had spent years
+optimizing CQL. That engineer explained it in one email: defines cache, functions do not,
+every retrieve iterates the whole bundle. The library now runs in under a second, and
+returns the same results.
+
+That answer existed because of one introduction. It is not searchable, it is not attached
+to a measure, and the next person will not find it.
+
+Most people doing this work are not on Zulip, do not attend connectathons, hold no NCQA
+support contract, and do not work at an insurer with a staff of analysts. As quality
+measurement moves from manual abstraction to digital, they need somewhere to go that does
+not depend on who they happen to know.
 
 This is early and honest about it. The package format and the validation core work; the
 hosted registry does not exist yet. See [Status](#status).
@@ -42,10 +61,21 @@ already rely on. It is the open corpus and community layer that sits alongside t
 - **Reason Health / ReasonHub** and other CRMI-native platforms are authoring and
   syndication systems. Open Quality is deliberately the *open, public-good* end of the
   same space, and aims to interoperate, not overlap.
+- **[The FHIR package registry](https://registry.fhir.org)** distributes FHIR conformance
+  artifacts, and does that well. It answers "where do I get this package." It is not built
+  to answer "why is this measure slow," "does a missing HbA1c count as poor control," or
+  "how did someone else read this denominator." Different problem, not a smaller one.
+- **[NCQA's Digital Quality Implementers Community](https://www.ncqa.org/digital-quality-implementers-community/)**
+  (DQIC) is a consensus effort focused, in NCQA's own description, first on *CQL engines*,
+  with other tooling and languages as future work. Engines are well covered. Measures and
+  analytics practice are not.
 
 What Open Quality adds that isn't already covered: radical openness, first-class support
 for **SQL and SQL-on-FHIR** (not just FHIR-canonical artifacts), and the
 [knowledge corpus](#the-knowledge-corpus) of interpretation issues.
+
+Being open source is also what makes the corpus possible. There is no HEDIS license to
+negotiate and no legacy vendor to pay for the right to discuss a measure in public.
 
 ## Status
 
