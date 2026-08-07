@@ -5,11 +5,6 @@
   "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
   "redirects": [
     {
-      "source": "/library",
-      "destination": "/library.html",
-      "permanent": false
-    },
-    {
       "source": "/github",
       "destination": "https://github.com/FHIR-IQ/openquality",
       "permanent": false
