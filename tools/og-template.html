@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Open Quality social card source</title>
+<style>
+  /* Vendored fonts, resolved by serving the repository root. See tools/README.md. */
+  @font-face{
+    font-family:"Inter Tight"; font-style:normal; font-weight:300 600;
+    src:url(/site/fonts/inter-tight-latin.woff2) format("woff2");
+  }
+  @font-face{
+    font-family:"JetBrains Mono"; font-style:normal; font-weight:400;
+    src:url(/site/fonts/jetbrains-mono-latin.woff2) format("woff2");
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    width:1200px; height:630px; overflow:hidden;
+    background:#111111; color:#F0F0F0;
+    font-family:"Inter Tight",sans-serif; font-weight:300;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:72px 80px;
+  }
+  .top{display:flex; align-items:center; gap:14px}
+  .mark{
+    width:44px; height:44px; border-radius:9px; background:#F0F0F0; color:#111;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:600; font-size:23px; letter-spacing:-.03em;
+  }
+  .dot{width:9px; height:9px; border-radius:50%; background:#FF6B35}
+  .kicker{font-size:19px; letter-spacing:.14em; text-transform:uppercase; color:#9A9A9A}
+  h1{font-size:112px; line-height:.94; font-weight:600; letter-spacing:-.035em; margin-top:34px}
+  h1 span{color:#FF6B35}
+  p{font-size:29px; line-height:1.45; color:#C9C9C9; max-width:1000px; margin-top:26px}
+  .rule{height:1px; background:#2E2E2E; margin-bottom:24px}
+  .foot{
+    display:flex; align-items:baseline; justify-content:space-between;
+    white-space:nowrap; font-size:21px; color:#9A9A9A;
+  }
+  .foot .facts{display:flex; gap:18px}
+  .foot .sep{color:#3A3A3A}
+  .foot b{color:#F0F0F0; font-weight:500}
+</style>
+</head>
+<body>
+
+<div>
+  <div class="top">
+    <div class="mark">oq</div>
+    <div class="dot"></div>
+    <div class="kicker">github.com/FHIR-IQ/openquality &middot; MIT</div>
+  </div>
+
+  <h1>OPEN<br>QUALITY<span>.</span></h1>
+
+  <p>
+    An open corpus of healthcare quality measures — and a shared record of what
+    implementers have learned about each one.
+  </p>
+</div>
+
+<div>
+  <div class="rule"></div>
+  <div class="foot">
+    <div class="facts">
+      <span><b>52</b> CC0 CMS eCQM packages</span>
+      <span class="sep">/</span>
+      <span><b>CQL</b>, SQL, SQL-on-FHIR</span>
+      <span class="sep">/</span>
+      <span><b>Provenance</b> verified in CI</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
