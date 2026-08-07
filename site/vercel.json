@@ -10,6 +10,11 @@
       "permanent": false
     },
     {
+      "source": "/demo",
+      "destination": "https://github.com/FHIR-IQ/openquality/blob/main/DEMO.md",
+      "permanent": false
+    },
+    {
       "source": "/contributing",
       "destination": "https://github.com/FHIR-IQ/openquality/blob/main/CONTRIBUTING.md",
       "permanent": false
