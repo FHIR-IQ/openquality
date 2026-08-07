@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://openquality.vercel.app/sitemap.xml
+Sitemap: https://openquality.us/sitemap.xml

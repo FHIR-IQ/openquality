@@ -10,7 +10,7 @@ open for review. Alongside the measures sits the part that usually gets lost: a 
 record of interpretation questions, defects, and test cases, attached to the measure and
 pinned to a version.
 
-Site: https://openquality.vercel.app
+Site: https://openquality.us
 
 ## Why this exists
 
@@ -108,7 +108,7 @@ This is a single repository, laid out so the intent is legible at a glance.
 | [`knowledge/`](knowledge/) | The interpretation-issue corpus — questions, defects, and test cases per measure |
 | [`TERMINOLOGY.md`](TERMINOLOGY.md) | Which code systems may be redistributed, and with or without display text |
 | `packages/` | The tooling: `@openquality/core` and the `oq` CLI |
-| `site/` | The openquality.vercel.app front end |
+| `site/` | The openquality.us front end |
 | `docs/` | Design specs and implementation plans |
 
 ## Try it

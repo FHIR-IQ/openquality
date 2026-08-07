@@ -9,5 +9,5 @@
 Contact: https://github.com/FHIR-IQ/openquality/security/advisories/new
 Expires: 2027-08-07T00:00:00.000Z
 Preferred-Languages: en
-Canonical: https://openquality.vercel.app/.well-known/security.txt
+Canonical: https://openquality.us/.well-known/security.txt
 Policy: https://github.com/FHIR-IQ/openquality/blob/main/CONTRIBUTING.md
