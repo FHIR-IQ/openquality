@@ -67,3 +67,17 @@ jobs:
             echo "in packages/importer and re-run 'pnpm oq-import 2026-08-01'."
             exit 1
           fi
+      - name: Re-run the library build
+        run: pnpm build-library
+      - name: Committed library page must equal generator output
+        # The page states counts and provenance for every package. If it can
+        # drift from the manifests it describes, it becomes a claim nobody
+        # checks, which is the one thing this project cannot ship.
+        run: |
+          if ! git diff --exit-code -- site/library.html site/library.js; then
+            echo ""
+            echo "site/library.html or site/library.js differs from the generator output."
+            echo "Do not edit them by hand: change tools/build-library.ts and re-run"
+            echo "'pnpm build-library'."
+            exit 1
+          fi

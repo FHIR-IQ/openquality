@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Browse the library first
+    url: https://openquality.us/library
+    about: Every package, and every question already recorded against it. Your question may already be answered.
+  - name: FHIR Zulip, #cql stream
+    url: https://chat.fhir.org/#narrow/stream/179220-cql
+    about: Where the measure and clinical-reasoning community talks. Good for conversation; this tracker is for things worth keeping.
+  - name: ONC eCQM Issue Tracker
+    url: https://oncprojectracking.healthit.gov/support/projects/CQM/summary
+    about: The official place to reach measure stewards. File there when you need an authoritative answer, and here when you want it to stay findable.

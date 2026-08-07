@@ -5,6 +5,11 @@
   "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
   "redirects": [
     {
+      "source": "/library",
+      "destination": "/library.html",
+      "permanent": false
+    },
+    {
       "source": "/github",
       "destination": "https://github.com/FHIR-IQ/openquality",
       "permanent": false
@@ -44,9 +49,18 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options", "value": "DENY" },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
@@ -69,13 +83,19 @@
     {
       "source": "/fonts/(.*).woff2",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/(robots.txt|sitemap.xml)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
       ]
     }
   ]

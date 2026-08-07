@@ -1,0 +1,37 @@
+name: Defect in a package
+description: A concrete error in a package published here.
+title: "Defect: "
+labels: ["defect", "knowledge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A defect is an error in what this repository published: a wrong artifact path,
+        a provenance claim that does not hold, terminology that should not be here.
+
+        If the error is in the upstream measure rather than in our packaging, file it
+        anyway and say so. Both are worth recording; only one is ours to fix.
+  - type: input
+    id: measure
+    attributes:
+      label: Package
+      placeholder: cms/breast-cancer-screening
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where is the error
+      options:
+        - In this repository's packaging
+        - In the upstream measure content
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: What is wrong
+      description: What you expected, what you found, and how you found it.
+    validations:
+      required: true

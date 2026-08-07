@@ -11,12 +11,14 @@
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json",
     "oq": "tsx packages/cli/src/index.ts",
-    "oq-import": "tsx packages/importer/src/cli.ts"
+    "oq-import": "tsx packages/importer/src/cli.ts",
+    "build-library": "tsx tools/build-library.ts"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",
     "tsx": "^4.23.1",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "yaml": "^2.9.0"
   }
 }

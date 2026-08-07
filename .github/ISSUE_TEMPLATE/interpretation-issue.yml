@@ -1,0 +1,40 @@
+name: Interpretation issue
+description: A place where the specification can be read two ways.
+title: "Interpretation: "
+labels: ["interpretation-issue", "knowledge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when you have found genuine ambiguity, whether or not you know which
+        reading is correct. Recording the ambiguity is valuable even unresolved.
+  - type: input
+    id: measure
+    attributes:
+      label: Measure
+      placeholder: cms/breast-cancer-screening, or CMS125
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Measure version
+      placeholder: "0.4.0"
+  - type: textarea
+    id: readings
+    attributes:
+      label: The two readings
+      description: State both. If one is clearly right, say which and why.
+      placeholder: |
+        Reading A: ...
+        Reading B: ...
+        These differ for a patient who ...
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: What input exposes the difference
+      description: The patient or data shape where the two readings produce different results.
+    validations:
+      required: true

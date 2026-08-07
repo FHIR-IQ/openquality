@@ -1,0 +1,49 @@
+name: Test case
+description: An input and the expected result. The most reusable thing you can contribute.
+title: "Test case: "
+labels: ["test-case", "knowledge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A test case is worth more than an explanation, because the next implementer can
+        run it. Synthetic patients only. Never paste real patient data into this
+        repository.
+  - type: input
+    id: measure
+    attributes:
+      label: Measure
+      placeholder: cms/diabetes-glycemic-status-assessment-greater-than-9
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Measure version
+      placeholder: "0.5.0"
+  - type: textarea
+    id: input
+    attributes:
+      label: The input
+      description: A synthetic patient, described well enough that someone can build it.
+      placeholder: |
+        Female, 52, continuous enrollment for the measurement period.
+        One qualifying encounter. No HbA1c observation at all.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected populations
+      description: Which populations the patient lands in, and why.
+      placeholder: |
+        Initial population: yes
+        Denominator: yes
+        Numerator: yes (missing result counts as poor control)
+    validations:
+      required: true
+  - type: textarea
+    id: catches
+    attributes:
+      label: What mistake this catches
+      description: What does a naive implementation get wrong here?

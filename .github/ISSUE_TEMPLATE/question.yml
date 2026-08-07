@@ -1,0 +1,58 @@
+name: Question about a measure
+description: Ask how a measure is supposed to behave. No answer required to file it.
+title: "Question: "
+labels: ["question", "knowledge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions are the point of this repository, not an interruption to it.
+
+        If the answer turns out to be useful, a maintainer turns this thread into a
+        typed entry under `knowledge/`, pinned to the measure and version, so the next
+        person finds it by searching instead of asking again.
+
+        You do not need to be sure the question is a good one. "I could not tell which
+        of two readings was intended" is exactly the thing this corpus exists to record.
+  - type: input
+    id: measure
+    attributes:
+      label: Measure
+      description: The package id, or the CMS identifier, or just the name if you are not sure.
+      placeholder: cms/diabetes-glycemic-status-assessment-greater-than-9, or CMS122
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Measure version
+      description: Leave blank if it does not matter or you do not know. Logic changes between years, so it usually matters.
+      placeholder: "0.5.0"
+  - type: dropdown
+    id: language
+    attributes:
+      label: What are you implementing in?
+      options:
+        - CQL
+        - SQL
+        - SQL-on-FHIR ViewDefinition
+        - Something else
+        - Not implementing, just reading the spec
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: What is ambiguous
+      description: What are you trying to work out? If the specification can be read two ways, give both readings.
+      placeholder: |
+        The denominator says "during the measurement period". I cannot tell whether an
+        encounter that starts before the period and ends inside it qualifies.
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you already checked
+      description: Optional. Saves everyone repeating work you have already done.
+      placeholder: Read the human-readable HTML, checked the ONC eCQM issue tracker, searched this repo.
