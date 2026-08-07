@@ -1,2 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# The site vendors fonts and a rendered social card. Git's binary heuristic
+# gets these right today, but LF normalization applied to a woff2 or a png
+# corrupts it silently: the file still commits, and only breaks when a browser
+# tries to parse it. Say it explicitly rather than trusting the guess.
+*.woff2 binary
+*.png binary
