@@ -1,7 +1,9 @@
 # Open Quality
 
-An open, community-owned corpus of healthcare quality measures, and a shared record of
-what the community has learned about each one.
+An open corpus of healthcare quality measures, and a shared record of what
+implementers have learned about each one. Founder-stewarded today, with a written
+commitment to community governance as it grows; see [GOVERNANCE](GOVERNANCE.md)
+and [VISION](VISION.md).
 
 Publish a measure in CQL, SQL, or SQL-on-FHIR. Everything is validated, versioned, and
 open for review. Alongside the measures sits the part that usually gets lost: a typed
@@ -89,7 +91,7 @@ Pre-launch.
 | Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
-| Typed feedback | planned | Questions, interpretation issues, defect reports, implementation notes |
+| Registry-hosted feedback | planned | The [`knowledge/`](knowledge/) corpus, searchable and writable from a web UI instead of a pull request |
 
 Local validation stops at Level 1, and so does the seeded corpus. Level 2 needs
 the deep validators, which do not exist yet.
@@ -100,6 +102,7 @@ This is a single repository, laid out so the intent is legible at a glance.
 
 | Path | What lives here |
 |------|-----------------|
+| [VISION.md](VISION.md) | The problem, the mission, and the next year's goals |
 | [`spec/`](spec/) | The package format, the conformance levels, and the CRMI mapping |
 | [`measures/`](measures/) | Measure package collections, indexed by data model and year |
 | [`knowledge/`](knowledge/) | The interpretation-issue corpus — questions, defects, and test cases per measure |

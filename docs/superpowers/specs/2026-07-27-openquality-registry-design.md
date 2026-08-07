@@ -1,7 +1,11 @@
 # Open Quality: Measure Package Registry (v1 Design)
 
 Date: 2026-07-27
-Status: Approved for planning
+Status: Approved for planning. **Partially superseded 2026-08-01**: the seed-corpus
+spec in this directory executed the content phase and revised several decisions —
+the §10 success criteria (full CMS library at Level 2, 25 community packages in 90
+days) no longer bind, Level 2 is deferred with the validator subsystem, and git is
+the distribution channel until the hosted registry exists.
 Author: Gene Vestel
 
 ## 1. Problem

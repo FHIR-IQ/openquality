@@ -35,8 +35,10 @@ The full format, the conformance levels, and the CRMI mapping are in [`spec/`](s
    pnpm oq validate measures/<collection>/<your-package>
    ```
 
-5. Open the pull request. Deep validation (CQL to ELM, FHIR profile checks, SQL parsing,
-   value-set resolution) runs on publish and determines the final conformance level.
+5. Open the pull request. Local validation reaches Level 1, and today that is also the
+   ceiling: deep validation (CQL to ELM, FHIR profile checks, SQL parsing, value-set
+   resolution) will run on publish once the validator subsystem exists, and will then
+   determine the final conformance level.
 
 **What gets accepted**
 
