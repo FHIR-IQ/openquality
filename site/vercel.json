@@ -1,12 +1,70 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "trailingSlash": false,
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "redirects": [
+    {
+      "source": "/github",
+      "destination": "https://github.com/FHIR-IQ/openquality",
+      "permanent": false
+    },
+    {
+      "source": "/contributing",
+      "destination": "https://github.com/FHIR-IQ/openquality/blob/main/CONTRIBUTING.md",
+      "permanent": false
+    },
+    {
+      "source": "/knowledge",
+      "destination": "https://github.com/FHIR-IQ/openquality/tree/main/knowledge",
+      "permanent": false
+    },
+    {
+      "source": "/spec",
+      "destination": "https://github.com/FHIR-IQ/openquality/tree/main/spec",
+      "permanent": false
+    },
+    {
+      "source": "/terminology",
+      "destination": "https://github.com/FHIR-IQ/openquality/blob/main/TERMINOLOGY.md",
+      "permanent": false
+    },
+    {
+      "source": "/zulip",
+      "destination": "https://chat.fhir.org/#narrow/stream/179220-cql",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://vitals.vercel-insights.com; upgrade-insecure-requests"
+        }
+      ]
+    },
+    {
+      "source": "/og.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(robots.txt|sitemap.xml)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" }
       ]
     }
   ]

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://openquality.vercel.app/sitemap.xml

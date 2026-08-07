@@ -1,0 +1,13 @@
+# Open Quality publishes a static site and a public corpus. There is no user
+# data, no authentication, and no backend to attack. The findings we care about
+# are content defects: a package whose provenance claim does not match upstream,
+# or licensed terminology that reached the corpus by mistake.
+#
+# Renew before the Expires date below, or drop this file. A security.txt that
+# has expired is a broken promise, which is worse than not making one.
+
+Contact: https://github.com/FHIR-IQ/openquality/security/advisories/new
+Expires: 2027-08-07T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://openquality.vercel.app/.well-known/security.txt
+Policy: https://github.com/FHIR-IQ/openquality/blob/main/CONTRIBUTING.md
