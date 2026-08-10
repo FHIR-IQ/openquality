@@ -12,6 +12,7 @@ const LEVEL_1_CHECKS: CheckId[] = [
   'artifacts.typed',
   'valuesets.referenced',
   'readme.sections',
+  'package.symlinks',
   'content.forbidden',
 ]
 

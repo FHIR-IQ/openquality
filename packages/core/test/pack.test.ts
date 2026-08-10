@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { packPackage } from '../src/pack.js'
+import { listPackageFiles, listPackageSymlinks, packPackage } from '../src/pack.js'
 
 let dir: string
 
@@ -57,5 +57,40 @@ describe('packPackage', () => {
     const empty = await mkdtemp(join(tmpdir(), 'oq-empty-'))
     await expect(packPackage(empty)).rejects.toThrow(/openquality\.yaml/)
     await rm(empty, { recursive: true, force: true })
+  })
+})
+
+describe('symlinks in a package', () => {
+  // An undeclared symlink used to be invisible: readdir reports it as neither a
+  // file nor a directory, so the walk skipped it. A file the content scanner
+  // rejects could sit in a package behind one and validate clean at Level 1.
+  it('lists a symlink instead of silently dropping it', async () => {
+    const outside = await mkdtemp(join(tmpdir(), 'oq-outside-'))
+    await writeFile(join(outside, 'licensed.cql'), 'library X\n', 'utf8')
+    await symlink(join(outside, 'licensed.cql'), join(dir, 'cql', 'hidden.cql'))
+
+    expect(await listPackageSymlinks(dir)).toEqual(['cql/hidden.cql'])
+    // Still not a file, so the two lists stay disjoint and the tarball is not
+    // asked to carry something it cannot represent.
+    expect(await listPackageFiles(dir)).not.toContain('cql/hidden.cql')
+
+    await rm(outside, { recursive: true, force: true })
+  })
+
+  it('finds a symlink nested below the package root', async () => {
+    await mkdir(join(dir, 'cql', 'sub'), { recursive: true })
+    await symlink(join(dir, 'README.md'), join(dir, 'cql', 'sub', 'link.md'))
+    expect(await listPackageSymlinks(dir)).toEqual(['cql/sub/link.md'])
+  })
+
+  it('reports no symlinks for an ordinary package', async () => {
+    expect(await listPackageSymlinks(dir)).toEqual([])
+  })
+
+  it('refuses to pack a package containing one', async () => {
+    await symlink(join(dir, 'README.md'), join(dir, 'cql', 'link.md'))
+    await expect(packPackage(dir)).rejects.toThrow(/symlink/)
+    // The message has to name the offender, or an author cannot act on it.
+    await expect(packPackage(dir)).rejects.toThrow(/cql\/link\.md/)
   })
 })

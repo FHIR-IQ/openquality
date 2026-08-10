@@ -7,7 +7,7 @@ const L1_CHECKS: CheckId[] = [
   'manifest.schema', 'manifest.license', 'manifest.dataModel', 'manifest.measure',
   'manifest.provenance',
   'artifacts.present', 'artifacts.typed', 'valuesets.referenced',
-  'readme.sections', 'content.forbidden',
+  'readme.sections', 'package.symlinks', 'content.forbidden',
 ]
 
 function manifest(over: Partial<Manifest> = {}): Manifest {

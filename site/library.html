@@ -146,7 +146,7 @@
     </p>
     <div class="counts">
       <div><b>53</b> packages</div>
-      <div><b>8</b> knowledge entries</div>
+      <div><b>9</b> knowledge entries</div>
       <div><b>14</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
     </div>
@@ -180,6 +180,12 @@
         <span class="es mono">corpus-2026-003</span>
         <span class="es">resolved</span></div>
         <p>CQL legitimately declares one value set under two names. A manifest that lists value sets by walking those declarations therefore names the same OID twice, which no check caught until someone went looking for it.</p>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="et">defect</span>
+        <span class="es mono">corpus-2026-004</span>
+        <span class="es">resolved</span></div>
+        <p>A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.</p>
       </div>
     </div>
   </section>

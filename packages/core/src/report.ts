@@ -15,6 +15,7 @@ export type CheckId =
   | 'artifacts.typed'
   | 'valuesets.referenced'
   | 'readme.sections'
+  | 'package.symlinks'
   | 'content.forbidden'
   | 'cql.translate'
   | 'fhir.validate'

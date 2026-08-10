@@ -179,3 +179,47 @@ describe('validatePackage', () => {
     expect(result.report.findings.some((f) => f.check === 'readme.sections')).toBe(true)
   })
 })
+
+describe('undeclared symlinks', () => {
+  // The scenario an outside reviewer used to defeat the content scanner: put
+  // the licensed text in a file outside the package, link to it from inside,
+  // and declare nothing. readdir reports a symlink as neither file nor
+  // directory, so the scanner never opened it and the package validated clean
+  // at Level 1 carrying exactly what the scanner exists to reject.
+  it('does not let an undeclared symlink hide content from the scanner', async () => {
+    const outside = await mkdtemp(join(tmpdir(), 'oq-outside-'))
+    await writeFile(
+      join(outside, 'licensed.cql'),
+      `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'\n` +
+        `code "N": '97804' from "CPT" display 'licensed descriptor'\n`,
+      'utf8',
+    )
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', README)
+    await write('cql/M.cql', 'library M\n')
+    await symlink(join(outside, 'licensed.cql'), join(dir, 'cql', 'hidden.cql'))
+
+    const { level, report } = await validatePackage(dir)
+
+    expect(level).toBe(0)
+    const symlinkErrors = report.findings.filter(
+      (f) => f.check === 'package.symlinks' && f.severity === 'error',
+    )
+    expect(symlinkErrors).toHaveLength(1)
+    expect(symlinkErrors[0].path).toBe('cql/hidden.cql')
+
+    await rm(outside, { recursive: true, force: true })
+  })
+
+  it('runs the symlink check on a package that has none, so the level can be earned', async () => {
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', README)
+    await write('cql/M.cql', 'library M\n')
+
+    const { level, report } = await validatePackage(dir)
+
+    expect(report.checksRun).toContain('package.symlinks')
+    expect(report.findings.filter((f) => f.check === 'package.symlinks')).toEqual([])
+    expect(level).toBe(1)
+  })
+})

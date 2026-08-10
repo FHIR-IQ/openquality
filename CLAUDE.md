@@ -56,6 +56,7 @@ sequence of checks, each owned by its own module, each returning `Finding[]`:
 | `provenance.ts` | Upstream provenance block rules |
 | `valuesets.ts` | Value set reference format |
 | `readme.ts` | Required README sections |
+| `pack.ts` | The file walk, and the rule that a package holds only real files |
 | `scanner.ts` / `terminology.ts` | Content the corpus cannot host |
 | `level.ts` | Maps checks → conformance level |
 | `report.ts` | `CheckId` union, `Finding`, `Severity` |

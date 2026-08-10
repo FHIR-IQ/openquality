@@ -7,7 +7,7 @@ import { checkProvenance } from './provenance.js'
 import { checkReadmeSections } from './readme.js'
 import { scanContent } from './scanner.js'
 import { computeLevel } from './level.js'
-import { listPackageFiles } from './pack.js'
+import { listPackageFiles, listPackageSymlinks } from './pack.js'
 import type { CheckId, ConformanceLevel, Finding, ValidationReport } from './report.js'
 
 export interface ValidationResult {
@@ -154,6 +154,29 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   checksRun.push('readme.sections')
   findings.push(...checkReadmeSections(await readIfPresent(join(dir, 'README.md'))))
+
+  // Runs before content.forbidden because it is what makes that check's promise
+  // true. A symlink is neither a file nor a directory to readdir, so the walk
+  // below never saw one and never reported it. Licensed content could therefore
+  // sit in a package behind an undeclared symlink and validate clean at Level 1.
+  //
+  // An error rather than a warning: a package is a self-contained unit of
+  // exchange, a tarball cannot carry a link to a file the recipient does not
+  // have, and there is no legitimate use for one inside a measure package. This
+  // is the rare case where the check is not about what the content says but
+  // about whether the validator was able to read it at all.
+  checksRun.push('package.symlinks')
+  for (const relPath of await listPackageSymlinks(dir)) {
+    findings.push({
+      check: 'package.symlinks',
+      severity: 'error',
+      message:
+        `${relPath} is a symlink. A package must contain only real files, because ` +
+        `nothing can verify what a link points to at the time someone reads it. ` +
+        `Replace it with the file it points to.`,
+      path: relPath,
+    })
+  }
 
   // Scans every file in the package, not only the declared artifacts. packPackage
   // ships the whole directory, so scanning only what the manifest lists would let

@@ -18,7 +18,7 @@ exists to be copied.
 ## What Level 1 requires
 
 Level 1 is called **Described**: the package says what it is in a form a machine
-can read, and carries nothing it has no right to redistribute. Nine checks gate
+can read, and carries nothing it has no right to redistribute. Ten checks gate
 it, and only errors count. A warning never blocks a level.
 
 | Check | What it wants |
@@ -32,6 +32,7 @@ it, and only errors count. A warning never blocks a level.
 | `artifacts.typed` | Every artifact declares a known type |
 | `valuesets.referenced` | Value sets referenced by OID or canonical URL |
 | `readme.sections` | This README has Intent, Known Limitations, and Provenance |
+| `package.symlinks` | Real files only, so nothing can hide from the scanner |
 
 Level 2 is **Verified**, and nothing reaches it today. It needs CQL translation,
 FHIR profile validation, and SQL parsing, none of which are implemented. Level 1
