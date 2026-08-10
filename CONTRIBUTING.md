@@ -22,9 +22,18 @@ The full format, the conformance levels, and the CRMI mapping are in [`spec/`](s
 
 **Steps**
 
-1. Create your package under [`measures/`](measures/), in the collection that matches its
+1. Copy [`measures/TEMPLATE/`](measures/TEMPLATE/) into the collection that matches your
    data model and measurement year. Open an issue first if you are not sure where it goes.
-2. Write the `openquality.yaml` manifest. Reference value sets by OID or canonical URL —
+
+   ```bash
+   cp -r measures/TEMPLATE measures/community/my-measure
+   ```
+
+   The template is a working package that reaches Level 1 as it stands, with every manifest
+   field annotated. CI validates it on every pull request, so it cannot drift from the rules
+   the validator actually enforces. Starting from scratch is fine too; the template just
+   saves you a round trip.
+2. Edit the `openquality.yaml` manifest. Reference value sets by OID or canonical URL —
    never paste an expansion into the package.
 3. Write the package `README`, stating **intent**, **known limitations**, and
    **provenance**. This is required for Level 1 and it is the part a future reader needs

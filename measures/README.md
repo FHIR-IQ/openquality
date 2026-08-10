@@ -20,6 +20,11 @@ More collections get added as content arrives — a `sql-on-fhir` collection for
 ViewDefinition-based measures, additional program and year collections, and so on. New
 collections earn their place when there is content to fill them, not before.
 
+[`TEMPLATE/`](TEMPLATE/) is not a collection and not a measure. It is a package skeleton to
+copy, annotated field by field, and it reaches Level 1 as it stands. It sits outside both
+collections on purpose, so it is never counted in the corpus and never appears in the
+library. CI validates it on every pull request so it cannot drift from the rules.
+
 ## Status
 
 Every collection carries one of three statuses, with the same meanings cqframework uses:

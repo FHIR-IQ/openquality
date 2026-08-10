@@ -31,6 +31,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Every package reaches Level 1
         run: pnpm oq validate-all measures/cms-fhir-2026 measures/community
+      - name: The contributor template still reaches Level 1
+        # measures/TEMPLATE is the skeleton CONTRIBUTING tells people to copy,
+        # and its README claims it validates as-is. It sits directly under
+        # measures/ rather than inside a collection, so it is the only package
+        # this root finds, and it stays out of the corpus count and the library.
+        # Checked because a template that silently stops passing sends every new
+        # contributor into a failing build.
+        run: pnpm oq validate-all measures --floor 1
       - name: No licensed display text
         run: |
           if grep -rn 'from "CPT"' measures/ | grep -q display; then

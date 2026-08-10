@@ -1,0 +1,100 @@
+# A working package skeleton. Copy the directory, rename it, and edit:
+#
+#   cp -r measures/TEMPLATE measures/community/my-measure
+#   pnpm oq validate measures/community/my-measure
+#
+# It reaches Level 1 exactly as it stands, so you can change one field at a
+# time and see what the validator says. CI validates this template on every
+# pull request: if a rule changes and the template stops passing, the build
+# fails and the template gets fixed rather than quietly going stale.
+#
+# The authoritative rules are the code in packages/core/src/. This file
+# annotates them; it does not define them.
+
+# Required. namespace/name, lowercase letters, digits and hyphens.
+# The namespace says who publishes the package, not who stewards the measure.
+id: community/template-measure
+
+# Required. Semver. A published version is immutable: to change a package,
+# publish a new version rather than editing one.
+version: 0.1.0
+
+# Required, and must be on the allowlist in packages/core/src/licenses.ts:
+# Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause, CC0-1.0, CC-BY-4.0,
+# CC-BY-SA-4.0, GPL-3.0-only, GPL-3.0-or-later, LGPL-3.0-only, MPL-2.0.
+# Non-commercial and no-derivatives variants are rejected because they block
+# the reuse this corpus exists to enable.
+license: Apache-2.0
+
+# Optional. The measurement year the logic targets.
+measurementPeriod: 2026
+
+measure:
+  # Required for Level 1. Without it, the package never says which measure it
+  # implements, and a reader cannot tell what they are looking at.
+  title: Template Measure
+
+  # Optional. The organization that stewards the measure. Omit it for original
+  # logic that has no steward: naming one that did not publish the measure is a
+  # false claim, and this project treats an overstated README as a defect equal
+  # to a bug in the code.
+  # steward: National Committee for Quality Assurance
+
+  # Optional. Whatever the measure is publicly known by.
+  # identifiers: [CMS122FHIR]
+
+  # Optional. process | outcome | intermediate-outcome | structural |
+  # patient-reported-outcome
+  type: process
+
+  # Optional. increase | decrease. Which direction is better.
+  improvementNotation: increase
+
+  # Optional, free text, used for browsing.
+  # domain: [diabetes, chronic-care]
+  # setting: [ambulatory]
+
+# Required for Level 1. One of: fhir-r4, qi-core, qdm-5.6, omop-5.4,
+# sql-on-fhir, custom. Without it, shared SQL is unreadable to anyone but its
+# author.
+dataModel: fhir-r4
+
+# Required, at least one entry, and every declared path must exist inside the
+# package. Types: cql, sql, fhir/Measure, fhir/Library, fhir/ValueSet,
+# sql-on-fhir/ViewDefinition, python, r, notebook, doc.
+#
+# An artifact of type "sql" must also declare a dialect:
+#   - path: numerator.sql
+#     type: sql
+#     dialect: duckdb
+#
+# If your logic includes a shared library such as FHIRHelpers, vendor the file
+# into this package and declare it here too. A package that cannot be read
+# without fetching six others is not a unit of exchange.
+artifacts:
+  - path: cql/TemplateMeasure.cql
+    type: cql
+
+# Optional, but list every value set your logic uses. Never paste an expansion
+# into the package: redistributing one requires a UMLS licence, and the
+# validator rejects it as an error. The OID goes in bare, without the urn:oid:
+# prefix that CQL writes it with.
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001
+    source: vsac
+
+# Omitted on purpose. Declare provenance only when the content came from
+# somewhere else. Original logic has no upstream, and inventing one is the kind
+# of unverifiable claim this corpus exists to avoid.
+#
+# When it does apply, these fields are all required, and a "derived" package
+# must say what changed:
+#
+# provenance:
+#   upstream: https://github.com/example/measure-content
+#   ref: 0e5c0f4a1d3b9f2c8a7e6d5b4c3a2918f7e6d5c4   # commit, tag, branch or release
+#   retrieved: 2026-08-10                            # ISO date, YYYY-MM-DD
+#   relationship: unmodified                         # unmodified | derived
+#   modifications:                                   # required and non-empty when derived
+#     - "Removed licensed display descriptors from three code declarations."
