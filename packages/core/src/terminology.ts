@@ -40,6 +40,23 @@ export function displayAllowed(url: string): boolean {
 }
 
 /**
+ * What can sit between two tokens of a declaration: whitespace, a block
+ * comment, or a line comment. Used everywhere the patterns below would
+ * otherwise demand `\s`.
+ *
+ * Reported by an outside reviewer, who put a block comment between `display`
+ * and its string. That is valid CQL, it changes nothing about the bytes being
+ * redistributed, and it made the descriptor check below stop matching
+ * altogether. The licensed text shipped with only the generic reference
+ * warning, which does not block a level.
+ *
+ * The same hole existed here, and was worse: an unmatched codesystem
+ * declaration means the alias is never recorded, so `checkTerminology` returns
+ * early and no code declaration in the file is examined at all.
+ */
+const GAP = String.raw`(?:\s|/\*[\s\S]*?\*/|//[^\n]*(?:\n|$))`
+
+/**
  * A CQL codesystem declaration, e.g. `codesystem "CPT": 'http://...'`. Group 1
  * is the alias used elsewhere in the file, group 2 the system URL. The alias
  * capture tolerates an escaped quote (\") the same way CODE_WITH_DISPLAY's
@@ -50,7 +67,10 @@ export function displayAllowed(url: string): boolean {
  * Case-insensitive (`i`) for the same reason as CODE_WITH_DISPLAY below, not
  * because CQL keywords are case-insensitive - they are not.
  */
-const CODESYSTEM_DECL = /^\s*codesystem\s+"((?:[^"\\]|\\.)*)"\s*:\s*'((?:[^'\\]|\\.)*)'/gim
+const CODESYSTEM_DECL = new RegExp(
+  String.raw`^${GAP}*codesystem${GAP}+"((?:[^"\\]|\\.)*)"${GAP}*:${GAP}*'((?:[^'\\]|\\.)*)'`,
+  'gim',
+)
 
 /**
  * A CQL code declaration that carries display text:
@@ -71,8 +91,11 @@ const CODESYSTEM_DECL = /^\s*codesystem\s+"((?:[^"\\]|\\.)*)"\s*:\s*'((?:[^'\\]|
  * Matching case-insensitively costs nothing and keeps such a file from
  * carrying a licensed descriptor past this check.
  */
-const CODE_WITH_DISPLAY =
-  /^\s*code\s+"(?:[^"\\]|\\.)*"\s*:\s*'((?:[^'\\]|\\.)*)'\s+from\s+"((?:[^"\\]|\\.)*)"\s+display\s+'(?:[^'\\]|\\.)*'/gim
+const CODE_WITH_DISPLAY = new RegExp(
+  String.raw`^${GAP}*code${GAP}+"(?:[^"\\]|\\.)*"${GAP}*:${GAP}*'((?:[^'\\]|\\.)*)'` +
+    String.raw`${GAP}+from${GAP}+"((?:[^"\\]|\\.)*)"${GAP}+display${GAP}+'(?:[^'\\]|\\.)*'`,
+  'gim',
+)
 
 /** Code system aliases declared in this CQL file, mapped to their URLs. */
 export function codeSystemAliases(cql: string): Map<string, string> {

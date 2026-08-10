@@ -146,7 +146,7 @@
     </p>
     <div class="counts">
       <div><b>53</b> packages</div>
-      <div><b>9</b> knowledge entries</div>
+      <div><b>10</b> knowledge entries</div>
       <div><b>14</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
     </div>
@@ -186,6 +186,12 @@
         <span class="es mono">corpus-2026-004</span>
         <span class="es">resolved</span></div>
         <p>A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.</p>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="et">defect</span>
+        <span class="es mono">corpus-2026-005</span>
+        <span class="es">resolved</span></div>
+        <p>Two ways past the content scanner, both found with real, declared files. Each worked by making a parser fail to recognise something rather than by hiding it: a duplicate key that stopped the YAML parser reading an embedded expansion, and a CQL comment that stopped a regex matching a licensed descriptor. In both cases the scanner read the failure as &quot;nothing here&quot;.</p>
       </div>
     </div>
   </section>

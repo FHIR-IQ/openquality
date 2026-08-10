@@ -53,3 +53,9 @@ licence.
 The scanner is a heuristic first filter. It will miss things and it will
 produce false positives. It is backed by the takedown process in
 [GOVERNANCE](GOVERNANCE.md), not presented as a guarantee.
+
+Where it cannot tell, it fails closed. A file that declares a `ValueSet`
+resourceType and an expansion element is an error even when the scanner cannot
+read the file well enough to confirm what the expansion holds. That rule exists
+because it was defeated: see
+[`knowledge/corpus/2026-005`](knowledge/corpus/2026-005-the-scanner-trusted-its-own-parser.md).

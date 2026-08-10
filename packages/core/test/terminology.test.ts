@@ -138,3 +138,53 @@ describe('checkTerminology', () => {
     expect(checkTerminology('cql/Example.cql', cql)).toEqual([])
   })
 })
+
+describe('comments between the tokens of a declaration', () => {
+  // Reported by an outside reviewer. A block comment between `display` and its
+  // string is valid CQL, changes nothing about the bytes redistributed, and
+  // stopped the descriptor check matching at all.
+  const withGap = (gap: string) =>
+    [
+      `library Example version '1.0.000'`,
+      ``,
+      `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'`,
+      ``,
+      `code "N": '97804' from "CPT" display ${gap}'Medical nutrition therapy'`,
+    ].join('\n')
+
+  it('still reports a descriptor split by a block comment', () => {
+    const findings = checkTerminology('m.cql', withGap('/* harmless */ '))
+    expect(findings).toHaveLength(1)
+    expect(findings[0].severity).toBe('error')
+    expect(findings[0].message).toContain('97804')
+  })
+
+  it('still reports a descriptor split by a multi-line block comment', () => {
+    const findings = checkTerminology('m.cql', withGap('/* one\n   two */\n  '))
+    expect(findings).toHaveLength(1)
+  })
+
+  it('still reports a descriptor split by a line comment', () => {
+    const findings = checkTerminology('m.cql', withGap('// note\n  '))
+    expect(findings).toHaveLength(1)
+  })
+
+  it('still records the alias when the codesystem declaration carries a comment', () => {
+    // The worse half of the same hole: an unmatched codesystem declaration
+    // means the alias is never recorded, checkTerminology returns early, and
+    // no code declaration in the file is examined at all.
+    const cql = [
+      `codesystem /* which one */ "CPT": 'http://www.ama-assn.org/go/cpt'`,
+      `code "N": '97804' from "CPT" display 'Medical nutrition therapy'`,
+    ].join('\n')
+    expect(checkTerminology('m.cql', cql)).toHaveLength(1)
+  })
+
+  it('leaves an unrestricted code system alone however it is spaced', () => {
+    const cql = [
+      `codesystem /* fine */ "SNOMED": 'http://snomed.info/sct'`,
+      `code "D": '44054006' from "SNOMED" display /* fine */ 'Diabetes mellitus type 2'`,
+    ].join('\n')
+    expect(checkTerminology('m.cql', cql)).toEqual([])
+  })
+})

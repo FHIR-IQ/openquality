@@ -76,3 +76,52 @@ describe('scanContent', () => {
     expect(scanContent('fhir/m.json', '{"system":"urn:oid:2.16.840.1.113883.6.12"}')).toHaveLength(1)
   })
 })
+
+describe('an expansion the parser cannot read', () => {
+  // Reported by an outside reviewer. A genuine expansion with one duplicated
+  // key: YAML forbids duplicates so the parser throws, where a JSON parser
+  // takes the last one and carries on. The scanner treated the thrown error as
+  // "nothing here" and the package validated clean at Level 1.
+  const DUPLICATE_KEY = `{
+  "resourceType": "ValueSet",
+  "resourceType": "ValueSet",
+  "expansion": {
+    "contains": [
+      { "system": "http://snomed.info/sct", "code": "44054006", "display": "Diabetes mellitus type 2" }
+    ]
+  }
+}`
+
+  it('reports an expansion that does not parse, instead of passing it', () => {
+    const findings = scanContent('vs.json', DUPLICATE_KEY)
+    const errors = findings.filter((f) => f.severity === 'error')
+    expect(errors).toHaveLength(1)
+    expect(errors[0].check).toBe('content.forbidden')
+    expect(errors[0].message).toMatch(/did not parse/)
+  })
+
+  it('still reports a well formed expansion through the structural check', () => {
+    const clean = DUPLICATE_KEY.replace('  "resourceType": "ValueSet",\n', '')
+    const errors = scanContent('vs.json', clean).filter((f) => f.severity === 'error')
+    expect(errors).toHaveLength(1)
+    // The structural check owns this one, so the message must not blame parsing.
+    expect(errors[0].message).toMatch(/contains an embedded ValueSet expansion/)
+  })
+
+  it('does not fire on prose that discusses expansions', () => {
+    // TERMINOLOGY.md explains this rule at length and must stay scannable.
+    const prose = [
+      '# Terminology',
+      '',
+      'Value sets are referenced by OID or canonical URL. An expansion is the',
+      'list of codes a ValueSet resolves to, and redistributing one requires a',
+      'UMLS licence, so no expansion is ever embedded in a package.',
+    ].join('\n')
+    expect(scanContent('TERMINOLOGY.md', prose)).toEqual([])
+  })
+
+  it('does not fire on a CQL file, which never parses as YAML', () => {
+    const cql = `library M version '1.0.0'\n\nvalueset "D": 'urn:oid:2.16.840.1'\n\ndefine "X": true\n`
+    expect(scanContent('cql/M.cql', cql)).toEqual([])
+  })
+})
