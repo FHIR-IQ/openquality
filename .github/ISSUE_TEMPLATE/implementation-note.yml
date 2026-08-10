@@ -1,0 +1,63 @@
+name: Implementation note
+description: A lesson learned that would save the next implementer time.
+title: "Implementation note: "
+labels: ["implementation-note", "knowledge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The thing you worked out the hard way, that is written down nowhere.
+
+        It does not have to be about one measure. "Defines cache and functions do not,
+        so every call re-evaluates the retrieve" is a fact about how CQL is evaluated,
+        and filing it under whichever measure happened to expose it buries it. Entries
+        like that get a scope instead of a measure and live under `knowledge/cql/`,
+        `knowledge/sql-on-fhir/`, `knowledge/qi-core/`, or `knowledge/corpus/`.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: What is this about
+      description: Pick the widest thing it is true of, not the narrowest place you hit it.
+      options:
+        - One specific measure
+        - CQL, the language and how engines evaluate it
+        - SQL-on-FHIR, ViewDefinitions and the flat schema
+        - QI-Core, the profiles and the data model
+        - How this repository packages and versions things
+    validations:
+      required: true
+  - type: input
+    id: measure
+    attributes:
+      label: Measure
+      description: Only if you picked "one specific measure" above. Leave blank otherwise.
+      placeholder: cms/diabetes-glycemic-status-assessment-greater-than-9, or CMS122
+  - type: input
+    id: version
+    attributes:
+      label: Measure version
+      description: Leave blank if the note is not version-specific.
+      placeholder: "0.5.0"
+  - type: textarea
+    id: note
+    attributes:
+      label: What you learned
+      description: What you expected, what actually happened, and what you changed.
+      placeholder: |
+        Functions do not cache, so calling one inside a where clause re-ran the
+        retrieve for every element. Restructuring the same logic into prefiltered
+        defines took a library from 30-40 seconds per patient to under a second,
+        with identical results.
+    validations:
+      required: true
+  - type: input
+    id: engine
+    attributes:
+      label: Engine, tool, or version
+      description: Optional, but it is usually the first thing the next person asks.
+      placeholder: cql-engine 3.x, CQL Studio, Firely SDK
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How you know
+      description: Optional. Timings, a before-and-after snippet, or a link. Turns an assertion into something a reader can check.

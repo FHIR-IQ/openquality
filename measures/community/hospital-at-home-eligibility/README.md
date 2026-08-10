@@ -19,6 +19,21 @@ author under an approved open license.
 
 ## How to fill this in
 
-See [CONTRIBUTING](../../../CONTRIBUTING.md#1-publish-a-measure-package). A complete package
-adds an `openquality.yaml` manifest, the CQL (and/or SQL) artifacts, referenced value sets by
-OID or canonical URL, and a README stating intent, known limitations, and provenance.
+This directory already exists, so copy the skeleton's files into it rather than copying the
+directory over it:
+
+```bash
+cp measures/TEMPLATE/openquality.yaml measures/community/hospital-at-home-eligibility/
+mkdir -p measures/community/hospital-at-home-eligibility/cql
+# add your .cql files there, then:
+pnpm oq validate measures/community/hospital-at-home-eligibility
+```
+
+[`measures/TEMPLATE/`](../../TEMPLATE/) is a working package that reaches Level 1 as it
+stands, with every manifest field annotated. Its README also explains what belongs under
+Intent, Known Limitations, and Provenance, which are the three sections Level 1 requires and
+the three no tool can write for you.
+
+Replace this README when the package lands. The remaining rules are in
+[CONTRIBUTING](../../../CONTRIBUTING.md#1-publish-a-measure-package): value sets referenced
+by OID or canonical URL and never embedded, and no licensed display text.

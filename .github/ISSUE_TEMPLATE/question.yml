@@ -1,5 +1,5 @@
-name: Question about a measure
-description: Ask how a measure is supposed to behave. No answer required to file it.
+name: Ask a question
+description: How a measure is supposed to behave, or how CQL, SQL-on-FHIR, or QI-Core works. No answer required to file it.
 title: "Question: "
 labels: ["question", "knowledge"]
 body:
@@ -14,14 +14,29 @@ body:
 
         You do not need to be sure the question is a good one. "I could not tell which
         of two readings was intended" is exactly the thing this corpus exists to record.
+
+        Questions that are not about any one measure are welcome too. How CQL evaluates,
+        how a ViewDefinition flattens, how QI-Core profiles a resource: those get a scope
+        rather than a measure, and they are often the more reusable answer.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: What is the question about
+      description: Pick the widest thing it applies to, not the narrowest place you hit it.
+      options:
+        - One specific measure
+        - CQL, the language and how engines evaluate it
+        - SQL-on-FHIR, ViewDefinitions and the flat schema
+        - QI-Core, the profiles and the data model
+        - How this repository packages and versions things
+    validations:
+      required: true
   - type: input
     id: measure
     attributes:
       label: Measure
-      description: The package id, or the CMS identifier, or just the name if you are not sure.
+      description: Only if you picked "one specific measure" above. The package id, the CMS identifier, or just the name if you are not sure.
       placeholder: cms/diabetes-glycemic-status-assessment-greater-than-9, or CMS122
-    validations:
-      required: true
   - type: input
     id: version
     attributes:

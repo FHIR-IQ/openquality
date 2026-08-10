@@ -74,8 +74,17 @@ to a version. Each entry is one of:
 - **Implementation note** — a lesson learned that would save the next implementer time.
 - **Test case** — an input and the expected result.
 
-Follow the entry format in [`knowledge/README.md`](knowledge/README.md). The schema is a
-machine-readable superset of the categories in the
+You do not need git for this. [Open an issue](https://github.com/FHIR-IQ/openquality/issues/new/choose)
+and pick the form that matches; the forms ask for the same fields as the entry format, and a
+maintainer turns the thread into a committed entry. If you would rather open a pull request
+directly, follow the entry format in [`knowledge/README.md`](knowledge/README.md).
+
+An entry does not have to be about one measure. How CQL caches, how a ViewDefinition
+flattens, how this repository versions things: those carry a `scope` instead of a `measure`,
+and they are usually the more reusable answer. Filing them under whichever measure happened
+to expose them buries them.
+
+The schema is a machine-readable superset of the categories in the
 [ONC eCQM Issue Tracker](https://oncprojectracking.healthit.gov/support/projects/CQM/summary),
 so if you already file there, the mapping is direct.
 
