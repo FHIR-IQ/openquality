@@ -1,8 +1,7 @@
 ---
-id: cms122-2026-007
+id: corpus-2026-002
+scope: corpus
 type: implementation-note
-measure: cms/diabetes-glycemic-status-assessment-greater-than-9
-measureVersion: "0.5.0"
 measurementPeriod: 2026
 status: open
 categories: [packaging, cql]

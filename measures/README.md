@@ -56,7 +56,7 @@ That duplication is deliberate. A package that cannot be read or evaluated witho
 six others is not a unit of exchange. The alternative, publishing each shared library as its
 own package, would require a `measure.title` for something that is not a measure, since
 Level 1 demands one. The trade-off and its open questions are recorded in
-[`../knowledge/cms122/2026-007-vendored-library-duplication.md`](../knowledge/cms122/2026-007-vendored-library-duplication.md).
+[`../knowledge/corpus/2026-002-vendored-library-duplication.md`](../knowledge/corpus/2026-002-vendored-library-duplication.md).
 
 ## Contributing a measure
 

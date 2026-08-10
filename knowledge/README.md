@@ -37,9 +37,9 @@ this corpus is direct, and the corpus becomes the open, queryable companion to i
 
 ## Layout
 
-Entries live under the measure they concern:
+Most entries live under the measure they concern:
 
-```
+```text
 knowledge/
   cms122/
     2026-001-numerator-timing.md
@@ -47,6 +47,33 @@ knowledge/
     test-cases/
       poor-control-boundary.md
 ```
+
+## Entries that are not about one measure
+
+Some of the most reusable knowledge is not about a measure at all. "Defines
+cache and functions do not, so every call re-evaluates the retrieve" is a fact
+about how CQL is evaluated. It applies to every measure anyone writes, and
+filing it under whichever measure happened to expose it buries it.
+
+An entry like that carries a `scope` instead of a `measure`, and lives in a
+directory named for that scope:
+
+```text
+knowledge/
+  cql/            # the language and how engines evaluate it
+  sql-on-fhir/    # ViewDefinitions and the flat schema
+  qi-core/        # the profiles and the data model
+  corpus/         # how this repository packages and versions things
+```
+
+Use `measure:` when the entry is about a measure, and `scope:` when it is not.
+Do not set both. An entry with neither has no home and will not appear in the
+library.
+
+The id is prefixed with the scope rather than the measure, so
+`corpus-2026-002` rather than `cms122-2026-007`. That prefix is the honest
+statement of what the entry is about, and it is how a reader knows before
+opening the file whether it applies to them.
 
 ## Entry format
 
@@ -57,6 +84,8 @@ Each entry is a Markdown file with a YAML front matter header, then a free-text 
 id: cms122-2026-002                       # stable, unique within the measure
 type: interpretation-issue                 # one of the types above
 measure: cms/diabetes-glycemic-status-assessment-greater-than-9   # the package id it concerns
+# ...or, when the entry is not about one measure, a scope instead:
+#   scope: cql                              # cql | sql-on-fhir | qi-core | corpus
 measureVersion: "0.5.0"                     # pin when the issue is version-specific
 measurementPeriod: 2026
 status: open                                # open | acknowledged | resolved | wont-fix

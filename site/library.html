@@ -108,6 +108,13 @@
   .acts a.primary{background:var(--ink); color:var(--bg); border-color:var(--ink)}
   .acts a.primary:hover{opacity:.85; color:var(--bg)}
 
+  .cross{border-top:1px solid var(--hairline); padding:28px 0 6px; margin-top:8px}
+  .cross-head h2{font-size:22px; font-weight:600; letter-spacing:-.02em; margin:0 0 8px}
+  .cross-head p{margin:0 0 22px; max-width:680px; font-size:14px; color:var(--muted)}
+  .scope{margin-bottom:22px}
+  .scope-name{display:inline-block; font-size:12px; padding:3px 10px; border-radius:999px;
+    border:1px solid var(--accent); color:var(--accent); margin-bottom:12px}
+
   .empty{padding:60px 0; text-align:center; color:var(--muted)}
   footer{border-top:1px solid var(--hairline); margin-top:40px; padding:34px 0 60px;
     font-size:13px; color:var(--muted)}
@@ -144,6 +151,32 @@
       <div><b>46</b> verified unmodified</div>
     </div>
   </header>
+
+  <section class="cross">
+    <div class="cross-head">
+      <h2>Applies to every measure</h2>
+      <p>
+        Knowledge that is not about one measure: how CQL is evaluated, how this
+        corpus packages things. Filed under a scope rather than a measure, because
+        burying it under whichever measure exposed it is how it gets lost.
+      </p>
+    </div>
+    <div class="scope">
+      <div class="scope-name mono">corpus</div>
+      <div class="entry">
+        <div class="eh"><span class="et">implementation note</span>
+        <span class="es mono">corpus-2026-001</span>
+        <span class="es">resolved</span></div>
+        <p>Seeded packages carry a 0.x version, not the CMS measure number. A reader expecting 13.0.0 for CMS122v13 will not find it, and that is deliberate.</p>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="et">implementation note</span>
+        <span class="es mono">corpus-2026-002</span>
+        <span class="es">open</span></div>
+        <p>Every package vendors the CQL libraries its measure includes, so the same library file is copied into many packages. The corpus has no way to say that two copies of FHIRHelpers.cql are the same artifact, and a fix to a shared library has to be applied everywhere it was copied.</p>
+      </div>
+    </div>
+  </section>
 
   <div class="controls">
     <input id="q" type="search" placeholder="Search measures, stewards, CMS identifiers, known issues" autocomplete="off">

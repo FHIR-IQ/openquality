@@ -1,0 +1,40 @@
+# Citation metadata, in the Citation File Format. GitHub reads this and renders
+# a "Cite this repository" button with APA and BibTeX.
+#
+# There is no DOI yet. A DOI needs an archived release, which needs the Zenodo
+# integration switched on for this repository and a tagged release cut. Until
+# that exists, this file deliberately says nothing about a DOI rather than
+# citing one that does not resolve.
+#
+# When citing a specific measure, cite the package id and version from its
+# openquality.yaml, not just this repository. A measure named in a methods
+# section has to stay resolvable to the exact logic that produced the number.
+cff-version: 1.2.0
+title: "Open Quality: an open corpus of healthcare quality measures and their implementation knowledge"
+message: "If you use this corpus in research, please cite it."
+type: software
+authors:
+  - given-names: Eugene
+    family-names: Vestel
+    email: eugene.vestel@gmail.com
+repository-code: "https://github.com/FHIR-IQ/openquality"
+url: "https://openquality.us"
+license: MIT
+keywords:
+  - clinical quality measures
+  - eCQM
+  - CQL
+  - SQL-on-FHIR
+  - FHIR
+  - QI-Core
+  - health informatics
+  - open data
+abstract: >-
+  An open corpus of healthcare quality measures paired with a typed record of
+  what implementers have learned about each one. Measure packages carry
+  machine-readable provenance pinned to an upstream commit and re-verified in
+  continuous integration, so a redistribution claim is checked rather than
+  asserted. Alongside the measures sits a knowledge corpus of interpretation
+  issues, defects, implementation notes, and test cases, keyed to a measure and
+  pinned to a version, so that questions about how a measure behaves are
+  queryable rather than rediscovered.
