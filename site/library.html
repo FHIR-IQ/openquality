@@ -146,7 +146,7 @@
     </p>
     <div class="counts">
       <div><b>53</b> packages</div>
-      <div><b>10</b> knowledge entries</div>
+      <div><b>12</b> knowledge entries</div>
       <div><b>14</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
     </div>
@@ -192,6 +192,21 @@
         <span class="es mono">corpus-2026-005</span>
         <span class="es">resolved</span></div>
         <p>Two ways past the content scanner, both found with real, declared files. Each worked by making a parser fail to recognise something rather than by hiding it: a duplicate key that stopped the YAML parser reading an embedded expansion, and a CQL comment that stopped a regex matching a licensed descriptor. In both cases the scanner read the failure as &quot;nothing here&quot;.</p>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="et">implementation note</span>
+        <span class="es mono">corpus-2026-006</span>
+        <span class="es">open</span></div>
+        <p>A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.</p>
+      </div>
+    </div>
+    <div class="scope">
+      <div class="scope-name mono">cql</div>
+      <div class="entry">
+        <div class="eh"><span class="et">implementation note</span>
+        <span class="es mono">cql-2026-001</span>
+        <span class="es">open</span></div>
+        <p>A define is evaluated once per patient and its result is reused. A function is evaluated on every call. Logic written as functions therefore re-runs its retrieves each time it is invoked, which turns one pass over a patient's data into repeated full scans of the bundle.</p>
       </div>
     </div>
   </section>
