@@ -160,9 +160,6 @@ valueSets:
   - oid: 2.16.840.1.113762.1.4.1029.305
     url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.305
     source: vsac
-  - oid: 2.16.840.1.113762.1.4.1029.302
-    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.302
-    source: vsac
   - oid: 2.16.840.1.113762.1.4.1029.275
     url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.275
     source: vsac

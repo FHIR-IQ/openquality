@@ -64,8 +64,26 @@ export function emitManifest(plan: PackagePlan): string {
   // Only value sets that resolved to an OID or a URL are emitted. The core
   // check rejects an entry with neither, and a value set the parser could not
   // resolve is a skip condition rather than something to emit half of.
+  //
+  // Deduplicated because CQL legitimately declares one value set under two
+  // names, and the manifest lists value sets rather than the names logic gives
+  // them. CMS1028 declares 2.16.840.1.113762.1.4.1029.302 as both
+  // "Placenta Accreta" and "Placental Accreta Spectrum", which put the same OID
+  // in that manifest twice.
+  //
+  // The key is the oid and url together, not the oid alone. Two entries sharing
+  // an OID but disagreeing on its URL are contradictory rather than redundant,
+  // and collapsing them here would hide a real problem from the validator that
+  // exists to report it.
+  const seen = new Set<string>()
   const valueSets = plan.valueSets
     .filter((v) => v.oid || v.url)
+    .filter((v) => {
+      const key = `${v.oid ?? ''}|${v.url ?? ''}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
     .map((v) => {
       const entry: Record<string, unknown> = {}
       if (v.oid) entry.oid = v.oid

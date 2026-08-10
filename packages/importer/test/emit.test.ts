@@ -75,6 +75,38 @@ describe('emitManifest', () => {
     ])
   })
 
+  it('declares a value set once when CQL gives it two names', () => {
+    // CMS1028 declares 2.16.840.1.113762.1.4.1029.302 as both "Placenta Accreta"
+    // and "Placental Accreta Spectrum". The manifest lists value sets, not the
+    // names logic gives them, so it names this one once.
+    const url = 'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.302'
+    const oid = '2.16.840.1.113762.1.4.1029.302'
+    const twoNames = {
+      ...PLAN,
+      valueSets: [
+        { name: 'Placenta Accreta', url, oid },
+        { name: 'Placental Accreta Spectrum', url, oid },
+      ],
+    }
+    const manifest = parse(emitManifest(twoNames))
+    expect(manifest.valueSets).toEqual([{ oid, url, source: 'vsac' }])
+  })
+
+  it('keeps two entries that share an oid but disagree on its url', () => {
+    // Contradictory rather than redundant. Collapsing them here would hide the
+    // problem from the core check that exists to report it.
+    const oid = '2.16.840.1.113762.1.4.1029.302'
+    const conflicting = {
+      ...PLAN,
+      valueSets: [
+        { name: 'A', url: `http://cts.nlm.nih.gov/fhir/ValueSet/${oid}`, oid },
+        { name: 'B', url: 'http://example.org/fhir/ValueSet/other', oid },
+      ],
+    }
+    const manifest = parse(emitManifest(conflicting))
+    expect(manifest.valueSets).toHaveLength(2)
+  })
+
   it('emits the provenance block', () => {
     const manifest = parse(emitManifest(PLAN))
     expect(manifest.provenance.relationship).toBe('unmodified')
