@@ -1,0 +1,70 @@
+name: Validate changed packages
+
+# Runs on the pull request head, which for an outside contributor is code we do
+# not control. It therefore gets a read-only token and no secrets, and it does
+# not comment. Posting is done by pr-comment.yml, which runs from the base
+# repository and never checks out this code.
+on:
+  pull_request:
+    paths:
+      - 'measures/**'
+      - 'packages/core/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Needed to diff against the base branch. Without it the checkout is
+          # shallow and the merge base is not present.
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: List the files this pull request changes
+        id: changed
+        run: |
+          git diff --name-only --diff-filter=d \
+            "origin/${{ github.base_ref }}...HEAD" > changed.txt
+          echo "count=$(wc -l < changed.txt)" >> "$GITHUB_OUTPUT"
+
+      # Paths go in on stdin, not as arguments: a large pull request would
+      # otherwise overflow the command line and xargs would split it into
+      # several runs, each printing its own report. --silent keeps pnpm's
+      # "> openquality@ pr-report" banner out of the Markdown.
+      - name: Validate every package among them
+        id: report
+        run: |
+          set +e
+          pnpm --silent pr-report < changed.txt > report.md
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+      # Written to a file rather than passed between jobs, because the commenting
+      # job runs in a different workflow and cannot read these outputs.
+      - name: Record which pull request this was
+        run: echo "${{ github.event.number }}" > pr-number.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-validation
+          path: |
+            report.md
+            pr-number.txt
+          retention-days: 7
+
+      - name: Fail if any package reported an error
+        if: steps.report.outputs.exit != '0'
+        run: |
+          echo "A changed package did not reach Level 1. The findings are in the"
+          echo "job summary above and in the pull request comment."
+          exit 1

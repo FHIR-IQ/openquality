@@ -12,9 +12,11 @@
     "typecheck": "tsc -p tsconfig.json",
     "oq": "tsx packages/cli/src/index.ts",
     "oq-import": "tsx packages/importer/src/cli.ts",
-    "build-library": "tsx tools/build-library.ts"
+    "build-library": "tsx tools/build-library.ts",
+    "pr-report": "tsx tools/pr-report.ts"
   },
   "devDependencies": {
+    "@openquality/core": "workspace:*",
     "@types/node": "^22.7.0",
     "tsx": "^4.23.1",
     "typescript": "^5.6.0",

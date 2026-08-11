@@ -23,8 +23,9 @@ pnpm vitest run packages/core/test/manifest.test.ts -t "accepts qi-core"
 ```
 
 Requires Node 22 and pnpm (pinned via `packageManager` in `package.json`).
-Vitest only collects `packages/*/test/**/*.test.ts`, so new test files must live
-inside a workspace package's `test/` directory.
+Vitest collects `packages/*/test/**/*.test.ts` and `tools/test/**/*.test.ts`, so
+a new test file must live in a workspace package's `test/` directory or in
+`tools/test/`.
 
 ## What this project is
 
@@ -138,5 +139,13 @@ exact codes named in `modifications`.
   currently validates its front matter.
 - `docs/strategy/` and `docs/outreach/` are gitignored planning material and are
   not part of the public repository.
-- CI has three jobs: `test`, `validate-corpus` (Level 1 floor plus a CPT-display
-  grep), and `drift`. There is no JVM and no CQL translation step.
+- `ci.yml` has three jobs: `test`, `validate-corpus` (Level 1 floor, the
+  contributor template, plus a CPT-display grep), and `drift`. There is no JVM
+  and no CQL translation step.
+- Two more workflows give contributors a browser-only path.
+  `pr-validate.yml` runs `tools/pr-report.ts` over the packages a pull request
+  touches and uploads the Markdown; `pr-comment.yml` posts it. They are split
+  on purpose: a fork's pull request gets a read-only token, so the job that
+  runs contributor code cannot comment, and the job that comments must never
+  check out contributor code. Renaming `pr-validate.yml`'s `name:` silently
+  breaks the pair, because `pr-comment.yml` matches on that string.

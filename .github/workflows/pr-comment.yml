@@ -1,0 +1,69 @@
+name: Comment validation results
+
+# The second half of the pair. A pull request from a fork gets a read-only
+# token, so the job that runs contributor code cannot post a comment, and the
+# job that can post must not run contributor code.
+#
+# workflow_run gives exactly that split: this runs from the base repository with
+# a write token, on the default branch's version of this file, and its only
+# input is an artifact. It never checks out the pull request.
+on:
+  workflow_run:
+    workflows: ['Validate changed packages']
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the report
+        uses: actions/download-artifact@v4
+        with:
+          name: package-validation
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+
+            const number = Number(fs.readFileSync('pr-number.txt', 'utf8').trim())
+            if (!Number.isInteger(number) || number <= 0) {
+              core.setFailed(`artifact did not carry a usable pull request number`)
+              return
+            }
+            const body = fs.readFileSync('report.md', 'utf8')
+
+            // A marker rather than a stored id, so the comment survives reruns
+            // and this workflow holding no state between them. One comment that
+            // updates in place beats a new one on every push.
+            const MARKER = '<!-- openquality:package-validation -->'
+            const withMarker = `${MARKER}\n${body}`
+
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: number,
+              per_page: 100,
+            })
+            const mine = comments.find(
+              (c) => c.user.type === 'Bot' && c.body.includes(MARKER),
+            )
+
+            if (mine) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: mine.id,
+                body: withMarker,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: number,
+                body: withMarker,
+              })
+            }

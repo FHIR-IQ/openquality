@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@openquality/core':
+        specifier: workspace:*
+        version: link:packages/core
       '@types/node':
         specifier: ^22.7.0
         version: 22.20.1
