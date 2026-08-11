@@ -20,8 +20,13 @@
       "permanent": false
     },
     {
+      "source": "/discuss",
+      "destination": "https://github.com/FHIR-IQ/openquality/discussions",
+      "permanent": false
+    },
+    {
       "source": "/knowledge",
-      "destination": "https://github.com/FHIR-IQ/openquality/tree/main/knowledge",
+      "destination": "/library",
       "permanent": false
     },
     {

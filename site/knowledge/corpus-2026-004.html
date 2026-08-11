@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Library — Open Quality</title>
-<meta name="description" content="Browse every measure package in the Open Quality corpus, the questions and interpretation issues recorded against each one, and how to add your own.">
-<link rel="canonical" href="https://openquality.us/library">
+<title>Undeclared symlink hid content from the scanner — Open Quality</title>
+<meta name="description" content="A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.">
+<link rel="canonical" href="https://openquality.us/knowledge/corpus-2026-004">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Open Quality">
-<meta property="og:url" content="https://openquality.us/library">
-<meta property="og:title" content="Library — Open Quality">
-<meta property="og:description" content="Browse every measure package in the Open Quality corpus, the questions and interpretation issues recorded against each one, and how to add your own.">
+<meta property="og:url" content="https://openquality.us/knowledge/corpus-2026-004">
+<meta property="og:title" content="Undeclared symlink hid content from the scanner — Open Quality">
+<meta property="og:description" content="A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.">
 <meta property="og:image" content="https://openquality.us/og.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
 <link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -131,6 +131,41 @@
   footer{border-top:1px solid var(--hairline); margin-top:40px; padding:34px 0 60px;
     font-size:13px; color:var(--muted)}
   footer a{color:var(--ink)}
+
+  .crumbs{font-size:13px; color:var(--muted); padding-top:34px}
+  .crumbs a{color:var(--muted); text-decoration:none}
+  .crumbs a:hover{color:var(--accent)}
+  .entry-head{padding:10px 0 22px; border-bottom:1px solid var(--hairline)}
+  .entry-head h1{font-size:34px; margin:0 0 14px; max-width:760px}
+  .facts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .fact{font-size:12px; font-weight:500; padding:3px 9px; border-radius:999px;
+    border:1px solid var(--hairline); color:var(--muted); white-space:nowrap}
+  .fact.on{border-color:var(--accent); color:var(--accent)}
+  .prose{max-width:760px; padding:30px 0 10px; font-size:16px}
+  .prose h2{font-size:21px; font-weight:600; letter-spacing:-.02em; margin:34px 0 10px}
+  .prose h3{font-size:16px; font-weight:600; margin:26px 0 8px}
+  .prose p{margin:0 0 16px}
+  .prose ul,.prose ol{margin:0 0 16px; padding-left:22px}
+  .prose li{margin:0 0 6px}
+  .prose a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--hairline)}
+  .prose a:hover{border-bottom-color:var(--accent)}
+  .prose code{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:4px; padding:1px 5px}
+  .prose pre{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:var(--radius); padding:14px 16px; overflow-x:auto; margin:0 0 18px}
+  .prose pre code{background:none; border:0; padding:0; font-size:12.5px; line-height:1.7}
+  .prose blockquote{margin:0 0 18px; padding:2px 0 2px 18px; border-left:2px solid var(--accent);
+    color:var(--ink)}
+  .prose table{border-collapse:collapse; width:100%; margin:0 0 18px; font-size:14px; display:block;
+    overflow-x:auto}
+  .prose th,.prose td{border:1px solid var(--hairline); padding:7px 10px; text-align:left}
+  .prose th{font-weight:600}
+  .prose hr{border:0; border-top:1px solid var(--hairline); margin:26px 0}
+  .prose strong{font-weight:600}
+  .after{border-top:1px solid var(--hairline); margin-top:30px; padding-top:24px; max-width:760px}
+  .after h2{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 12px}
+  .after p{font-size:14px; color:var(--muted); margin:0 0 16px}
 </style>
 </head>
 <body>
@@ -149,140 +184,98 @@
 </nav>
 
 <div class="wrap">
-  <header>
-    <h1>The library</h1>
-    <p class="lede">
-      Every measure package in the corpus, and every question, interpretation issue,
-      and test case recorded against it. Open a measure to read what implementers
-      already found, or ask something nobody has answered yet.
-    </p>
-    <div class="counts">
-      <div><b>53</b> packages</div>
-      <div><b>12</b> knowledge entries</div>
-      <div><b>14</b> stewards</div>
-      <div><b>46</b> verified unmodified</div>
-    </div>
-  </header>
+  <div class="crumbs"><a href="/library">Library</a> &nbsp;/&nbsp; Applies to every measure &middot; scope <span class="mono">corpus</span></div>
 
-  <section class="cross">
-    <div class="cross-head">
-      <h2>Applies to every measure</h2>
-      <p>
-        Knowledge that is not about one measure: how CQL is evaluated, how this
-        corpus packages things. Filed under a scope rather than a measure, because
-        burying it under whichever measure exposed it is how it gets lost.
-      </p>
+  <div class="entry-head">
+    <h1>Undeclared symlink hid content from the scanner</h1>
+    <div class="facts">
+      <span class="fact on">defect</span>
+      <span class="fact">resolved</span>
+      <span class="fact mono">corpus-2026-004</span>
+      
+      <span class="fact">reported by anonymous</span>
+      <span class="fact">tooling</span>
+      <span class="fact">terminology</span>
+      <span class="fact">security</span>
     </div>
-    <div class="scope">
-      <div class="scope-name mono">corpus</div>
-      <div class="entry">
-        <div class="eh"><span class="et">implementation note</span>
-        <span class="es mono">corpus-2026-001</span>
-        <span class="es">resolved</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-001">Draft versioning of seeded packages</a></p>
-        <p>Seeded packages carry a 0.x version, not the CMS measure number. A reader expecting 13.0.0 for CMS122v13 will not find it, and that is deliberate.</p>
-      </div>
-      <div class="entry">
-        <div class="eh"><span class="et">implementation note</span>
-        <span class="es mono">corpus-2026-002</span>
-        <span class="es">open</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-002">Vendored library duplication</a></p>
-        <p>Every package vendors the CQL libraries its measure includes, so the same library file is copied into many packages. The corpus has no way to say that two copies of FHIRHelpers.cql are the same artifact, and a fix to a shared library has to be applied everywhere it was copied.</p>
-      </div>
-      <div class="entry">
-        <div class="eh"><span class="et">implementation note</span>
-        <span class="es mono">corpus-2026-003</span>
-        <span class="es">resolved</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-003">One value set two CQL aliases</a></p>
-        <p>CQL legitimately declares one value set under two names. A manifest that lists value sets by walking those declarations therefore names the same OID twice, which no check caught until someone went looking for it.</p>
-      </div>
-      <div class="entry">
-        <div class="eh"><span class="et">defect</span>
-        <span class="es mono">corpus-2026-004</span>
-        <span class="es">resolved</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-004">Undeclared symlink hid content from the scanner</a></p>
-        <p>A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.</p>
-      </div>
-      <div class="entry">
-        <div class="eh"><span class="et">defect</span>
-        <span class="es mono">corpus-2026-005</span>
-        <span class="es">resolved</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-005">The scanner trusted its own parser</a></p>
-        <p>Two ways past the content scanner, both found with real, declared files. Each worked by making a parser fail to recognise something rather than by hiding it: a duplicate key that stopped the YAML parser reading an embedded expansion, and a CQL comment that stopped a regex matching a licensed descriptor. In both cases the scanner read the failure as &quot;nothing here&quot;.</p>
-      </div>
-      <div class="entry">
-        <div class="eh"><span class="et">implementation note</span>
-        <span class="es mono">corpus-2026-006</span>
-        <span class="es">open</span></div>
-        <p><a class="elink" href="/knowledge/corpus-2026-006">Verifying a provenance claim without fetching</a></p>
-        <p>A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.</p>
-      </div>
-    </div>
-    <div class="scope">
-      <div class="scope-name mono">cql</div>
-      <div class="entry">
-        <div class="eh"><span class="et">implementation note</span>
-        <span class="es mono">cql-2026-001</span>
-        <span class="es">open</span></div>
-        <p><a class="elink" href="/knowledge/cql-2026-001">Defines cache and functions do not</a></p>
-        <p>A define is evaluated once per patient and its result is reused. A function is evaluated on every call. Logic written as functions therefore re-runs its retrieves each time it is invoked, which turns one pass over a patient's data into repeated full scans of the bundle.</p>
-      </div>
-    </div>
-  </section>
-
-  <div class="controls">
-    <input id="q" type="search" placeholder="Search measures, stewards, CMS identifiers, known issues" autocomplete="off">
-    <select id="steward">
-      <option value="">All stewards</option>
-      <option value="Academy of Nutrition and Dietetics">Academy of Nutrition and Dietetics</option>
-      <option value="Alara Imaging, Inc.">Alara Imaging, Inc.</option>
-      <option value="American Academy of Neurology">American Academy of Neurology</option>
-      <option value="American Academy of Ophthalmology">American Academy of Ophthalmology</option>
-      <option value="American Heart Association">American Heart Association</option>
-      <option value="American Institutes for Research (AIR)">American Institutes for Research (AIR)</option>
-      <option value="American Society of Clinical Oncology">American Society of Clinical Oncology</option>
-      <option value="Centers for Disease Control and Prevention (CDC)">Centers for Disease Control and Prevention (CDC)</option>
-      <option value="Centers for Medicare &amp; Medicaid Services (CMS)">Centers for Medicare &amp; Medicaid Services (CMS)</option>
-      <option value="Large Urology Group Practice Association (LUGPA)">Large Urology Group Practice Association (LUGPA)</option>
-      <option value="MN Community Measurement">MN Community Measurement</option>
-      <option value="National Committee for Quality Assurance">National Committee for Quality Assurance</option>
-      <option value="Oregon Urology">Oregon Urology</option>
-      <option value="The Joint Commission">The Joint Commission</option>
-    </select>
-    <select id="only">
-      <option value="">All packages</option>
-      <option value="knowledge">Has knowledge entries</option>
-      <option value="none">No entries yet</option>
-    </select>
-    <div class="hits" id="hits"></div>
   </div>
 
-  <div id="list"></div>
-  <div class="empty" id="empty" hidden>Nothing matches that. Try a measure name, a steward, or a CMS identifier.</div>
+  <article class="prose">
+<h2>Summary</h2>
+<p>A symlink is neither a file nor a directory to <code>readdir</code>, so the package file
+walk skipped it. Licensed content could therefore sit inside a package behind an
+undeclared symlink and validate clean at Level 1, and <code>oq pack</code> dropped it from
+the tarball without saying so.</p>
+<h2>Detail</h2>
+<p>Found by an outside reviewer who was asked to attack the path handling. The
+declared-artifact defences held: symlinks named in the manifest, a symlinked
+directory swapped in for <code>cql/</code>, a circular symlink loop, and Windows-style,
+URL-encoded, and <code>file://</code>-style paths were all rejected cleanly, with no
+crashes or hangs. <code>resolveInside</code> in <code>validate.ts</code> does its job.</p>
+<p>The gap was in what nobody declared. <code>listPackageFiles</code> in
+<code>packages/core/src/pack.ts</code> walked the directory with
+<code>readdir(dir, { withFileTypes: true })</code> and branched on <code>isDirectory()</code> then
+<code>isFile()</code>. <code>readdir</code> does not follow links, so a symlink dirent answers false
+to both and fell out of the walk entirely.</p>
+<p>That mattered because of what the walk feeds. <code>validatePackage</code> scans every file
+the walk returns, deliberately, so that content the corpus cannot host cannot
+ride along in a file the manifest never mentions. The comment above
+<code>listPackageFiles</code> said so in as many words. The function did not do it.</p>
+<p>The reviewer proved it the direct way: put a CQL file carrying a CPT display
+descriptor outside the package, symlink to it from <code>cql/</code>, declare nothing.
+<code>oq validate</code> reported <strong>Level 1, no findings</strong>. <code>content.forbidden</code> is the only
+error-severity content check this project has, and it never opened the file.</p>
+<p>Two consequences, and the second is the one that would have bitten first:</p>
+<ol>
+<li><code>oq pack</code> built a tarball that did not match the directory it was given.</li>
+<li>Git is the distribution channel today, and git stores symlinks. So the link
+and its target travelled with the repository even though the validator had
+declared the package clean, and a reviewer reading a pull request diff had no
+signal that a symlink was in the tree at all.</li>
+</ol>
+<h2>Resolution</h2>
+<p>Resolved. A package must contain only real files.</p>
+<p><code>pack.ts</code> now tests <code>isSymbolicLink()</code> first and collects links through
+<code>listPackageSymlinks</code>, which is separate from <code>listPackageFiles</code> so the two sets
+stay disjoint and the tarball is never asked to carry something it cannot
+represent. <code>packPackage</code> refuses to pack a package containing one, naming each
+offender, rather than silently omitting it.</p>
+<p><code>validate.ts</code> runs <code>package.symlinks</code> immediately before <code>content.forbidden</code>,
+because it is what makes that check&#39;s promise true, and reports each link as an
+<strong>error</strong>. Symlinks are reported rather than followed: following one would mean
+deciding what a link pointing outside the package means, and no answer to that
+is both safe and useful. A package is a self-contained unit of exchange, and a
+tarball cannot carry a link to a file the recipient does not have.</p>
+<p>The general lesson is not about symlinks. A directory walk that enumerates by
+asking &quot;is this a file?&quot; answers a narrower question than &quot;what is in here?&quot;,
+and the difference is exactly where something hides. Any check whose guarantee
+rests on having seen everything should fail closed on an entry it cannot
+classify, rather than skipping it.</p>
 
-  <section class="who">
-    <h2>Who recorded this</h2>
+  </article>
+
+  <div class="after">
+    <h2>About this entry</h2>
     <p>
-      Everyone who has put something into the knowledge corpus, by the handle on their
-      entries. Some asked not to be named and appear as anonymous, which is a choice
-      the corpus supports: the finding is what has to be public, not the finder.
+      Written by a person, reviewed in a pull request, and kept in the repository as
+      Markdown with machine-readable front matter. Cite it by its id,
+      <span class="mono">corpus-2026-004</span>, which does not change.
+      If you think it is wrong, saying so is a contribution.
     </p>
-    <div class="people">
-      <span class="person"><b>aks129</b> <span>7 entries</span></span>
-      <span class="person"><b>anonymous</b> <span>4 entries</span></span>
-      <span class="person"><b>evan-machusak</b> <span>1 entry</span></span>
+    <div class="acts">
+      <a class="primary" href="https://github.com/FHIR-IQ/openquality/discussions/new?category=q-a&title=About%20corpus-2026-004%3A%20" target="_blank" rel="noopener">Discuss this entry</a>
+      <a href="https://github.com/FHIR-IQ/openquality/blob/main/knowledge/corpus/2026-004-undeclared-symlink-hid-content-from-the-scanner.md" target="_blank" rel="noopener">Read the source</a>
+      <a href="https://github.com/FHIR-IQ/openquality/edit/main/knowledge/corpus/2026-004-undeclared-symlink-hid-content-from-the-scanner.md" target="_blank" rel="noopener">Suggest an edit</a>
+      <a href="/library">Back to the library</a>
     </div>
-  </section>
+  </div>
 
   <footer>
-    This page is generated from the repository by <code>pnpm build-library</code>, and CI
-    fails if it drifts from the manifests it describes.
-    
+    Generated from the repository by <code>pnpm build-library</code>. CI fails if this
+    page drifts from the entry it renders.
     Open Quality is not a measure steward and is not affiliated with or endorsed by CMS, NCQA, or HL7.
   </footer>
 </div>
-
-<script src="/library.js" defer></script>
 
 </body>
 </html>

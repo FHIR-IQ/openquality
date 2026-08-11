@@ -18,6 +18,7 @@
   "devDependencies": {
     "@openquality/core": "workspace:*",
     "@types/node": "^22.7.0",
+    "marked": "^18.0.9",
     "tsx": "^4.23.1",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0",

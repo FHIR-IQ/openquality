@@ -13,13 +13,24 @@
  *
  * Run with: pnpm build-library
  */
-import { readdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { parse } from 'yaml'
+import { Marked, Renderer } from 'marked'
 
 const MEASURE_ROOTS = ['measures/cms-fhir-2026', 'measures/community']
 const KNOWLEDGE_ROOT = 'knowledge'
 const OUT = 'site/library.html'
+/**
+ * One page per knowledge entry. The library page can only ever show a summary,
+ * and an entry whose body is unreachable is a citation nobody can follow: the
+ * corpus claims that what implementers learned is queryable, and a first
+ * paragraph is not the thing they learned.
+ *
+ * A stable URL per entry also makes an entry citable on its own, which is what
+ * a researcher needs in a methods section.
+ */
+const OUT_ENTRIES = 'site/knowledge'
 /**
  * The page script lives in its own file rather than inline. The site ships a
  * Content-Security-Policy of `script-src 'self'`, which blocks inline script,
@@ -27,6 +38,14 @@ const OUT = 'site/library.html'
  * perfectly from a local file server. Keep them separate.
  */
 const OUT_JS = 'site/library.js'
+/**
+ * Generated rather than hand-written, because it has to list a URL per
+ * knowledge entry and a hand-maintained list would silently fall behind. An
+ * entry nobody can find by searching is the archaeology problem this corpus
+ * exists to remove.
+ */
+const OUT_SITEMAP = 'site/sitemap.xml'
+const SITE = 'https://openquality.us'
 const REPO = 'https://github.com/FHIR-IQ/openquality'
 
 interface Pkg {
@@ -48,7 +67,11 @@ interface Pkg {
 
 interface Entry {
   file: string
+  /** Filename without the extension. What a [[wikilink]] in another entry names. */
+  slug: string
   id: string
+  /** From front matter when present, otherwise derived from the slug. */
+  title: string
   type: string
   /** Set when the entry is about one measure. Mutually exclusive with scope. */
   measure: string
@@ -64,6 +87,8 @@ interface Entry {
   categories: string[]
   reporter: string
   summary: string
+  /** The Markdown after the front matter, rendered onto the entry's own page. */
+  body: string
 }
 
 /** Splits YAML front matter from the Markdown body. */
@@ -96,6 +121,76 @@ function str(v: unknown, fallback = ''): string {
 
 function strArray(v: unknown): string[] {
   return Array.isArray(v) ? v.map((x) => str(x)).filter(Boolean) : []
+}
+
+/**
+ * Words a title case pass would otherwise mangle. Deliberately short: it covers
+ * what actually appears in this corpus rather than trying to be a dictionary,
+ * and an entry that wants an exact title can set `title:` in its front matter.
+ */
+const ACRONYMS = new Map(
+  [
+    'cql', 'sql', 'oid', 'oids', 'cms', 'ncqa', 'fhir', 'elm', 'vsac', 'umls',
+    'cpt', 'snomed', 'loinc', 'yaml', 'json', 'api', 'ci', 'qi', 'hedis',
+  ].map((w) => [w, w.toUpperCase()]),
+)
+ACRONYMS.set('hba1c', 'HbA1c')
+ACRONYMS.set('sql-on-fhir', 'SQL-on-FHIR')
+ACRONYMS.set('qi-core', 'QI-Core')
+
+/** `2026-004-undeclared-symlink-hid-content` -> `Undeclared symlink hid content`. */
+function deriveTitle(slug: string): string {
+  const words = slug.replace(/^\d{4}-\d+-/, '').split('-')
+  const text = words.map((w) => ACRONYMS.get(w.toLowerCase()) ?? w).join(' ')
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+/**
+ * The entry's id reduced to characters that are safe in both a path and a URL.
+ *
+ * The id comes from front matter that a contributor wrote, and it is used here
+ * to name a file. An id of `../../etc/whatever` would otherwise write outside
+ * site/, and one carrying a slash would produce a URL that does not resolve.
+ * Everything outside the allowed set becomes a hyphen rather than being
+ * dropped, so two different ids cannot collapse onto one page.
+ */
+function pageSlug(entry: Entry): string {
+  const cleaned = entry.id.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^[.-]+|[.-]+$/g, '')
+  return cleaned || 'entry'
+}
+
+function entryUrl(entry: Entry): string {
+  return `/knowledge/${pageSlug(entry)}`
+}
+
+/**
+ * Renders an entry body to HTML at build time.
+ *
+ * Raw HTML in the Markdown is escaped rather than emitted. Entries arrive by
+ * pull request from people we do not know, and while the site's CSP of
+ * `script-src 'self'` would stop an injected script from running, a check that
+ * relies on a second control to be safe is the pattern this project already
+ * had to fix twice. Escaping here means the page cannot carry markup an author
+ * did not intend, regardless of what the CSP does.
+ *
+ * `[[slug]]` links between entries are resolved to their pages. An unresolved
+ * one renders as plain text: knowledge/README invites authors to link to
+ * entries that do not exist yet, so a dangling link is a note to a future
+ * writer rather than a mistake to shout about.
+ */
+function makeMarkdown(entries: Entry[]): (body: string) => string {
+  const bySlug = new Map(entries.map((e) => [e.slug, e]))
+  const renderer = new Renderer()
+  renderer.html = ({ text }: { text: string }) => esc(text)
+  const marked = new Marked({ renderer, gfm: true })
+
+  return (body: string) => {
+    const linked = body.replace(/\[\[([^\]]+)\]\]/g, (whole, slug: string) => {
+      const target = bySlug.get(slug)
+      return target ? `[${target.title}](${entryUrl(target)})` : esc(slug)
+    })
+    return marked.parse(linked) as string
+  }
 }
 
 async function readPackages(): Promise<Pkg[]> {
@@ -163,9 +258,13 @@ async function readKnowledge(): Promise<Entry[]> {
       }
       if (!item.name.endsWith('.md') || item.name === 'README.md') continue
       const { fm, body } = splitFrontMatter(await readFile(path, 'utf8'))
+      const slug = item.name.replace(/\.md$/, '')
       entries.push({
         file: path,
-        id: str(fm.id, item.name.replace(/\.md$/, '')),
+        slug,
+        id: str(fm.id, slug),
+        title: str(fm.title) || deriveTitle(slug),
+        body,
         type: str(fm.type, 'note'),
         measure: str(fm.measure),
         scope: str(fm.scope),
@@ -185,34 +284,12 @@ function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
-function render(packages: Pkg[], entries: Entry[]): string {
-  const stewards = [...new Set(packages.map((p) => p.steward))].sort()
-  const scoped = entries.filter((e) => e.scope)
-  const measureScoped = entries.filter((e) => !e.scope)
-  const orphanCount = measureScoped.filter((e) => !packages.some((p) => p.id === e.measure)).length
-  const scopes = [...new Set(scoped.map((e) => e.scope))].sort()
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Library — Open Quality</title>
-<meta name="description" content="Browse every measure package in the Open Quality corpus, the questions and interpretation issues recorded against each one, and how to add your own.">
-<link rel="canonical" href="https://openquality.us/library">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Open Quality">
-<meta property="og:url" content="https://openquality.us/library">
-<meta property="og:title" content="Library — Open Quality">
-<meta property="og:description" content="Browse every measure package in the corpus and what implementers have recorded about each one.">
-<meta property="og:image" content="https://openquality.us/og.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
-<link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<style>
-  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:300 600;font-display:swap;
+/**
+ * Shared by the library page and every knowledge entry page, so the two cannot
+ * drift apart visually. Inlined into each page rather than served as a file:
+ * it is small, and one request beats two on a page this size.
+ */
+const STYLE = `  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:300 600;font-display:swap;
     src:url(/fonts/inter-tight-latin.woff2) format("woff2");
     unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
   @font-face{font-family:"Inter Tight";font-style:normal;font-weight:300 600;font-display:swap;
@@ -294,6 +371,18 @@ function render(packages: Pkg[], entries: Entry[]): string {
   .entry .et{font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:.06em}
   .entry .es{font-size:12px; color:var(--muted)}
   .entry p{margin:6px 0 0; font-size:14px; line-height:1.6}
+  .entry .elink{font-weight:500; text-decoration:none; border-bottom:1px solid var(--hairline)}
+  .entry .elink:hover{color:var(--accent); border-bottom-color:var(--accent)}
+
+  .who{border-top:1px solid var(--hairline); margin-top:30px; padding:26px 0 0}
+  .who h2{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 10px}
+  .who p{margin:0 0 14px; max-width:680px; font-size:14px; color:var(--muted)}
+  .people{display:flex; gap:8px; flex-wrap:wrap}
+  .person{font-size:13px; padding:5px 12px; border-radius:999px; background:var(--surface);
+    border:1px solid var(--hairline)}
+  .person b{font-weight:600}
+  .person span{color:var(--muted)}
   .none{font-size:14px; color:var(--muted); margin:0 0 20px}
   .acts{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
   .acts a{font-size:13px; font-weight:500; text-decoration:none; padding:8px 13px;
@@ -313,23 +402,31 @@ function render(packages: Pkg[], entries: Entry[]): string {
   footer{border-top:1px solid var(--hairline); margin-top:40px; padding:34px 0 60px;
     font-size:13px; color:var(--muted)}
   footer a{color:var(--ink)}
-</style>
-</head>
-<body>
+`
 
-<nav>
-  <div class="wrap nav-in">
-    <a class="mark" href="/">oq<span>.</span></a>
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/library">Library</a>
-      <a href="${REPO}/blob/main/DEMO.md">Demo</a>
-      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
-    </div>
-    <a class="btn" href="${REPO}">GitHub</a>
-  </div>
-</nav>
+function render(packages: Pkg[], entries: Entry[]): string {
+  const stewards = [...new Set(packages.map((p) => p.steward))].sort()
+  const scoped = entries.filter((e) => e.scope)
+  const measureScoped = entries.filter((e) => !e.scope)
+  const orphanCount = measureScoped.filter((e) => !packages.some((p) => p.id === e.measure)).length
+  const scopes = [...new Set(scoped.map((e) => e.scope))].sort()
 
+  // Sorted by count then name, so the order is stable across runs and does not
+  // depend on which directory a walk happened to reach first.
+  const tally = new Map<string, number>()
+  for (const e of entries) {
+    const who = e.reporter || 'unattributed'
+    tally.set(who, (tally.get(who) ?? 0) + 1)
+  }
+  const reporters = [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+
+  return `${pageOpen({
+    title: 'Library — Open Quality',
+    description:
+      'Browse every measure package in the Open Quality corpus, the questions and ' +
+      'interpretation issues recorded against each one, and how to add your own.',
+    canonical: 'https://openquality.us/library',
+  })}
 <div class="wrap">
   <header>
     <h1>The library</h1>
@@ -369,6 +466,7 @@ function render(packages: Pkg[], entries: Entry[]): string {
         <div class="eh"><span class="et">${esc(e.type.replace(/-/g, ' '))}</span>
         <span class="es mono">${esc(e.id)}</span>
         <span class="es">${esc(e.status)}</span></div>
+        <p><a class="elink" href="${entryUrl(e)}">${esc(e.title)}</a></p>
         <p>${esc(e.summary)}</p>
       </div>`,
         )
@@ -396,6 +494,23 @@ function render(packages: Pkg[], entries: Entry[]): string {
   <div id="list"></div>
   <div class="empty" id="empty" hidden>Nothing matches that. Try a measure name, a steward, or a CMS identifier.</div>
 
+  <section class="who">
+    <h2>Who recorded this</h2>
+    <p>
+      Everyone who has put something into the knowledge corpus, by the handle on their
+      entries. Some asked not to be named and appear as anonymous, which is a choice
+      the corpus supports: the finding is what has to be public, not the finder.
+    </p>
+    <div class="people">
+      ${reporters
+        .map(
+          ([name, count]) =>
+            `<span class="person"><b>${esc(name)}</b> <span>${count} ${count === 1 ? 'entry' : 'entries'}</span></span>`,
+        )
+        .join('\n      ')}
+    </div>
+  </section>
+
   <footer>
     This page is generated from the repository by <code>pnpm build-library</code>, and CI
     fails if it drifts from the manifests it describes.
@@ -411,8 +526,180 @@ function render(packages: Pkg[], entries: Entry[]): string {
 `
 }
 
+/**
+ * Styles used only by an entry page. Kept separate from STYLE so the library
+ * page does not carry rules for prose it never renders.
+ */
+const ENTRY_STYLE = `
+  .crumbs{font-size:13px; color:var(--muted); padding-top:34px}
+  .crumbs a{color:var(--muted); text-decoration:none}
+  .crumbs a:hover{color:var(--accent)}
+  .entry-head{padding:10px 0 22px; border-bottom:1px solid var(--hairline)}
+  .entry-head h1{font-size:34px; margin:0 0 14px; max-width:760px}
+  .facts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .fact{font-size:12px; font-weight:500; padding:3px 9px; border-radius:999px;
+    border:1px solid var(--hairline); color:var(--muted); white-space:nowrap}
+  .fact.on{border-color:var(--accent); color:var(--accent)}
+  .prose{max-width:760px; padding:30px 0 10px; font-size:16px}
+  .prose h2{font-size:21px; font-weight:600; letter-spacing:-.02em; margin:34px 0 10px}
+  .prose h3{font-size:16px; font-weight:600; margin:26px 0 8px}
+  .prose p{margin:0 0 16px}
+  .prose ul,.prose ol{margin:0 0 16px; padding-left:22px}
+  .prose li{margin:0 0 6px}
+  .prose a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--hairline)}
+  .prose a:hover{border-bottom-color:var(--accent)}
+  .prose code{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:4px; padding:1px 5px}
+  .prose pre{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:var(--radius); padding:14px 16px; overflow-x:auto; margin:0 0 18px}
+  .prose pre code{background:none; border:0; padding:0; font-size:12.5px; line-height:1.7}
+  .prose blockquote{margin:0 0 18px; padding:2px 0 2px 18px; border-left:2px solid var(--accent);
+    color:var(--ink)}
+  .prose table{border-collapse:collapse; width:100%; margin:0 0 18px; font-size:14px; display:block;
+    overflow-x:auto}
+  .prose th,.prose td{border:1px solid var(--hairline); padding:7px 10px; text-align:left}
+  .prose th{font-weight:600}
+  .prose hr{border:0; border-top:1px solid var(--hairline); margin:26px 0}
+  .prose strong{font-weight:600}
+  .after{border-top:1px solid var(--hairline); margin-top:30px; padding-top:24px; max-width:760px}
+  .after h2{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 12px}
+  .after p{font-size:14px; color:var(--muted); margin:0 0 16px}
+`
+
+/** The head, style block and nav that every page on this site shares. */
+function pageOpen(opts: { title: string; description: string; canonical: string; extraStyle?: string }): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(opts.title)}</title>
+<meta name="description" content="${esc(opts.description)}">
+<link rel="canonical" href="${esc(opts.canonical)}">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Open Quality">
+<meta property="og:url" content="${esc(opts.canonical)}">
+<meta property="og:title" content="${esc(opts.title)}">
+<meta property="og:description" content="${esc(opts.description)}">
+<meta property="og:image" content="https://openquality.us/og.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
+<link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+${STYLE}${opts.extraStyle ?? ''}</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="mark" href="/">oq<span>.</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/library">Library</a>
+      <a href="${REPO}/discussions">Discuss</a>
+      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
+    </div>
+    <a class="btn" href="${REPO}">GitHub</a>
+  </div>
+</nav>
+`
+}
+
+/**
+ * One entry, in full. The library page can only show a first paragraph, and an
+ * entry whose reasoning is unreachable cannot be argued with or cited.
+ */
+function renderEntryPage(
+  entry: Entry,
+  packages: Pkg[],
+  md: (body: string) => string,
+): string {
+  const pkg = entry.measure ? packages.find((p) => p.id === entry.measure) : undefined
+  const context = entry.scope
+    ? `Applies to every measure &middot; scope <span class="mono">${esc(entry.scope)}</span>`
+    : pkg
+      ? `<a href="/library#${esc(pkg.id)}">${esc(pkg.title)}</a>`
+      : `<span class="mono">${esc(entry.measure)}</span>`
+
+  return `${pageOpen({
+    title: `${entry.title} — Open Quality`,
+    description: entry.summary.slice(0, 300),
+    canonical: `https://openquality.us${entryUrl(entry)}`,
+    extraStyle: ENTRY_STYLE,
+  })}
+<div class="wrap">
+  <div class="crumbs"><a href="/library">Library</a> &nbsp;/&nbsp; ${context}</div>
+
+  <div class="entry-head">
+    <h1>${esc(entry.title)}</h1>
+    <div class="facts">
+      <span class="fact on">${esc(entry.type.replace(/-/g, ' '))}</span>
+      <span class="fact">${esc(entry.status)}</span>
+      <span class="fact mono">${esc(entry.id)}</span>
+      ${entry.measureVersion ? `<span class="fact mono">v${esc(entry.measureVersion)}</span>` : ''}
+      ${entry.reporter ? `<span class="fact">reported by ${esc(entry.reporter)}</span>` : ''}
+      ${entry.categories.map((c) => `<span class="fact">${esc(c)}</span>`).join('\n      ')}
+    </div>
+  </div>
+
+  <article class="prose">
+${md(entry.body)}
+  </article>
+
+  <div class="after">
+    <h2>About this entry</h2>
+    <p>
+      Written by a person, reviewed in a pull request, and kept in the repository as
+      Markdown with machine-readable front matter. Cite it by its id,
+      <span class="mono">${esc(entry.id)}</span>, which does not change.
+      If you think it is wrong, saying so is a contribution.
+    </p>
+    <div class="acts">
+      <a class="primary" href="${REPO}/discussions/new?category=q-a&title=${encodeURIComponent(
+        `About ${entry.id}: `,
+      )}" target="_blank" rel="noopener">Discuss this entry</a>
+      <a href="${REPO}/blob/main/${esc(entry.file)}" target="_blank" rel="noopener">Read the source</a>
+      <a href="${REPO}/edit/main/${esc(entry.file)}" target="_blank" rel="noopener">Suggest an edit</a>
+      ${pkg ? `<a href="/library#${esc(pkg.id)}">Back to the measure</a>` : `<a href="/library">Back to the library</a>`}
+    </div>
+  </div>
+
+  <footer>
+    Generated from the repository by <code>pnpm build-library</code>. CI fails if this
+    page drifts from the entry it renders.
+    Open Quality is not a measure steward and is not affiliated with or endorsed by CMS, NCQA, or HL7.
+  </footer>
+</div>
+
+</body>
+</html>
+`
+}
+
 function renderScript(packages: Pkg[], entries: Entry[]): string {
-  const data = JSON.stringify({ packages, entries })
+  // Projected field by field rather than serialised whole. The entry body is
+  // rendered into its own page at build time, so shipping it here too would be
+  // downloaded by every visitor and read by none of them: it grew this file by
+  // 68% before the projection existed. Listing the fields also means adding one
+  // to Entry cannot silently enlarge the payload.
+  const data = JSON.stringify({
+    packages,
+    entries: entries.map((e) => ({
+      id: e.id,
+      title: e.title,
+      url: entryUrl(e),
+      type: e.type,
+      measure: e.measure,
+      scope: e.scope,
+      measureVersion: e.measureVersion,
+      status: e.status,
+      reporter: e.reporter,
+      summary: e.summary,
+    })),
+  })
 
   return `// Generated by tools/build-library.ts. Do not edit; run \`pnpm build-library\`.
 const DATA = ${data};
@@ -494,6 +781,7 @@ function render(){
                 '<div class="eh"><span class="et">' + esc(e.type.replace(/-/g, ' ')) + '</span>' +
                 '<span class="es mono">' + esc(e.id) + '</span>' +
                 '<span class="es">' + esc(e.status) + (e.measureVersion ? ' &middot; v' + esc(e.measureVersion) : '') + '</span></div>' +
+                '<p><a class="elink" href="' + e.url + '">' + esc(e.title) + '</a></p>' +
                 '<p>' + esc(e.summary) + '</p>' +
               '</div>').join('')
           : '<p class="none">Nothing recorded yet. If you have implemented this measure, you know something this corpus does not.</p>') +
@@ -517,11 +805,79 @@ q.addEventListener('input', render);
 steward.addEventListener('change', render);
 only.addEventListener('change', render);
 render();
+
+// An entry page links back as /library#<package id>. Open that row and scroll
+// to it, so returning from an entry lands on the measure rather than at the top
+// of a list of 53. Runs after the first render, because the row must exist.
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const row = list.querySelector('[data-id="' + id.replace(/"/g, '\\\\"') + '"]');
+  if (!row) return;
+  row.classList.add('open');
+  row.scrollIntoView({ block: 'center' });
+}
+openFromHash();
+window.addEventListener('hashchange', openFromHash);
+`
+}
+
+function renderSitemap(entries: Entry[]): string {
+  const urls = [
+    { loc: `${SITE}/`, changefreq: 'weekly', priority: '1.0' },
+    { loc: `${SITE}/library`, changefreq: 'weekly', priority: '0.9' },
+    // Entries change rarely once written; a resolution or a status change is the
+    // usual reason, and neither is weekly.
+    ...entries.map((e) => ({ loc: `${SITE}${entryUrl(e)}`, changefreq: 'monthly', priority: '0.7' })),
+  ]
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) => `  <url>
+    <loc>${esc(u.loc)}</loc>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`,
+  )
+  .join('\n')}
+</urlset>
 `
 }
 
 const packages = await readPackages()
 const entries = await readKnowledge()
+const md = makeMarkdown(entries)
+
 await writeFile(OUT, render(packages, entries).replace(/\r\n/g, '\n'))
 await writeFile(OUT_JS, renderScript(packages, entries).replace(/\r\n/g, '\n'))
-console.log(`wrote ${OUT} and ${OUT_JS}: ${packages.length} packages, ${entries.length} knowledge entries`)
+
+// Cleared and rewritten, so an entry that is renamed or deleted does not leave
+// a page behind claiming the corpus still holds it. `recursive` on both calls
+// because the directory may not exist on a fresh checkout.
+await rm(OUT_ENTRIES, { recursive: true, force: true })
+await mkdir(OUT_ENTRIES, { recursive: true })
+const written = new Set<string>()
+for (const entry of entries) {
+  const slug = pageSlug(entry)
+  if (written.has(slug)) {
+    // Two entries claiming one page means one of them is unreachable, and
+    // which one you got would depend on directory order. Say so rather than
+    // publishing a page that silently drops an entry.
+    throw new Error(
+      `two knowledge entries resolve to /knowledge/${slug}. Give ${entry.file} a distinct id.`,
+    )
+  }
+  written.add(slug)
+  await writeFile(
+    join(OUT_ENTRIES, `${slug}.html`),
+    renderEntryPage(entry, packages, md).replace(/\r\n/g, '\n'),
+  )
+}
+
+await writeFile(OUT_SITEMAP, renderSitemap(entries).replace(/\r\n/g, '\n'))
+
+console.log(
+  `wrote ${OUT}, ${OUT_JS}, ${OUT_SITEMAP} and ${entries.length} pages under ${OUT_ENTRIES}/: ` +
+    `${packages.length} packages, ${entries.length} knowledge entries`,
+)

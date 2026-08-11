@@ -66,26 +66,43 @@ jobs:
         # The date must match what is recorded in the committed packages, or
         # every provenance block differs and the diff is noise.
         run: pnpm oq-import 2026-08-01
+      # git status rather than git diff, throughout this job. `git diff` only
+      # compares tracked files, so a generated file the commit does not contain
+      # is invisible to it and the check passes while the tree is wrong. That is
+      # the same fail-open shape as knowledge/corpus/2026-004 and 2026-005: a
+      # check that answers "did I find a difference?" quietly answers no when it
+      # should answer "I was not looking there."
       - name: Committed tree must equal importer output
         run: |
-          if ! git diff --exit-code -- measures/; then
-            echo ""
+          if [ -n "$(git status --porcelain -- measures/)" ]; then
             echo "The committed corpus differs from what the importer produces."
             echo "Generated packages must not be edited by hand: change the importer"
             echo "in packages/importer and re-run 'pnpm oq-import 2026-08-01'."
+            echo ""
+            git status --short -- measures/
+            git diff -- measures/
             exit 1
           fi
       - name: Re-run the library build
         run: pnpm build-library
-      - name: Committed library page must equal generator output
-        # The page states counts and provenance for every package. If it can
-        # drift from the manifests it describes, it becomes a claim nobody
-        # checks, which is the one thing this project cannot ship.
+      - name: Committed site pages must equal generator output
+        # The library states counts and provenance for every package, each
+        # knowledge entry has its own citable page, and the sitemap lists them.
+        # If any of it can drift from the corpus it describes, it becomes a
+        # claim nobody checks, which is the one thing this project cannot ship.
+        #
+        # Catching an untracked file matters most here: a contributor who adds a
+        # knowledge entry without running the generator leaves the entry with no
+        # page, and a check that only diffed tracked files would call that fine.
+        # Paths are written out rather than held in a variable: an unquoted
+        # expansion relies on word splitting, which bash does and other shells
+        # do not, so it cannot be checked locally on a Mac.
         run: |
-          if ! git diff --exit-code -- site/library.html site/library.js; then
+          if [ -n "$(git status --porcelain -- site/library.html site/library.js site/knowledge site/sitemap.xml)" ]; then
+            echo "The committed site pages differ from the generator output."
+            echo "Do not edit them by hand: run 'pnpm build-library' and commit the result."
             echo ""
-            echo "site/library.html or site/library.js differs from the generator output."
-            echo "Do not edit them by hand: change tools/build-library.ts and re-run"
-            echo "'pnpm build-library'."
+            git status --short -- site/library.html site/library.js site/knowledge site/sitemap.xml
+            git diff -- site/library.html site/library.js site/knowledge site/sitemap.xml
             exit 1
           fi

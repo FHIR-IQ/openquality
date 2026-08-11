@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verifying a provenance claim without fetching — Open Quality</title>
+<meta name="description" content="A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.">
+<link rel="canonical" href="https://openquality.us/knowledge/corpus-2026-006">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Open Quality">
+<meta property="og:url" content="https://openquality.us/knowledge/corpus-2026-006">
+<meta property="og:title" content="Verifying a provenance claim without fetching — Open Quality">
+<meta property="og:description" content="A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.">
+<meta property="og:image" content="https://openquality.us/og.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
+<link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:300 600;font-display:swap;
+    src:url(/fonts/inter-tight-latin.woff2) format("woff2");
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:300 600;font-display:swap;
+    src:url(/fonts/inter-tight-latin-ext.woff2) format("woff2");
+    unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;
+    src:url(/fonts/jetbrains-mono-latin.woff2) format("woff2");
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+  :root{
+    --bg:#F8F8F8; --ink:#222222; --surface:#FFFFFF; --panel:#222222;
+    --hairline:#E6E6E6; --accent:#FF6B35; --muted:#6B6B6B; --panel-ink:#EDEDED;
+    --radius:8px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#111111; --ink:#F0F0F0; --surface:#1A1A1A; --panel:#000000;
+      --hairline:#2E2E2E; --muted:#9A9A9A; --panel-ink:#EDEDED;
+    }
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Inter Tight",sans-serif; font-weight:300; font-size:15px; line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1240px; margin:0 auto; padding:0 24px}
+  a{color:inherit}
+  code,.mono{font-family:"JetBrains Mono",monospace; font-size:13px}
+
+  nav{position:sticky; top:0; z-index:20; background:var(--bg); border-bottom:1px solid var(--hairline)}
+  .nav-in{display:flex; align-items:center; gap:28px; height:64px}
+  .mark{font-weight:600; font-size:20px; letter-spacing:-.02em; text-decoration:none}
+  .mark span{color:var(--accent)}
+  .nav-links{margin-left:auto; display:flex; gap:22px; font-weight:500; font-size:14px}
+  .nav-links a{text-decoration:none; color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{display:inline-block; background:var(--ink); color:var(--bg); border-radius:var(--radius);
+    padding:11px 18px; font-weight:500; font-size:14px; text-decoration:none; border:1px solid var(--ink)}
+  .btn:hover{opacity:.85}
+  .btn-ghost{background:transparent; color:var(--ink); border:1px solid var(--hairline)}
+
+  header{padding:52px 0 26px}
+  h1{font-weight:600; font-size:40px; letter-spacing:-.03em; margin:0 0 12px; line-height:1.1}
+  .lede{max-width:680px; font-size:17px; color:var(--ink); margin:0}
+  .counts{display:flex; gap:26px; flex-wrap:wrap; margin-top:26px; font-size:14px; color:var(--muted)}
+  .counts b{color:var(--ink); font-weight:600; font-size:20px; display:block; line-height:1.2}
+
+  .controls{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:30px 0 8px;
+    position:sticky; top:64px; background:var(--bg); padding:14px 0; z-index:10; border-bottom:1px solid var(--hairline)}
+  #q{flex:1; min-width:260px; font:inherit; font-size:15px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--hairline); border-radius:var(--radius); padding:11px 14px}
+  #q:focus{outline:2px solid var(--accent); outline-offset:-1px}
+  select{font:inherit; font-size:14px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--hairline); border-radius:var(--radius); padding:11px 12px}
+  .hits{font-size:13px; color:var(--muted); margin-left:auto; white-space:nowrap}
+
+  .row{border-bottom:1px solid var(--hairline); padding:18px 0}
+  .row-head{display:flex; align-items:baseline; gap:14px; cursor:pointer; flex-wrap:wrap}
+  .row-head:hover .t{color:var(--accent)}
+  .t{font-size:17px; font-weight:500; letter-spacing:-.01em}
+  .ids{color:var(--muted); font-size:13px}
+  .tags{margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .tag{font-size:12px; font-weight:500; padding:3px 9px; border-radius:999px;
+    border:1px solid var(--hairline); color:var(--muted); white-space:nowrap}
+  .tag.k{border-color:var(--accent); color:var(--accent)}
+  .tag.d{border-color:var(--muted)}
+  .meta{display:flex; gap:22px; flex-wrap:wrap; margin-top:8px; font-size:13px; color:var(--muted)}
+
+  .detail{display:none; padding:18px 0 4px}
+  .row.open .detail{display:block}
+  .detail h3{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 10px}
+  .files{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px}
+  .file{font-family:"JetBrains Mono",monospace; font-size:12px; padding:5px 10px;
+    background:var(--surface); border:1px solid var(--hairline); border-radius:6px}
+  .entry{border-left:2px solid var(--accent); padding:2px 0 2px 16px; margin-bottom:16px}
+  .entry .eh{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+  .entry .et{font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:.06em}
+  .entry .es{font-size:12px; color:var(--muted)}
+  .entry p{margin:6px 0 0; font-size:14px; line-height:1.6}
+  .entry .elink{font-weight:500; text-decoration:none; border-bottom:1px solid var(--hairline)}
+  .entry .elink:hover{color:var(--accent); border-bottom-color:var(--accent)}
+
+  .who{border-top:1px solid var(--hairline); margin-top:30px; padding:26px 0 0}
+  .who h2{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 10px}
+  .who p{margin:0 0 14px; max-width:680px; font-size:14px; color:var(--muted)}
+  .people{display:flex; gap:8px; flex-wrap:wrap}
+  .person{font-size:13px; padding:5px 12px; border-radius:999px; background:var(--surface);
+    border:1px solid var(--hairline)}
+  .person b{font-weight:600}
+  .person span{color:var(--muted)}
+  .none{font-size:14px; color:var(--muted); margin:0 0 20px}
+  .acts{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+  .acts a{font-size:13px; font-weight:500; text-decoration:none; padding:8px 13px;
+    border:1px solid var(--hairline); border-radius:var(--radius)}
+  .acts a:hover{border-color:var(--accent); color:var(--accent)}
+  .acts a.primary{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+  .acts a.primary:hover{opacity:.85; color:var(--bg)}
+
+  .cross{border-top:1px solid var(--hairline); padding:28px 0 6px; margin-top:8px}
+  .cross-head h2{font-size:22px; font-weight:600; letter-spacing:-.02em; margin:0 0 8px}
+  .cross-head p{margin:0 0 22px; max-width:680px; font-size:14px; color:var(--muted)}
+  .scope{margin-bottom:22px}
+  .scope-name{display:inline-block; font-size:12px; padding:3px 10px; border-radius:999px;
+    border:1px solid var(--accent); color:var(--accent); margin-bottom:12px}
+
+  .empty{padding:60px 0; text-align:center; color:var(--muted)}
+  footer{border-top:1px solid var(--hairline); margin-top:40px; padding:34px 0 60px;
+    font-size:13px; color:var(--muted)}
+  footer a{color:var(--ink)}
+
+  .crumbs{font-size:13px; color:var(--muted); padding-top:34px}
+  .crumbs a{color:var(--muted); text-decoration:none}
+  .crumbs a:hover{color:var(--accent)}
+  .entry-head{padding:10px 0 22px; border-bottom:1px solid var(--hairline)}
+  .entry-head h1{font-size:34px; margin:0 0 14px; max-width:760px}
+  .facts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .fact{font-size:12px; font-weight:500; padding:3px 9px; border-radius:999px;
+    border:1px solid var(--hairline); color:var(--muted); white-space:nowrap}
+  .fact.on{border-color:var(--accent); color:var(--accent)}
+  .prose{max-width:760px; padding:30px 0 10px; font-size:16px}
+  .prose h2{font-size:21px; font-weight:600; letter-spacing:-.02em; margin:34px 0 10px}
+  .prose h3{font-size:16px; font-weight:600; margin:26px 0 8px}
+  .prose p{margin:0 0 16px}
+  .prose ul,.prose ol{margin:0 0 16px; padding-left:22px}
+  .prose li{margin:0 0 6px}
+  .prose a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--hairline)}
+  .prose a:hover{border-bottom-color:var(--accent)}
+  .prose code{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:4px; padding:1px 5px}
+  .prose pre{background:var(--surface); border:1px solid var(--hairline);
+    border-radius:var(--radius); padding:14px 16px; overflow-x:auto; margin:0 0 18px}
+  .prose pre code{background:none; border:0; padding:0; font-size:12.5px; line-height:1.7}
+  .prose blockquote{margin:0 0 18px; padding:2px 0 2px 18px; border-left:2px solid var(--accent);
+    color:var(--ink)}
+  .prose table{border-collapse:collapse; width:100%; margin:0 0 18px; font-size:14px; display:block;
+    overflow-x:auto}
+  .prose th,.prose td{border:1px solid var(--hairline); padding:7px 10px; text-align:left}
+  .prose th{font-weight:600}
+  .prose hr{border:0; border-top:1px solid var(--hairline); margin:26px 0}
+  .prose strong{font-weight:600}
+  .after{border-top:1px solid var(--hairline); margin-top:30px; padding-top:24px; max-width:760px}
+  .after h2{font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:0 0 12px}
+  .after p{font-size:14px; color:var(--muted); margin:0 0 16px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="mark" href="/">oq<span>.</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/library">Library</a>
+      <a href="https://github.com/FHIR-IQ/openquality/discussions">Discuss</a>
+      <a href="https://github.com/FHIR-IQ/openquality/blob/main/CONTRIBUTING.md">Contribute</a>
+    </div>
+    <a class="btn" href="https://github.com/FHIR-IQ/openquality">GitHub</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/library">Library</a> &nbsp;/&nbsp; Applies to every measure &middot; scope <span class="mono">corpus</span></div>
+
+  <div class="entry-head">
+    <h1>Verifying a provenance claim without fetching</h1>
+    <div class="facts">
+      <span class="fact on">implementation note</span>
+      <span class="fact">open</span>
+      <span class="fact mono">corpus-2026-006</span>
+      
+      <span class="fact">reported by anonymous</span>
+      <span class="fact">packaging</span>
+      <span class="fact">provenance</span>
+      <span class="fact">tooling</span>
+      <span class="fact">security</span>
+    </div>
+  </div>
+
+  <article class="prose">
+<h2>Summary</h2>
+<p>A community package can declare <code>relationship: unmodified</code> against any upstream
+and nothing checks it. The CI job that makes that claim verifiable today only
+covers the 53 seeded packages, because it works by re-running the importer.</p>
+<p>A design for closing this without ever fetching a URL during validation is
+recorded below. It is not implemented.</p>
+<h2>The problem</h2>
+<p><code>checkProvenance</code> in <code>packages/core/src/provenance.ts</code> validates the <em>shape</em> of
+a provenance block: an http upstream, a ref, an ISO date, a known relationship,
+and a non-empty modifications list when the relationship is <code>derived</code>. Every one
+of those rules is about form. None of them looks at the upstream.</p>
+<p>For <code>measures/cms-fhir-2026/</code> that gap is closed from the outside: CI re-runs the
+importer and fails on any diff, so <code>unmodified</code> is a checked claim rather than an
+asserted one. That mechanism does not generalise, because it depends on the
+content having been produced by our importer in the first place.</p>
+<p>So a hand-authored package can say it is an unmodified copy of some upstream and
+be believed. Provenance is the project&#39;s central claim, and this is the one place
+it rests on trust.</p>
+<h2>The design</h2>
+<p>Contributed by the outside reviewer who reported
+<a href="/knowledge/corpus-2026-004">Undeclared symlink hid content from the scanner</a> and
+<a href="/knowledge/corpus-2026-005">The scanner trusted its own parser</a>. The framing is theirs:</p>
+<blockquote>
+<p>Don&#39;t fetch at validate time at all. Separate proving the claim from checking
+it.</p>
+</blockquote>
+<p>The primitive already exists. <code>packPackage</code> computes a sha256 over a
+deterministic tarball, with entries sorted, mtime fixed, and ownership stripped,
+so the same content yields the same digest on any machine at any time. Today
+that digest is only printed and used to name the tarball file. Bind provenance
+to it instead.</p>
+<p><strong>Proving</strong>, once, in CI, when a pull request declares a provenance block:</p>
+<ol>
+<li>Fetch the one declared target, and nothing else. Sandboxed, host
+allowlisted, no redirects off the allowlist, no private IP ranges, size and
+time capped.</li>
+<li>Re-derive the package the way the importer does today.</li>
+<li>Diff it against what the pull request contains.</li>
+<li>On a match, record the package&#39;s <code>packPackage</code> digest, along with who
+verified it and when.</li>
+</ol>
+<p><strong>Checking</strong>, every time, offline:</p>
+<p><code>oq validate</code> recomputes the local digest and compares it against the recorded
+one. A match means the claim still holds. A mismatch is a hard error: the
+content has drifted since the last time anyone checked it against upstream.</p>
+<p>The properties that make this worth doing:</p>
+<ul>
+<li><strong>Zero network calls in the path that runs on a stranger&#39;s machine.</strong> The
+fetch happens once, in a place we control, under constraints we set. A
+contributor running <code>oq validate</code> locally makes no requests at all.</li>
+<li><strong>It covers community packages the same way as seeded ones</strong>, because the CI
+job keys off the declared provenance block rather than off our importer.</li>
+<li><strong>Drift becomes detectable rather than invisible.</strong> Today, editing a file in a
+package that claims <code>unmodified</code> produces no finding outside
+<code>cms-fhir-2026/</code>. Under this design it produces a digest mismatch.</li>
+</ul>
+<h2>The part that still needs deciding</h2>
+<p>Where the verification record lives. The obvious place is the manifest, as
+<code>provenance.verifiedDigest</code> plus the verifier and timestamp. That works for
+hand-authored packages and breaks for generated ones.</p>
+<p>Verified rather than assumed: injecting a <code>verifiedDigest</code> field into
+<code>measures/cms-fhir-2026/severe-obstetric-complications/openquality.yaml</code> and
+re-running <code>pnpm oq-import 2026-08-01</code> removes it. <code>emitManifest</code> builds each
+seeded manifest from the plan, so anything CI writes into one is destroyed by
+the next import, and the drift job then fails on the diff. The determinism
+contract and an in-manifest verification record cannot both hold.</p>
+<p>Two ways out, neither chosen yet:</p>
+<ol>
+<li><strong>A separate ledger.</strong> A repository-level file mapping package id and version
+to a verified digest, upstream, ref, verifier, and timestamp. The generated
+manifests stay byte-identical to importer output, so the drift check is
+untouched, and the record is one file to review rather than 53 diffs. The
+cost is that a package tarball no longer carries its own verification.</li>
+<li><strong>Teach the importer to carry it through.</strong> <code>emitManifest</code> would read an
+existing manifest and preserve the field. That keeps the record in the
+package and gives up the property that the importer is a pure function of
+upstream content plus a date, which is what makes the drift check meaningful.</li>
+</ol>
+<p>Option 1 preserves the invariant the project already depends on, so it is the
+one to try first.</p>
+<p>Also undecided: what a verified digest means once a package has more than one
+verification, whether an expired or very old verification should warn, and
+whether <code>relationship: derived</code> can be verified at all or only ever attested.</p>
+
+  </article>
+
+  <div class="after">
+    <h2>About this entry</h2>
+    <p>
+      Written by a person, reviewed in a pull request, and kept in the repository as
+      Markdown with machine-readable front matter. Cite it by its id,
+      <span class="mono">corpus-2026-006</span>, which does not change.
+      If you think it is wrong, saying so is a contribution.
+    </p>
+    <div class="acts">
+      <a class="primary" href="https://github.com/FHIR-IQ/openquality/discussions/new?category=q-a&title=About%20corpus-2026-006%3A%20" target="_blank" rel="noopener">Discuss this entry</a>
+      <a href="https://github.com/FHIR-IQ/openquality/blob/main/knowledge/corpus/2026-006-verifying-a-provenance-claim-without-fetching.md" target="_blank" rel="noopener">Read the source</a>
+      <a href="https://github.com/FHIR-IQ/openquality/edit/main/knowledge/corpus/2026-006-verifying-a-provenance-claim-without-fetching.md" target="_blank" rel="noopener">Suggest an edit</a>
+      <a href="/library">Back to the library</a>
+    </div>
+  </div>
+
+  <footer>
+    Generated from the repository by <code>pnpm build-library</code>. CI fails if this
+    page drifts from the entry it renders.
+    Open Quality is not a measure steward and is not affiliated with or endorsed by CMS, NCQA, or HL7.
+  </footer>
+</div>
+
+</body>
+</html>
