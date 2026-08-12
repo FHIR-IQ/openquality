@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Defines cache and functions do not — Open Quality</title>
-<meta name="description" content="A define is evaluated once per patient and its result is reused. A function is evaluated on every call. Logic written as functions therefore re-runs its retrieves each time it is invoked, which turns one pass over a patient's data into repeated full scans of the bundle.">
+<title>Prefer defines, because function caching is not guaranteed — Open Quality</title>
+<meta name="description" content="Engines in common use evaluate a define once per patient and reuse the result. They do not reliably do the same for a function call. Logic written as functions therefore tends to re-run its retrieves on every invocation, which turns one pass over a patient's data into repeated full scans of the bund">
 <link rel="canonical" href="https://openquality.us/knowledge/cql-2026-001">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Open Quality">
 <meta property="og:url" content="https://openquality.us/knowledge/cql-2026-001">
-<meta property="og:title" content="Defines cache and functions do not — Open Quality">
-<meta property="og:description" content="A define is evaluated once per patient and its result is reused. A function is evaluated on every call. Logic written as functions therefore re-runs its retrieves each time it is invoked, which turns one pass over a patient's data into repeated full scans of the bundle.">
+<meta property="og:title" content="Prefer defines, because function caching is not guaranteed — Open Quality">
+<meta property="og:description" content="Engines in common use evaluate a define once per patient and reuse the result. They do not reliably do the same for a function call. Logic written as functions therefore tends to re-run its retrieves on every invocation, which turns one pass over a patient's data into repeated full scans of the bund">
 <meta property="og:image" content="https://openquality.us/og.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23222'/><text x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='17' font-weight='600' fill='%23fff' text-anchor='middle'>oq</text><circle cx='25' cy='23' r='2.4' fill='%23FF6B35'/></svg>">
 <link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -187,7 +187,7 @@
   <div class="crumbs"><a href="/library">Library</a> &nbsp;/&nbsp; Applies to every measure &middot; scope <span class="mono">cql</span></div>
 
   <div class="entry-head">
-    <h1>Defines cache and functions do not</h1>
+    <h1>Prefer defines, because function caching is not guaranteed</h1>
     <div class="facts">
       <span class="fact on">implementation note</span>
       <span class="fact">open</span>
@@ -201,13 +201,17 @@
 
   <article class="prose">
 <h2>Summary</h2>
-<p>A define is evaluated once per patient and its result is reused. A function is
-evaluated on every call. Logic written as functions therefore re-runs its
-retrieves each time it is invoked, which turns one pass over a patient&#39;s data
-into repeated full scans of the bundle.</p>
+<p>Engines in common use evaluate a define once per patient and reuse the result.
+They do not reliably do the same for a function call. Logic written as functions
+therefore tends to re-run its retrieves on every invocation, which turns one
+pass over a patient&#39;s data into repeated full scans of the bundle.</p>
 <p>Restructuring the same logic into prefiltered defines took one eligibility
 library from 30 to 40 seconds per patient to under a second, returning the same
 results.</p>
+<p>Neither behaviour is required by the specification. Both are engine
+implementation choices, which is what makes this an authorship problem rather
+than something you can look up. See &quot;What the specification actually says&quot;
+below, which corrects an earlier version of this entry.</p>
 <h2>Detail</h2>
 <p>Recorded with the permission of Evan Machusak, who diagnosed it. The library was
 an eligibility screening set written for a dissertation project; its author is
@@ -251,15 +255,38 @@ attempts it.</p>
 <p>That is a statement about the present, not a prediction. When an engine does
 start planning, this entry should be revisited rather than deleted, because it
 will then be a record of what the tooling took over and when.</p>
+<h2>What the specification actually says</h2>
+<p>Nothing. An earlier version of this entry left that open and stated the
+behaviour as though it were a rule; Evan Machusak answered it, and the answer
+changes what a reader is entitled to rely on.</p>
+<p><strong>Caching a define is an implementation choice, not something the specification
+dictates.</strong> No engine is obliged to do it. Every engine in common use does, which
+is why the advice above works, but it is a habit rather than a guarantee and a
+conforming engine could drop it.</p>
+<p><strong>A function call can be cached too.</strong> That is memoization: if a function is
+invoked twice with the same arguments, the second call can reuse the first
+result. So &quot;functions never cache&quot; is wrong as a blanket statement, and this
+entry said it.</p>
+<p><strong>The catch is deciding what &quot;the same arguments&quot; means.</strong> In CQL that is often
+hard, particularly when a function takes a list of FHIR resources as a
+parameter, which is exactly what measure logic does. Comparing two such
+arguments for equality can cost more than re-running the function. Engines
+therefore tend to apply memoization conditionally, based on the parameter types,
+and a function taking lists of resources is usually on the wrong side of that
+condition.</p>
+<p>So the practical advice is unchanged, but the reason for it is different and
+more useful. Prefer defines not because functions can never be cached, but
+because whether a given call is cached depends on your engine and on the types
+of the arguments, and with the argument types measure logic actually uses it
+usually will not be. A define&#39;s reuse is predictable. A function&#39;s is not
+something you should plan around.</p>
 <h2>What is still open</h2>
-<p>Whether define caching is guaranteed by the CQL specification and ELM semantics,
-or is an implementation choice that happens to be shared by the engines in
-common use. The advice above is sound either way, but the two cases differ in
-what a reader is entitled to rely on, and the entry should say which. Left open
-rather than guessed at.</p>
-<p>Also open: what a reader can do to spot this in their own library before it
-costs them a week. The lesson so far arrived by way of an expert reading the
-source. That does not scale, and it is the gap this corpus exists to close.</p>
+<p>What a reader can do to spot this in their own library before it costs them a
+week. The lesson so far arrived by way of an expert reading the source. That
+does not scale, and it is the gap this corpus exists to close.</p>
+<p>A concrete follow-on: which engines memoize, and under what parameter-type
+conditions. That would turn &quot;do not plan around it&quot; into something a reader can
+check against the engine they run.</p>
 
   </article>
 
@@ -273,8 +300,8 @@ source. That does not scale, and it is the gap this corpus exists to close.</p>
     </p>
     <div class="acts">
       <a class="primary" href="https://github.com/FHIR-IQ/openquality/discussions/new?category=q-a&title=About%20cql-2026-001%3A%20" target="_blank" rel="noopener">Discuss this entry</a>
-      <a href="https://github.com/FHIR-IQ/openquality/blob/main/knowledge/cql/2026-001-defines-cache-and-functions-do-not.md" target="_blank" rel="noopener">Read the source</a>
-      <a href="https://github.com/FHIR-IQ/openquality/edit/main/knowledge/cql/2026-001-defines-cache-and-functions-do-not.md" target="_blank" rel="noopener">Suggest an edit</a>
+      <a href="https://github.com/FHIR-IQ/openquality/blob/main/knowledge/cql/2026-001-prefer-defines-because-function-caching-is-not-guaranteed.md" target="_blank" rel="noopener">Read the source</a>
+      <a href="https://github.com/FHIR-IQ/openquality/edit/main/knowledge/cql/2026-001-prefer-defines-because-function-caching-is-not-guaranteed.md" target="_blank" rel="noopener">Suggest an edit</a>
       <a href="/library">Back to the library</a>
     </div>
   </div>

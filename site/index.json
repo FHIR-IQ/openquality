@@ -1550,7 +1550,7 @@
     },
     {
       "id": "cql-2026-001",
-      "title": "Defines cache and functions do not",
+      "title": "Prefer defines, because function caching is not guaranteed",
       "type": "implementation-note",
       "status": "open",
       "scope": "cql",
@@ -1558,9 +1558,9 @@
         "cql",
         "performance"
       ],
-      "summary": "A define is evaluated once per patient and its result is reused. A function is evaluated on every call. Logic written as functions therefore re-runs its retrieves each time it is invoked, which turns one pass over a patient's data into repeated full scans of the bundle.",
+      "summary": "Engines in common use evaluate a define once per patient and reuse the result. They do not reliably do the same for a function call. Logic written as functions therefore tends to re-run its retrieves on every invocation, which turns one pass over a patient's data into repeated full scans of the bundle.",
       "page": "https://openquality.us/knowledge/cql-2026-001",
-      "source": "knowledge/cql/2026-001-defines-cache-and-functions-do-not.md"
+      "source": "knowledge/cql/2026-001-prefer-defines-because-function-caching-is-not-guaranteed.md"
     }
   ]
 }

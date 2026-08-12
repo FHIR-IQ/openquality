@@ -1,5 +1,6 @@
 ---
 id: cql-2026-001
+title: "Prefer defines, because function caching is not guaranteed"
 scope: cql
 type: implementation-note
 status: open
@@ -9,14 +10,19 @@ reporter: evan-machusak
 
 ## Summary
 
-A define is evaluated once per patient and its result is reused. A function is
-evaluated on every call. Logic written as functions therefore re-runs its
-retrieves each time it is invoked, which turns one pass over a patient's data
-into repeated full scans of the bundle.
+Engines in common use evaluate a define once per patient and reuse the result.
+They do not reliably do the same for a function call. Logic written as functions
+therefore tends to re-run its retrieves on every invocation, which turns one
+pass over a patient's data into repeated full scans of the bundle.
 
 Restructuring the same logic into prefiltered defines took one eligibility
 library from 30 to 40 seconds per patient to under a second, returning the same
 results.
+
+Neither behaviour is required by the specification. Both are engine
+implementation choices, which is what makes this an authorship problem rather
+than something you can look up. See "What the specification actually says"
+below, which corrects an earlier version of this entry.
 
 ## Detail
 
@@ -69,14 +75,43 @@ That is a statement about the present, not a prediction. When an engine does
 start planning, this entry should be revisited rather than deleted, because it
 will then be a record of what the tooling took over and when.
 
+## What the specification actually says
+
+Nothing. An earlier version of this entry left that open and stated the
+behaviour as though it were a rule; Evan Machusak answered it, and the answer
+changes what a reader is entitled to rely on.
+
+**Caching a define is an implementation choice, not something the specification
+dictates.** No engine is obliged to do it. Every engine in common use does, which
+is why the advice above works, but it is a habit rather than a guarantee and a
+conforming engine could drop it.
+
+**A function call can be cached too.** That is memoization: if a function is
+invoked twice with the same arguments, the second call can reuse the first
+result. So "functions never cache" is wrong as a blanket statement, and this
+entry said it.
+
+**The catch is deciding what "the same arguments" means.** In CQL that is often
+hard, particularly when a function takes a list of FHIR resources as a
+parameter, which is exactly what measure logic does. Comparing two such
+arguments for equality can cost more than re-running the function. Engines
+therefore tend to apply memoization conditionally, based on the parameter types,
+and a function taking lists of resources is usually on the wrong side of that
+condition.
+
+So the practical advice is unchanged, but the reason for it is different and
+more useful. Prefer defines not because functions can never be cached, but
+because whether a given call is cached depends on your engine and on the types
+of the arguments, and with the argument types measure logic actually uses it
+usually will not be. A define's reuse is predictable. A function's is not
+something you should plan around.
+
 ## What is still open
 
-Whether define caching is guaranteed by the CQL specification and ELM semantics,
-or is an implementation choice that happens to be shared by the engines in
-common use. The advice above is sound either way, but the two cases differ in
-what a reader is entitled to rely on, and the entry should say which. Left open
-rather than guessed at.
+What a reader can do to spot this in their own library before it costs them a
+week. The lesson so far arrived by way of an expert reading the source. That
+does not scale, and it is the gap this corpus exists to close.
 
-Also open: what a reader can do to spot this in their own library before it
-costs them a week. The lesson so far arrived by way of an expert reading the
-source. That does not scale, and it is the gap this corpus exists to close.
+A concrete follow-on: which engines memoize, and under what parameter-type
+conditions. That would turn "do not plan around it" into something a reader can
+check against the engine they run.
