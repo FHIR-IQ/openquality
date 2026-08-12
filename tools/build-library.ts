@@ -17,6 +17,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { parse } from 'yaml'
 import { Marked, Renderer } from 'marked'
+import { validatePackage } from '@openquality/core'
 
 const MEASURE_ROOTS = ['measures/cms-fhir-2026', 'measures/community']
 const KNOWLEDGE_ROOT = 'knowledge'
@@ -45,8 +46,20 @@ const OUT_JS = 'site/library.js'
  * exists to remove.
  */
 const OUT_SITEMAP = 'site/sitemap.xml'
+/**
+ * A machine-readable catalogue of the corpus, served as a static file.
+ *
+ * There is no registry server, and a tool that wants to list or fetch packages
+ * should not need one. This is the whole of the read API: one JSON document
+ * over HTTPS, no credentials, no OAuth, no host for anyone to run. A client
+ * reads it to decide what it wants, then fetches those files from the raw
+ * content URL it names.
+ */
+const OUT_INDEX = 'site/index.json'
 const SITE = 'https://openquality.us'
 const REPO = 'https://github.com/FHIR-IQ/openquality'
+/** Where the files a package declares can actually be fetched from. */
+const RAW = 'https://raw.githubusercontent.com/FHIR-IQ/openquality'
 
 interface Pkg {
   slug: string
@@ -822,6 +835,86 @@ window.addEventListener('hashchange', openFromHash);
 `
 }
 
+/**
+ * The catalogue a tool reads instead of cloning the repository.
+ *
+ * The conformance level is computed here by running the real validator rather
+ * than asserted, so the number in this file means the same thing as the number
+ * `oq validate` prints. Publishing a level nobody checked would be the exact
+ * failure this project treats as a defect.
+ *
+ * No timestamp and no commit SHA. Both would change on every build and break
+ * the CI check that this file still matches the corpus, and a document that
+ * cannot be regenerated identically cannot be verified at all. A consumer that
+ * needs to pin should pin the ref it fetches, which is why `ref` is named.
+ */
+async function renderIndex(packages: Pkg[], entries: Entry[]): Promise<string> {
+  const byMeasure = new Map<string, string[]>()
+  for (const e of entries) {
+    if (e.scope || !e.measure) continue
+    byMeasure.set(e.measure, [...(byMeasure.get(e.measure) ?? []), e.id])
+  }
+
+  const catalogue = []
+  for (const p of packages) {
+    const { level } = await validatePackage(p.dir)
+    catalogue.push({
+      id: p.id,
+      version: p.version,
+      title: p.title,
+      steward: p.steward,
+      identifiers: p.identifiers,
+      dataModel: p.dataModel,
+      license: p.license,
+      level,
+      collection: p.collection,
+      path: p.dir,
+      manifest: `${p.dir}/openquality.yaml`,
+      artifacts: p.artifacts.map((a) => `${p.dir}/${a}`),
+      valueSets: p.valueSets,
+      relationship: p.relationship,
+      knowledge: byMeasure.get(p.id) ?? [],
+    })
+  }
+
+  return `${JSON.stringify(
+    {
+      openquality: '1',
+      about:
+        'A static catalogue of the Open Quality corpus. There is no registry server: ' +
+        'read this document, then fetch the paths it names from `raw`. Paths are ' +
+        'relative to the repository root.',
+      repository: REPO,
+      ref: 'main',
+      raw: `${RAW}/main/`,
+      pinning:
+        '`ref` is a moving branch. Pin a commit or tag and substitute it into `raw` if ' +
+        'you need the same bytes twice.',
+      levels: {
+        '0': 'Shared: valid manifest, open licence, at least one artifact.',
+        '1': 'Described: adds data model, measure identity, typed artifacts, value set references, and a README stating intent, known limitations and provenance.',
+        '2': 'Verified: not reachable today. CQL translation, FHIR profile validation and SQL parsing are unimplemented, so every package tops out at Level 1.',
+      },
+      counts: { packages: packages.length, knowledgeEntries: entries.length },
+      packages: catalogue,
+      knowledge: entries.map((e) => ({
+        id: e.id,
+        title: e.title,
+        type: e.type,
+        status: e.status,
+        ...(e.scope ? { scope: e.scope } : { measure: e.measure }),
+        ...(e.measureVersion ? { measureVersion: e.measureVersion } : {}),
+        categories: e.categories,
+        summary: e.summary,
+        page: `${SITE}${entryUrl(e)}`,
+        source: e.file,
+      })),
+    },
+    null,
+    2,
+  )}\n`
+}
+
 function renderSitemap(entries: Entry[]): string {
   const urls = [
     { loc: `${SITE}/`, changefreq: 'weekly', priority: '1.0' },
@@ -876,8 +969,9 @@ for (const entry of entries) {
 }
 
 await writeFile(OUT_SITEMAP, renderSitemap(entries).replace(/\r\n/g, '\n'))
+await writeFile(OUT_INDEX, (await renderIndex(packages, entries)).replace(/\r\n/g, '\n'))
 
 console.log(
-  `wrote ${OUT}, ${OUT_JS}, ${OUT_SITEMAP} and ${entries.length} pages under ${OUT_ENTRIES}/: ` +
-    `${packages.length} packages, ${entries.length} knowledge entries`,
+  `wrote ${OUT}, ${OUT_JS}, ${OUT_SITEMAP}, ${OUT_INDEX} and ${entries.length} pages under ` +
+    `${OUT_ENTRIES}/: ${packages.length} packages, ${entries.length} knowledge entries`,
 )

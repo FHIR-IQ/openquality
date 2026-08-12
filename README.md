@@ -127,6 +127,27 @@ Expected output:
 Checked 52 packages, 0 below Level 1
 ```
 
+## Reading the corpus from a tool
+
+There is no registry server, and a tool that wants to list or fetch packages does not
+need one. The whole read interface is one static document:
+
+```text
+https://openquality.us/index.json
+```
+
+No credentials, no OAuth, no host for anyone to run. It lists every package with its
+id, version, steward, data model, licence, conformance level, and the repository paths
+of its manifest and artifacts, plus every knowledge entry. A client reads it, decides
+what it wants, and fetches those paths from the `raw` base URL the document names.
+
+The conformance level in that file is computed by running the same validator
+`oq validate` runs, not asserted, and CI fails if the file drifts from the corpus it
+describes.
+
+`ref` is `main`, which moves. Pin a commit or tag and substitute it into `raw` if you
+need the same bytes twice.
+
 ## What a package looks like
 
 A package is a directory with an `openquality.yaml` manifest and the artifacts the

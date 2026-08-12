@@ -98,11 +98,11 @@ jobs:
         # expansion relies on word splitting, which bash does and other shells
         # do not, so it cannot be checked locally on a Mac.
         run: |
-          if [ -n "$(git status --porcelain -- site/library.html site/library.js site/knowledge site/sitemap.xml)" ]; then
+          if [ -n "$(git status --porcelain -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json)" ]; then
             echo "The committed site pages differ from the generator output."
             echo "Do not edit them by hand: run 'pnpm build-library' and commit the result."
             echo ""
-            git status --short -- site/library.html site/library.js site/knowledge site/sitemap.xml
-            git diff -- site/library.html site/library.js site/knowledge site/sitemap.xml
+            git status --short -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json
+            git diff -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json
             exit 1
           fi
