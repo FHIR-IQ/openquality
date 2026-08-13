@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm, symlink, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { listPackageFiles, listPackageSymlinks, packPackage } from '../src/pack.js'
+import { listPackageFiles, listPackageSymlinks, packFiles, packPackage } from '../src/pack.js'
 
 let dir: string
 
@@ -92,5 +92,37 @@ describe('symlinks in a package', () => {
     await expect(packPackage(dir)).rejects.toThrow(/symlink/)
     // The message has to name the offender, or an author cannot act on it.
     await expect(packPackage(dir)).rejects.toThrow(/cql\/link\.md/)
+  })
+})
+
+describe('packFiles', () => {
+  const FILES = [
+    { path: 'package/package.json', content: '{"name":"x"}\n' },
+    { path: 'package/.index.json', content: '{"index-version":2}\n' },
+  ]
+
+  it('produces a byte identical tarball on repeated runs', async () => {
+    const a = await packFiles(FILES)
+    const b = await packFiles(FILES)
+    expect(a.digest).toBe(b.digest)
+    expect(a.tarball.equals(b.tarball)).toBe(true)
+  })
+
+  it('does not depend on the order files are given in', async () => {
+    const forwards = await packFiles(FILES)
+    const backwards = await packFiles([...FILES].reverse())
+    expect(backwards.digest).toBe(forwards.digest)
+  })
+
+  it('reports the paths it packed, sorted', async () => {
+    const { files } = await packFiles(FILES)
+    expect(files).toEqual(['package/.index.json', 'package/package.json'])
+  })
+
+  it('leaves nothing behind in the temp directory', async () => {
+    const before = (await readdir(tmpdir())).filter((n) => n.startsWith('oq-pack-')).length
+    await packFiles(FILES)
+    const after = (await readdir(tmpdir())).filter((n) => n.startsWith('oq-pack-')).length
+    expect(after).toBe(before)
   })
 })

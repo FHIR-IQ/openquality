@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
-import { readdir, stat } from 'node:fs/promises'
-import { join, relative, sep } from 'node:path'
+import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { dirname, join, relative, sep } from 'node:path'
 import { create } from 'tar'
 
 const EXCLUDED_DIRS = new Set(['.git', 'node_modules', '.DS_Store', 'dist'])
@@ -73,6 +74,51 @@ async function toBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
 }
 
 /**
+ * The settings that make a tarball reproducible: entries in the order given,
+ * no mtime, no ownership metadata. Shared by every packer here so two of them
+ * cannot disagree about what deterministic means, which is the way a digest
+ * quietly stops addressing content.
+ */
+const DETERMINISTIC = { gzip: { level: 9 as const }, portable: true, noMtime: true, preservePaths: false }
+
+/** A file to pack that does not exist on disk yet. */
+export interface VirtualFile {
+  path: string
+  content: string
+}
+
+/**
+ * Packs files held in memory into a deterministic tarball.
+ *
+ * Staged through a temporary directory because tar reads from a filesystem.
+ * The staging directory is removed even when packing throws, so a failure
+ * cannot leave the contents of a package lying in the system temp directory.
+ */
+export async function packFiles(files: VirtualFile[]): Promise<PackResult> {
+  const ordered = [...files].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
+  const staging = await mkdtemp(join(tmpdir(), 'oq-pack-'))
+  try {
+    for (const file of ordered) {
+      const full = join(staging, file.path)
+      await mkdir(dirname(full), { recursive: true })
+      await writeFile(full, file.content, 'utf8')
+    }
+    const stream = create(
+      { cwd: staging, ...DETERMINISTIC },
+      ordered.map((f) => f.path),
+    ) as unknown as NodeJS.ReadableStream
+    const tarball = await toBuffer(stream)
+    return {
+      tarball,
+      digest: createHash('sha256').update(tarball).digest('hex'),
+      files: ordered.map((f) => f.path),
+    }
+  } finally {
+    await rm(staging, { recursive: true, force: true })
+  }
+}
+
+/**
  * Packs a package directory into a deterministic tarball. Entries are sorted,
  * mtime is fixed, and ownership metadata is stripped, so the same content
  * always yields the same digest regardless of machine or checkout time.
@@ -98,16 +144,7 @@ export async function packPackage(dir: string): Promise<PackResult> {
 
   const files = await listPackageFiles(dir)
 
-  const stream = create(
-    {
-      cwd: dir,
-      gzip: { level: 9 },
-      portable: true,
-      noMtime: true,
-      preservePaths: false,
-    },
-    files,
-  ) as unknown as NodeJS.ReadableStream
+  const stream = create({ cwd: dir, ...DETERMINISTIC }, files) as unknown as NodeJS.ReadableStream
 
   const tarball = await toBuffer(stream)
   const digest = createHash('sha256').update(tarball).digest('hex')

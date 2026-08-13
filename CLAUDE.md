@@ -12,6 +12,7 @@ pnpm typecheck                     # tsc -p tsconfig.json
 pnpm oq validate <package-dir>     # one package, prints findings and level
 pnpm oq validate-all measures/cms-fhir-2026 measures/community
 pnpm oq pack <package-dir>
+pnpm oq fhir-package <package-dir>   # emit a FHIR NPM .tgz for CQL Studio et al
 pnpm oq-import 2026-08-01          # regenerate the seed corpus (see below)
 ```
 
@@ -57,7 +58,9 @@ sequence of checks, each owned by its own module, each returning `Finding[]`:
 | `provenance.ts` | Upstream provenance block rules |
 | `valuesets.ts` | Value set reference format |
 | `readme.ts` | Required README sections |
-| `pack.ts` | The file walk, and the rule that a package holds only real files |
+| `pack.ts` | The file walk, the rule that a package holds only real files, and deterministic tarballs |
+| `cql.ts` | Reading library name, version and includes out of CQL source |
+| `fhir.ts` | Building a FHIR NPM package: `Library` resources, `package.json`, `.index.json` |
 | `scanner.ts` / `terminology.ts` | Content the corpus cannot host |
 | `level.ts` | Maps checks → conformance level |
 | `report.ts` | `CheckId` union, `Finding`, `Severity` |

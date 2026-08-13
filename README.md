@@ -87,7 +87,7 @@ Pre-launch.
 |-------|-------|------------|
 | Package format | shipped | Manifest schema, conformance levels, license policy, content scanning, provenance |
 | Validation core | shipped | Validates a package directory and computes its level |
-| `oq` CLI | shipped | `oq validate`, `oq validate-all` and `oq pack` |
+| `oq` CLI | shipped | `oq validate`, `oq validate-all`, `oq pack`, `oq fhir-package` |
 | Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
@@ -147,6 +147,25 @@ describes.
 
 `ref` is `main`, which moves. Pin a commit or tag and substitute it into `raw` if you
 need the same bytes twice.
+
+## Using a measure in CQL Studio or another FHIR tool
+
+A package can be emitted as a FHIR NPM package, which is the format CQL Studio
+loads, the FHIR package registry serves, and IG Publisher produces:
+
+```bash
+pnpm oq fhir-package measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9
+```
+
+Each CQL file becomes a `Library` resource carrying the CQL as a `text/cql`
+attachment, with its `include` statements stated as `depends-on`. FHIR resources
+the package already holds, such as a SQL-on-FHIR `ViewDefinition`, are packaged
+as they are.
+
+The resources are marked `experimental` and their canonical URLs point at
+`openquality.us` rather than at the measure steward, because a repackaged copy is
+not an authoritative publication of the logic. The tarball is byte-for-byte
+reproducible, so its digest addresses its content.
 
 ## What a package looks like
 

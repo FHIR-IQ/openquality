@@ -1,17 +1,10 @@
-import { codeSystemAliases, policyFor } from '@openquality/core'
+import { codeSystemAliases, parseHeader, parseIncludes, policyFor } from '@openquality/core'
 
-export interface CqlHeader {
-  name: string
-  version: string
-  model?: string
-  modelVersion?: string
-}
-
-export interface CqlInclude {
-  library: string
-  version: string
-  alias?: string
-}
+// parseHeader and parseIncludes moved to @openquality/core so the CLI can reach
+// them without depending on the importer. Re-exported here because this
+// module's own callers, and its tests, address them at this path.
+export { parseHeader, parseIncludes } from '@openquality/core'
+export type { CqlHeader, CqlInclude } from '@openquality/core'
 
 export interface CqlValueSet {
   name: string
@@ -19,25 +12,11 @@ export interface CqlValueSet {
   oid?: string
 }
 
-const LIBRARY = /^library\s+([A-Za-z0-9_]+)\s+version\s+'([^']+)'/m
-const USING = /^using\s+([A-Za-z0-9_]+)(?:\s+version\s+'([^']+)')?/m
-const INCLUDE = /^include\s+([A-Za-z0-9_]+)\s+version\s+'([^']+)'(?:\s+called\s+([A-Za-z0-9_]+))?/gm
 const VALUESET = /^valueset\s+"([^"]+)"\s*:\s*'([^']+)'/gm
 
 /** Dotted decimal OID, matching the rule in @openquality/core valuesets.ts. */
 const OID = /^\d+(\.\d+)+$/
 const URN_OID = 'urn:oid:'
-
-export function parseHeader(cql: string): CqlHeader | undefined {
-  const library = cql.match(LIBRARY)
-  if (!library) return undefined
-  const using = cql.match(USING)
-  return { name: library[1], version: library[2], model: using?.[1], modelVersion: using?.[2] }
-}
-
-export function parseIncludes(cql: string): CqlInclude[] {
-  return [...cql.matchAll(INCLUDE)].map((m) => ({ library: m[1], version: m[2], alias: m[3] }))
-}
 
 /**
  * Derives the OID from a value set reference. Upstream writes canonical URLs
