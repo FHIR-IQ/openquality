@@ -24,6 +24,15 @@ There is no common unit for exchanging measure logic, and no shared place to rec
 the community has figured out. Open Quality is an attempt at both: a package format
 anyone can publish, and a knowledge corpus anyone can read.
 
+The goal is an open marketplace for measure logic. Somewhere to find a measure, see what
+other implementers already learned about it, and take the artifacts, without a vendor
+contract, a licensing negotiation, or knowing the right person to ask. Today a researcher
+or a small team has none of those things, and pays for access or goes without.
+
+Browsing and downloading work now, through the [library](https://openquality.us/library),
+a machine-readable [catalogue](https://openquality.us/index.json), and git. Publishing
+still goes through a pull request. See [Status](#status).
+
 ### Who this is for
 
 Today, getting an answer about a measure depends on knowing the right person.
@@ -60,8 +69,12 @@ already rely on. It is the open corpus and community layer that sits alongside t
   through a lifecycle. That is the interoperability target, and Open Quality tracks it
   rather than inventing a parallel model. **No CRMI emitter exists yet.** What exists
   today is `oq fhir-package`, which emits a FHIR NPM package that CQL Studio, the FHIR
-  package registry, and IG Publisher already read. Packaging is not where this project
-  adds anything, and it should not try to: see [`spec/`](spec/).
+  package registry, and IG Publisher already read.
+
+  Format is deliberately not the product. Open Quality aims to ingest whatever standard
+  format a tool already emits, so nobody has to adopt anything of ours to publish here.
+  What is missing from the ecosystem is not another way to package a measure. It is an
+  open place to find one. See [`spec/`](spec/).
 - **Reason Health / ReasonHub** and other CRMI-native platforms are authoring and
   syndication systems. Open Quality is deliberately the *open, public-good* end of the
   same space, and aims to interoperate, not overlap.
