@@ -57,9 +57,11 @@ already rely on. It is the open corpus and community layer that sits alongside t
   at the same connectathons.
 - **[HL7 CRMI](https://build.fhir.org/ig/HL7/crmi-ig/)** (Canonical Resource Management
   Infrastructure) defines how knowledge artifacts are packaged, versioned, and moved
-  through a lifecycle. Open Quality's package format maps onto CRMI so a package can be
-  emitted as a CRMI artifact bundle and consumed by CRMI-aware tooling. See
-  [`spec/`](spec/).
+  through a lifecycle. That is the interoperability target, and Open Quality tracks it
+  rather than inventing a parallel model. **No CRMI emitter exists yet.** What exists
+  today is `oq fhir-package`, which emits a FHIR NPM package that CQL Studio, the FHIR
+  package registry, and IG Publisher already read. Packaging is not where this project
+  adds anything, and it should not try to: see [`spec/`](spec/).
 - **Reason Health / ReasonHub** and other CRMI-native platforms are authoring and
   syndication systems. Open Quality is deliberately the *open, public-good* end of the
   same space, and aims to interoperate, not overlap.
