@@ -1,0 +1,94 @@
+id: community/hospital-at-home-eligibility
+version: 0.1.0
+license: MIT
+measure:
+  title: Hospital at Home Eligibility Leff Demo
+
+dataModel: fhir-r4
+
+artifacts:
+  - path: cql/HaHEligibilityLeffDemo.cql
+    type: cql
+
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1222.1524
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.1524
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.1466
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.1466
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.738
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.738
+    source: vsac
+  - oid: 2.16.840.1.113883.3.526.3.366
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.366
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1235.344
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1235.344
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.1148
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.1148
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.611
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.611
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1219.160
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1219.160
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.1219
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.1219
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.1463
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.1463
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.1469
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.1469
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1146.715
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1146.715
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1146.3222
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1146.3222
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.81
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.81
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.1154
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.1154
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.1480
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.1480
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1222.43
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1222.43
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1116.241
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1116.241
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.120.12.1003
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.120.12.1003
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1011
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1011
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.1225
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.1225
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1260.511
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1260.511
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1029.360
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.360
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1248.102
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.102
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1078.1277
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1078.1277
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.109.12.1013
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.109.12.1013
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1146.3390
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1146.3390
+    source: vsac
