@@ -17,13 +17,15 @@ function headings(markdown: string): string[] {
   const found: string[] = []
 
   lines.forEach((line, index) => {
-    const atx = line.match(/^#{1,6}\s+(.*)$/)
+    // Optional trailing \r: split('\n') leaves CR on CRLF files, and JS '.' / '$'
+    // do not treat CR as a line break, so bare `$` would miss every heading.
+    const atx = line.match(/^#{1,6}\s+(.*?)\s*\r?$/)
     if (atx) {
       found.push(atx[1].trim().toLowerCase())
       return
     }
     const underline = lines[index + 1]
-    if (line.trim() && !line.startsWith('#') && underline && /^(=+|-+)\s*$/.test(underline)) {
+    if (line.trim() && !line.startsWith('#') && underline && /^(=+|-+)\s*\r?$/.test(underline)) {
       found.push(line.trim().toLowerCase())
     }
   })

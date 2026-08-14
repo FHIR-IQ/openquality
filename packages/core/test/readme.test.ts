@@ -62,4 +62,15 @@ describe('checkReadmeSections', () => {
     )
     expect(findings).toEqual([])
   })
+
+  it('accepts CRLF line endings (Windows checkouts)', () => {
+    expect(checkReadmeSections(COMPLETE.replace(/\n/g, '\r\n'))).toEqual([])
+  })
+
+  it('recognises Setext headings with CRLF line endings', () => {
+    const findings = checkReadmeSections(
+      'My Measure\r\n==========\r\n\r\nIntent\r\n------\r\nx\r\n\r\nKnown Limitations\r\n-----------------\r\nx\r\n\r\nProvenance\r\n----------\r\nx\r\n',
+    )
+    expect(findings).toEqual([])
+  })
 })
