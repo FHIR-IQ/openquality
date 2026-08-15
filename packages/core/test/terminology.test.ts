@@ -188,3 +188,41 @@ describe('comments between the tokens of a declaration', () => {
     expect(checkTerminology('m.cql', cql)).toEqual([])
   })
 })
+
+describe('files that made the checks pathological', () => {
+  const withCommentLines = (n: number, line = '// ') =>
+    `library X version '1.0.0'\n` +
+    `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'\n` +
+    `${line}\n`.repeat(n) +
+    // Deliberately unterminated, so the pattern fails and the engine explores
+    // every way of matching what came before it. That is what turned a run of
+    // comment lines into exponential work.
+    `code "N": '97804' from "CPT" display\n`
+
+  it('handles a large block of empty comment lines in linear time', () => {
+    const started = Date.now()
+    checkTerminology('x.cql', withCommentLines(20000))
+    // Before the fix, 20 lines took 240ms and each extra line doubled it, so
+    // this input would not have finished. A generous bound still catches any
+    // return of super-linear behaviour.
+    expect(Date.now() - started).toBeLessThan(2000)
+  })
+
+  it('handles a large block of ordinary comment lines in linear time', () => {
+    const started = Date.now()
+    checkTerminology('x.cql', withCommentLines(20000, '// an explanatory line'))
+    expect(Date.now() - started).toBeLessThan(2000)
+  })
+
+  it('does not treat a URL inside a string as the start of a comment', () => {
+    // The blanking pass has to know about strings: every CQL file is full of
+    // 'http://...', and stripping from // to end of line would erase the code
+    // system URL and with it the reason to check the file at all.
+    const cql = [
+      `library X version '1.0.0'`,
+      `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'`,
+      `code "N": '97804' from "CPT" display 'licensed text'`,
+    ].join('\n')
+    expect(checkTerminology('x.cql', cql)).toHaveLength(1)
+  })
+})
