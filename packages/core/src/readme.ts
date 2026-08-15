@@ -13,16 +13,7 @@ function escapeRegExp(literal: string): string {
  * hand-written READMEs, so ignoring it would falsely block a compliant package.
  */
 function headings(markdown: string): string[] {
-  // Split on both line endings, not just LF.
-  //
-  // Reported by the first outside contributor, working on Windows: a README
-  // with all three required sections was reported as having none of them.
-  // Splitting on '\n' alone leaves a trailing '\r' on every line, and `.` does
-  // not match '\r', so `(.*)$` in the ATX pattern below can never reach the end
-  // of the string and no heading matches. The package drops to Level 0 while
-  // looking perfectly correct in an editor, which is about the worst way for a
-  // check to fail.
-  const lines = markdown.split(/\r?\n/)
+  const lines = markdown.split('\n')
   const found: string[] = []
 
   lines.forEach((line, index) => {

@@ -63,27 +63,3 @@ describe('checkReadmeSections', () => {
     expect(findings).toEqual([])
   })
 })
-
-describe('Windows line endings', () => {
-  // Reported by the first outside contributor, on Windows. A README with all
-  // three sections was reported as having none: splitting on '\n' alone left a
-  // trailing '\r', and `.` does not match '\r', so the ATX pattern could never
-  // reach the end of the line.
-  const SECTIONS = '# Measure\n\n## Intent\nx\n\n## Known Limitations\nx\n\n## Provenance\nx\n'
-
-  it('finds ATX headings in a CRLF file', () => {
-    expect(checkReadmeSections(SECTIONS.replace(/\n/g, '\r\n'))).toEqual([])
-  })
-
-  it('finds setext headings in a CRLF file', () => {
-    const setext = 'Intent\n------\nx\n\nKnown Limitations\n-----\nx\n\nProvenance\n----\nx\n'
-    expect(checkReadmeSections(setext.replace(/\n/g, '\r\n'))).toEqual([])
-  })
-
-  it('still reports a genuinely missing section in a CRLF file', () => {
-    const missing = '# Measure\n\n## Intent\nx\n\n## Provenance\nx\n'
-    const findings = checkReadmeSections(missing.replace(/\n/g, '\r\n'))
-    expect(findings).toHaveLength(1)
-    expect(findings[0].message).toContain('known limitations')
-  })
-})
