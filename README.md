@@ -261,13 +261,24 @@ produce false positives. It is backed by a takedown process, not presented as a 
 
 ## Get involved
 
-Community is the point. There are three ways in, and none of them require you to publish
-code:
+Community is the point, and none of these ask you to publish code.
 
-1. **Publish a measure package.** See [CONTRIBUTING](CONTRIBUTING.md).
-2. **File an interpretation issue or a test case** against a measure in
-   [`knowledge/`](knowledge/). This is the highest-value, lowest-friction contribution.
+Everyone who has contributed so far arrived holding a problem rather than a package: a
+bug in the validator, a claim that was not true, or a use case the tool did not serve.
+That is the normal way in, not the exception.
+
+1. **Bring a problem.** Open the [library](https://openquality.us/library), find a measure
+   you have implemented, and use the links on it. Question, ambiguity, defect or test case,
+   each opens a form with the measure and version already filled in. You do not need to be
+   sure you are right. "I could not tell which of two readings was intended" is a complete
+   contribution.
+2. **Publish a measure package.** See [CONTRIBUTING](CONTRIBUTING.md).
 3. **Review** what others have published.
+
+[What the first reviewers found](docs/2026-08-16-what-the-first-reviewers-found.md) records
+what four outside readers caught in the first twenty days, what changed because of it, and
+what is still open. The open list is the short version of where help is worth most right
+now.
 
 The measure and clinical-reasoning community mostly gathers on the FHIR Zulip
 ([`#cql`](https://chat.fhir.org/#narrow/stream/179220-cql)) and in the HL7 Clinical

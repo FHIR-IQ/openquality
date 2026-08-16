@@ -1,4 +1,5 @@
 import type { Finding } from './report.js'
+import { stripComments } from './cql.js'
 
 export interface CodeSystemPolicy {
   /** Human readable name, used in messages. */
@@ -40,37 +41,18 @@ export function displayAllowed(url: string): boolean {
 }
 
 /**
- * What can sit between two tokens of a declaration: whitespace, a block
- * comment, or a line comment. Used everywhere the patterns below would
- * otherwise demand `\s`.
+ * A comment between two tokens of a declaration is valid CQL and changes
+ * nothing about the bytes being redistributed, so it must not hide a licensed
+ * descriptor. That was once handled by allowing comments inside these patterns,
+ * which made them ambiguous and exponential; see `stripComments`.
  *
- * Reported by an outside reviewer, who put a block comment between `display`
- * and its string. That is valid CQL, it changes nothing about the bytes being
- * redistributed, and it made the descriptor check below stop matching
- * altogether. The licensed text shipped with only the generic reference
- * warning, which does not block a level.
- *
- * The same hole existed here, and was worse: an unmatched codesystem
- * declaration means the alias is never recorded, so `checkTerminology` returns
- * early and no code declaration in the file is examined at all.
+ * The patterns are therefore plain again, and `matchesIn` below runs them twice:
+ * once over the file as written, and once over the file with comments blanked.
+ * The first pass keeps the long-standing behaviour of flagging a declaration
+ * that sits inside a comment, because those bytes ship either way. The second
+ * catches a comment wedged between tokens.
  */
-const GAP = String.raw`(?:\s|/\*[\s\S]*?\*/|//[^\n]*(?:\n|$))`
-
-/**
- * A CQL codesystem declaration, e.g. `codesystem "CPT": 'http://...'`. Group 1
- * is the alias used elsewhere in the file, group 2 the system URL. The alias
- * capture tolerates an escaped quote (\") the same way CODE_WITH_DISPLAY's
- * quoted fields do below: without that, an alias carrying one fails to match
- * here at all, and every code declaration against that alias goes silently
- * unchecked rather than flagged.
- *
- * Case-insensitive (`i`) for the same reason as CODE_WITH_DISPLAY below, not
- * because CQL keywords are case-insensitive - they are not.
- */
-const CODESYSTEM_DECL = new RegExp(
-  String.raw`^${GAP}*codesystem${GAP}+"((?:[^"\\]|\\.)*)"${GAP}*:${GAP}*'((?:[^'\\]|\\.)*)'`,
-  'gim',
-)
+const CODESYSTEM_DECL = /^[ \t]*codesystem\s+"((?:[^"\\]|\\.)*)"\s*:\s*'((?:[^'\\]|\\.)*)'/gim
 
 /**
  * A CQL code declaration that carries display text:
@@ -91,16 +73,32 @@ const CODESYSTEM_DECL = new RegExp(
  * Matching case-insensitively costs nothing and keeps such a file from
  * carrying a licensed descriptor past this check.
  */
-const CODE_WITH_DISPLAY = new RegExp(
-  String.raw`^${GAP}*code${GAP}+"(?:[^"\\]|\\.)*"${GAP}*:${GAP}*'((?:[^'\\]|\\.)*)'` +
-    String.raw`${GAP}+from${GAP}+"((?:[^"\\]|\\.)*)"${GAP}+display${GAP}+'(?:[^'\\]|\\.)*'`,
-  'gim',
-)
+const CODE_WITH_DISPLAY =
+  /^[ \t]*code\s+"(?:[^"\\]|\\.)*"\s*:\s*'((?:[^'\\]|\\.)*)'\s+from\s+"((?:[^"\\]|\\.)*)"\s+display\s+'(?:[^'\\]|\\.)*'/gim
+
+/**
+ * Every match of `pattern` in the file as written and in the file with comments
+ * blanked, with duplicates removed. Both passes are needed: see the note above
+ * the patterns.
+ */
+function matchesIn(pattern: RegExp, cql: string): RegExpMatchArray[] {
+  const seen = new Set<string>()
+  const found: RegExpMatchArray[] = []
+  for (const source of [cql, stripComments(cql)]) {
+    for (const match of source.matchAll(pattern)) {
+      const key = match.slice(1).join('\u0000')
+      if (seen.has(key)) continue
+      seen.add(key)
+      found.push(match)
+    }
+  }
+  return found
+}
 
 /** Code system aliases declared in this CQL file, mapped to their URLs. */
 export function codeSystemAliases(cql: string): Map<string, string> {
   const aliases = new Map<string, string>()
-  for (const match of cql.matchAll(CODESYSTEM_DECL)) aliases.set(match[1], match[2])
+  for (const match of matchesIn(CODESYSTEM_DECL, cql)) aliases.set(match[1], match[2])
   return aliases
 }
 
@@ -132,7 +130,7 @@ export function checkTerminology(path: string, content: string): Finding[] {
   if (restricted.size === 0) return []
 
   const findings: Finding[] = []
-  for (const match of content.matchAll(CODE_WITH_DISPLAY)) {
+  for (const match of matchesIn(CODE_WITH_DISPLAY, content)) {
     const [, code, alias] = match
     const policy = restricted.get(alias)
     if (!policy) continue

@@ -19,15 +19,32 @@ const only = document.getElementById('only');
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-function askUrl(p){
-  const title = encodeURIComponent('Question: ' + p.title);
-  const body = encodeURIComponent(
-    'Measure: ' + p.id + '\n' +
-    'Measure version: ' + p.version + '\n\n' +
-    '## What is ambiguous\n\n' +
-    '<!-- What are you trying to work out? Which reading of the spec are you unsure about? -->\n'
-  );
-  return REPO + '/issues/new?labels=question&title=' + title + '&body=' + body;
+// Links into the issue forms rather than a blank issue with a label. The forms
+// are what make an entry typed, and typed is the whole difference between this
+// corpus and a comment thread. Prefilling measure and version also removes the
+// two fields a reader is most likely to get wrong or leave blank.
+//
+// Unknown query parameters are ignored by GitHub, so passing version to the
+// defect form, which has no version field, is harmless and keeps this one call
+// shape for every template.
+function issueUrl(template, p, extra){
+  const q = new URLSearchParams({ template: template, measure: p.id });
+  if (p.version) q.set('version', p.version);
+  for (const k in (extra || {})) q.set(k, extra[k]);
+  return REPO + '/issues/new?' + q.toString();
+}
+
+// Four ways in, ordered by how much they ask of the reader. A question needs
+// nothing but confusion; a test case needs work already done. Offering only the
+// question form, which is what this used to do, quietly told the person who had
+// found a defect that this was not the place for it.
+function contributeLinks(p){
+  return [
+    ['Ask a question', issueUrl('question.yml', p, { scope: 'One specific measure' }), true],
+    ['Found an ambiguity', issueUrl('interpretation-issue.yml', p), false],
+    ['Report a defect', issueUrl('defect.yml', p), false],
+    ['Add a test case', issueUrl('test-case.yml', p), false],
+  ];
 }
 
 function render(){
@@ -85,9 +102,10 @@ function render(){
         '<h3>Artifacts</h3>' +
         '<div class="files">' + p.artifacts.map(a => '<span class="file">' + esc(a) + '</span>').join('') + '</div>' +
         '<div class="acts">' +
-          '<a class="primary" href="' + askUrl(p) + '" target="_blank" rel="noopener">Ask about this measure</a>' +
+          contributeLinks(p).map(([label, href, primary]) =>
+            '<a' + (primary ? ' class="primary"' : '') + ' href="' + href + '" target="_blank" rel="noopener">' + esc(label) + '</a>'
+          ).join('') +
           '<a href="' + dirUrl + '" target="_blank" rel="noopener">Browse the package</a>' +
-          '<a href="' + REPO + '/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Add what you know</a>' +
         '</div>' +
       '</div>' +
     '</div>';

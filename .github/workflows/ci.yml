@@ -85,18 +85,31 @@ jobs:
           fi
       - name: Re-run the library build
         run: pnpm build-library
+      # The site check is split by event, and the split is the whole point.
+      #
+      # On main it blocks: main is what Vercel deploys, the library states counts
+      # and provenance for every package, each knowledge entry has its own citable
+      # page, and the sitemap lists them. If any of that can drift from the corpus
+      # it describes, it becomes a claim nobody checks, which is the one thing this
+      # project cannot ship.
+      #
+      # On a pull request it only reports. Adding a package or a knowledge entry
+      # changes site/index.json and the library counts as a mechanical consequence,
+      # so a blocking check here fails a contributor for the content they were
+      # invited to add. It also contradicts pr-validate.yml, which exists so that
+      # contributing needs nothing installed. Regenerating is the maintainer's step
+      # at merge, not the contributor's: push the regenerated files to the PR branch
+      # before merging, so main is never red. See CONTRIBUTING, "Generated files".
+      #
+      # git status rather than git diff in both, for the reason given above: an
+      # untracked knowledge entry with no generated page is exactly the case that
+      # matters, and git diff cannot see it.
+      #
+      # Paths are written out rather than held in a variable: an unquoted expansion
+      # relies on word splitting, which bash does and other shells do not, so it
+      # could not be checked locally on a Mac.
       - name: Committed site pages must equal generator output
-        # The library states counts and provenance for every package, each
-        # knowledge entry has its own citable page, and the sitemap lists them.
-        # If any of it can drift from the corpus it describes, it becomes a
-        # claim nobody checks, which is the one thing this project cannot ship.
-        #
-        # Catching an untracked file matters most here: a contributor who adds a
-        # knowledge entry without running the generator leaves the entry with no
-        # page, and a check that only diffed tracked files would call that fine.
-        # Paths are written out rather than held in a variable: an unquoted
-        # expansion relies on word splitting, which bash does and other shells
-        # do not, so it cannot be checked locally on a Mac.
+        if: github.event_name == 'push'
         run: |
           if [ -n "$(git status --porcelain -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json)" ]; then
             echo "The committed site pages differ from the generator output."
@@ -106,3 +119,25 @@ jobs:
             git diff -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json
             exit 1
           fi
+      - name: Report the site pages a maintainer regenerates at merge
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED="$(git status --porcelain -- site/library.html site/library.js site/knowledge site/sitemap.xml site/index.json)"
+          if [ -z "$CHANGED" ]; then
+            echo "No generated site pages change. Nothing to regenerate at merge." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "### Generated site pages need regenerating at merge"
+            echo ""
+            echo "This is expected and is **not** something you need to fix. Adding a package"
+            echo "or a knowledge entry changes the generated library and index as a"
+            echo "consequence. A maintainer runs \`pnpm build-library\` and pushes the result"
+            echo "to this branch before merging."
+            echo ""
+            echo '```'
+            echo "$CHANGED"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Site pages to regenerate at merge (not a failure):"
+          echo "$CHANGED"
