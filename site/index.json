@@ -1397,6 +1397,7 @@
         "cql"
       ],
       "summary": "A patient with diabetes and no HbA1c result during the measurement period counts in the numerator of CMS122 (poor control), not the denominator only. This trips up first-time implementers who assume \"poor control > 9%\" requires an actual result above 9%.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/cms122-2026-001",
       "source": "knowledge/cms122/2026-001-missing-hba1c-counts-as-poor-control.md"
     },
@@ -1412,6 +1413,7 @@
         "terminology"
       ],
       "summary": "The CQL implementation resolves HbA1c results through the \"HbA1c Laboratory Test\" value set. The SQL-on-FHIR implementation in the same corpus enumerates LOINC codes directly. The two agree today and will diverge the moment the value set changes.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/cms122-2026-002",
       "source": "knowledge/cms122/2026-002-value-set-versus-enumerated-loinc.md"
     },
@@ -1426,6 +1428,7 @@
         "measure-metadata"
       ],
       "summary": "CMS122 is titled \"Diabetes: Glycemic Status Assessment Greater Than 9%\" in the 2026 FHIR content. Older material calls it \"Diabetes: Hemoglobin A1c (HbA1c) Poor Control (> 9%)\". Searching for the old name finds nothing in this corpus.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/cms122-2026-003",
       "source": "knowledge/cms122/2026-003-measure-renamed-and-retitled.md"
     },
@@ -1441,6 +1444,7 @@
         "licensing"
       ],
       "summary": "The steward of CMS122 is the National Committee for Quality Assurance, not CMS. NCQA is not the dominant steward across the imported collection, but it stewards enough of it that the distinction is worth stating once here rather than relearning it measure by measure.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/cms122-2026-004",
       "source": "knowledge/cms122/2026-004-steward-is-ncqa-not-cms.md"
     },
@@ -1456,6 +1460,7 @@
         "test-data"
       ],
       "summary": "A denominator-eligible patient with no glycemic status result in the measurement period belongs in the numerator. This is the case first-time implementers get wrong, and it is the one worth running first.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/cms122-2026-005",
       "source": "knowledge/cms122/test-cases/2026-005-no-result-counts-as-numerator.md"
     },
@@ -1470,6 +1475,7 @@
         "packaging"
       ],
       "summary": "Seeded packages carry a 0.x version, not the CMS measure number. A reader expecting 13.0.0 for CMS122v13 will not find it, and that is deliberate.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/corpus-2026-001",
       "source": "knowledge/corpus/2026-001-draft-versioning-of-seeded-packages.md"
     },
@@ -1484,6 +1490,7 @@
         "cql"
       ],
       "summary": "Every package vendors the CQL libraries its measure includes, so the same library file is copied into many packages. The corpus has no way to say that two copies of FHIRHelpers.cql are the same artifact, and a fix to a shared library has to be applied everywhere it was copied.",
+      "reporter": "aks129",
       "page": "https://openquality.us/knowledge/corpus-2026-002",
       "source": "knowledge/corpus/2026-002-vendored-library-duplication.md"
     },
@@ -1499,6 +1506,7 @@
         "tooling"
       ],
       "summary": "CQL legitimately declares one value set under two names. A manifest that lists value sets by walking those declarations therefore names the same OID twice, which no check caught until someone went looking for it.",
+      "reporter": "anonymous",
       "page": "https://openquality.us/knowledge/corpus-2026-003",
       "source": "knowledge/corpus/2026-003-one-value-set-two-cql-aliases.md"
     },
@@ -1514,6 +1522,7 @@
         "security"
       ],
       "summary": "A symlink is neither a file nor a directory to readdir, so the package file walk skipped it. Licensed content could therefore sit inside a package behind an undeclared symlink and validate clean at Level 1, and oq pack dropped it from the tarball without saying so.",
+      "reporter": "anonymous",
       "page": "https://openquality.us/knowledge/corpus-2026-004",
       "source": "knowledge/corpus/2026-004-undeclared-symlink-hid-content-from-the-scanner.md"
     },
@@ -1529,6 +1538,7 @@
         "security"
       ],
       "summary": "Two ways past the content scanner, both found with real, declared files. Each worked by making a parser fail to recognise something rather than by hiding it: a duplicate key that stopped the YAML parser reading an embedded expansion, and a CQL comment that stopped a regex matching a licensed descriptor. In both cases the scanner read the failure as \"nothing here\".",
+      "reporter": "anonymous",
       "page": "https://openquality.us/knowledge/corpus-2026-005",
       "source": "knowledge/corpus/2026-005-the-scanner-trusted-its-own-parser.md"
     },
@@ -1545,6 +1555,7 @@
         "security"
       ],
       "summary": "A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.",
+      "reporter": "anonymous",
       "page": "https://openquality.us/knowledge/corpus-2026-006",
       "source": "knowledge/corpus/2026-006-verifying-a-provenance-claim-without-fetching.md"
     },
@@ -1559,6 +1570,7 @@
         "performance"
       ],
       "summary": "Engines in common use evaluate a define once per patient and reuse the result. They do not reliably do the same for a function call. Logic written as functions therefore tends to re-run its retrieves on every invocation, which turns one pass over a patient's data into repeated full scans of the bundle.",
+      "reporter": "evan-machusak",
       "page": "https://openquality.us/knowledge/cql-2026-001",
       "source": "knowledge/cql/2026-001-prefer-defines-because-function-caching-is-not-guaranteed.md"
     }
