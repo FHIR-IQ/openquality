@@ -11,7 +11,7 @@
     "2": "Verified: not reachable today. CQL translation, FHIR profile validation and SQL parsing are unimplemented, so every package tops out at Level 1."
   },
   "counts": {
-    "packages": 53,
+    "packages": 54,
     "knowledgeEntries": 12
   },
   "packages": [
@@ -1380,6 +1380,25 @@
         "measures/community/glycemic-status-assessment-sql-on-fhir/views/patient-hba1c.json"
       ],
       "valueSets": 2,
+      "relationship": "",
+      "knowledge": []
+    },
+    {
+      "id": "community/hospital-at-home-eligibility",
+      "version": "0.1.0",
+      "title": "Hospital at Home Eligibility Leff Demo",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "fhir-r4",
+      "license": "MIT",
+      "level": 1,
+      "collection": "community",
+      "path": "measures/community/hospital-at-home-eligibility",
+      "manifest": "measures/community/hospital-at-home-eligibility/openquality.yaml",
+      "artifacts": [
+        "measures/community/hospital-at-home-eligibility/cql/HaHEligibilityLeffDemo.cql"
+      ],
+      "valueSets": 27,
       "relationship": "",
       "knowledge": []
     }
