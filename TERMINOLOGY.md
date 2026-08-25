@@ -25,9 +25,20 @@ published; the content is left to a terminology server.
 Systems not listed here default to permitted. This table is a licensing filter,
 not an allowlist of terminologies a measure may use.
 
-The rule for CPT is enforced: `content.forbidden` reports an error for a CQL
-code declaration that carries display text from a restricted system, which
-blocks Level 1. See `packages/core/src/terminology.ts`.
+The rule for CPT is enforced two ways, because a licensed descriptor can reach
+a package two ways. `content.forbidden` reports an error, which blocks Level 1,
+for both:
+
+- a **CQL code declaration** that carries display text from a restricted system;
+- a **FHIR Coding** that names a restricted system and carries a `display`,
+  anywhere in a resource. A `Measure` records its effective data requirements as
+  a contained `Library`, and each directly referenced code appears there as a
+  `cqf-directReferenceCode` extension with the descriptor in
+  `valueCoding.display`.
+
+Neither check gates on the file extension. The bytes are redistributed whether
+they sit in a `.cql` file, a `.json` file, or a README, so all three are read
+the same way. See `packages/core/src/terminology.ts`.
 
 ## Attribution
 

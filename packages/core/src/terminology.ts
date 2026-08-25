@@ -1,3 +1,4 @@
+import { parse as parseYaml } from 'yaml'
 import type { Finding } from './report.js'
 import { stripComments } from './cql.js'
 
@@ -103,25 +104,37 @@ export function codeSystemAliases(cql: string): Map<string, string> {
 }
 
 /**
- * Reports code declarations that carry display text from a code system whose
- * licence does not permit redistributing it. Only the display string is the
- * problem: a code plus a system URL is a reference, which is the same rule
- * Open Quality already applies to value sets, and the same convention FHIR
- * itself follows by publishing large terminologies with content=not-present.
+ * Reports display text carried from a code system whose licence does not permit
+ * redistributing it. Only the display string is the problem: a code plus a
+ * system URL is a reference, which is the same rule Open Quality already
+ * applies to value sets, and the same convention FHIR itself follows by
+ * publishing large terminologies with content=not-present.
  *
- * Heuristic by design, same as scanContent: a regex over CQL text, not a
- * parse of it, so it does not know about comments and will flag a
- * declaration sitting inside a `/* *\/` block too. That is intentional here -
- * the licensed descriptor bytes are present in the redistributed file
- * regardless of whether the declaration is live code - but it does mean this
- * check will miss things a parser would not and could, in principle,
- * misread a declaration it should not flag. That caveat matters more here
- * than for the CPT reference warning in scanner.ts, because this check
- * reports errors and blocks Level 1 rather than merely surfacing a warning.
+ * The same descriptor can reach a package two ways, so there are two checks.
+ * A CQL `code` declaration is one. A FHIR resource is the other, and for a
+ * `Measure` those are the same twelve licensed codes in a second place: its
+ * contained effective-data-requirements Library records each directly
+ * referenced code with the descriptor in `valueCoding.display`.
  */
 export function checkTerminology(path: string, content: string): Finding[] {
-  if (!path.endsWith('.cql')) return []
+  // Both checks run on every file. Neither gates on the extension, for the
+  // reason scanner.ts already learned the hard way: gating on `.json` let an
+  // author bypass a check by renaming the file. Each returns nothing when it
+  // does not apply, so running both is cheap and closes that door.
+  return [...checkCqlDisplays(path, content), ...checkCodingDisplays(path, content)]
+}
 
+/**
+ * Heuristic by design, same as scanContent: a regex over CQL text, not a parse
+ * of it, so it does not know about comments and will flag a declaration sitting
+ * inside a block comment too. That is intentional - the licensed descriptor
+ * bytes are present in the redistributed file whether or not the declaration is
+ * live code - but it does mean this check will miss things a parser would not,
+ * and could in principle misread a declaration it should not flag. That caveat
+ * matters more here than for the CPT reference warning in scanner.ts, because
+ * this check reports errors and blocks Level 1 rather than surfacing a warning.
+ */
+function checkCqlDisplays(path: string, content: string): Finding[] {
   const restricted = new Map<string, CodeSystemPolicy>()
   for (const [alias, url] of codeSystemAliases(content)) {
     const policy = policyFor(url)
@@ -141,6 +154,113 @@ export function checkTerminology(path: string, content: string): Finding[] {
         `code '${code}' from "${alias}" carries display text. ${policy.name} descriptors are ` +
         `licensed and cannot be redistributed. Keep the code and the code system, remove the ` +
         `display string.`,
+      path,
+    })
+  }
+  return findings
+}
+
+/** A FHIR Coding carrying display text, wherever it sits in a resource. */
+interface FoundCoding {
+  system: string
+  code: string
+  display: string
+}
+
+/**
+ * Every Coding-shaped object in a parsed document that names a code system and
+ * carries display text. Walks the whole tree, because FHIR puts Codings in
+ * `coding` arrays, in `valueCoding` extensions, and inside `contained`
+ * resources, and a check that knew only one of those shapes would be a check
+ * that mostly does not run.
+ */
+function walkCodings(doc: unknown): FoundCoding[] {
+  const found: FoundCoding[] = []
+  const stack: unknown[] = [doc]
+  const seen = new Set<object>()
+  while (stack.length) {
+    const node = stack.pop()
+    if (Array.isArray(node)) {
+      stack.push(...node)
+    } else if (node && typeof node === 'object') {
+      if (seen.has(node)) continue
+      seen.add(node)
+      const obj = node as Record<string, unknown>
+      if (
+        typeof obj.system === 'string' &&
+        typeof obj.display === 'string' &&
+        obj.display.length > 0
+      ) {
+        found.push({
+          system: obj.system,
+          code: typeof obj.code === 'string' ? obj.code : '',
+          display: obj.display,
+        })
+      }
+      stack.push(...Object.values(obj))
+    }
+  }
+  return found
+}
+
+/**
+ * The same licensing rule as the CQL check, applied to structured resources.
+ *
+ * A FHIR `Measure` carries its effective data requirements as a contained
+ * `Library`, and that Library records every directly referenced code as a
+ * `cqf-directReferenceCode` extension with the descriptor in `valueCoding.display`.
+ * For the six upstream measures that reference CPT, those are the same twelve
+ * licensed descriptors the CQL check already strips, in a second location that
+ * the CQL check cannot see and the CI grep for `from "CPT"` does not look at.
+ *
+ * Parsed as YAML because YAML is a superset of JSON, matching scanner.ts, so
+ * detection does not depend on the file extension.
+ */
+function checkCodingDisplays(path: string, content: string): Finding[] {
+  // Cheap reject before parsing. Every FHIR resource serialised as JSON or YAML
+  // spells the key `system`; CQL never does. This keeps the parse off the 302
+  // CQL files in the corpus without gating on the extension.
+  if (!/["']?system["']?\s*:/.test(content)) return []
+
+  let doc: unknown
+  try {
+    doc = parseYaml(content)
+  } catch {
+    // Fail closed, the lesson of knowledge/corpus/2026-005. A document this
+    // check could not read is not a document known to be clean, so if the raw
+    // text names a restricted code system at all, say so and let a person look.
+    const policy = CODE_SYSTEM_POLICY.find((p) => !p.displayAllowed && p.match.test(content))
+    if (!policy) return []
+    return [
+      {
+        check: 'content.forbidden',
+        severity: 'error',
+        message:
+          `references the ${policy.name} code system but could not be parsed, so its display ` +
+          `text cannot be checked. ${policy.name} descriptors are licensed and cannot be ` +
+          `redistributed. Fix the file so it parses, or remove the reference.`,
+        path,
+      },
+    ]
+  }
+
+  const findings: Finding[] = []
+  const reported = new Set<string>()
+  for (const coding of walkCodings(doc)) {
+    const policy = policyFor(coding.system)
+    if (!policy || policy.displayAllowed) continue
+    // One finding per code, not per occurrence: the twelve CPT codes appear
+    // twenty times across the six affected measures, and twenty findings for
+    // twelve problems reads as twenty problems.
+    if (reported.has(coding.code)) continue
+    reported.add(coding.code)
+    findings.push({
+      check: 'content.forbidden',
+      severity: 'error',
+      message:
+        `code '${coding.code}' from ${policy.name} carries display text. ${policy.name} ` +
+        `descriptors are licensed and cannot be redistributed. Keep the code and the code ` +
+        `system, remove the display string.`,
       path,
     })
   }

@@ -40,12 +40,25 @@ jobs:
         # contributor into a failing build.
         run: pnpm oq validate-all measures --floor 1
       - name: No licensed display text
+        # A belt-and-braces grep beside the validator, deliberately dumber than
+        # it: if the two ever disagree, that is worth knowing. It reads the CQL
+        # form and the FHIR Coding form, because those are the two ways a
+        # licensed descriptor reaches a package. The Coding form is what a
+        # Measure's contained data-requirements Library carries, and the CQL
+        # pattern alone could not see it.
         run: |
+          fail=0
           if grep -rn 'from "CPT"' measures/ | grep -q display; then
-            echo "CPT display text found in measures/"
+            echo "CPT display text found in CQL under measures/"
             grep -rn 'from "CPT"' measures/ | grep display
-            exit 1
+            fail=1
           fi
+          if grep -rn -A3 'ama-assn.org/go/cpt' measures/ | grep -q '"display"'; then
+            echo "CPT display text found in a FHIR resource under measures/"
+            grep -rn -A3 'ama-assn.org/go/cpt' measures/ | grep '"display"'
+            fail=1
+          fi
+          exit $fail
 
   drift:
     runs-on: ubuntu-latest

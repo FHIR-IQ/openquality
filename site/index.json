@@ -12,7 +12,7 @@
   },
   "counts": {
     "packages": 54,
-    "knowledgeEntries": 12
+    "knowledgeEntries": 13
   },
   "packages": [
     {
@@ -1577,6 +1577,22 @@
       "reporter": "anonymous",
       "page": "https://openquality.us/knowledge/corpus-2026-006",
       "source": "knowledge/corpus/2026-006-verifying-a-provenance-claim-without-fetching.md"
+    },
+    {
+      "id": "corpus-2026-007",
+      "title": "The licensing check could not see FHIR resources",
+      "type": "defect",
+      "status": "resolved",
+      "scope": "corpus",
+      "categories": [
+        "packaging",
+        "terminology",
+        "licensing"
+      ],
+      "summary": "The check that enforces this project's hardest content rule, that AMA-licensed CPT descriptors are never redistributed, read CQL and nothing else. It returned no findings for every other file type, including FHIR resources, where the same twelve licensed descriptors also appear.",
+      "reporter": "aks129",
+      "page": "https://openquality.us/knowledge/corpus-2026-007",
+      "source": "knowledge/corpus/2026-007-the-licensing-check-could-not-see-fhir-resources.md"
     },
     {
       "id": "cql-2026-001",

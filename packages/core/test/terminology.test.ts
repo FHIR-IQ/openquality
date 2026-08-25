@@ -50,8 +50,13 @@ describe('checkTerminology', () => {
     expect(checkTerminology('cql/Example.cql', cql)).toEqual([])
   })
 
-  it('ignores files that are not CQL', () => {
-    expect(checkTerminology('README.md', CPT_CQL)).toEqual([])
+  it('reports a CQL declaration even in a file that is not named .cql', () => {
+    // This used to assert the opposite, back when the check gated on the `.cql`
+    // extension. The gate was the bug: packPackage ships the whole directory,
+    // so a licensed descriptor pasted into a README is redistributed exactly
+    // like one in a library. Same shape as knowledge/corpus/2026-005, where
+    // keying detection off the file type was the bypass.
+    expect(checkTerminology('README.md', CPT_CQL)).toHaveLength(1)
   })
 
   it('ignores a CQL file with no restricted code system', () => {
@@ -222,6 +227,101 @@ describe('files that made the checks pathological', () => {
       `library X version '1.0.0'`,
       `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'`,
       `code "N": '97804' from "CPT" display 'licensed text'`,
+    ].join('\n')
+    expect(checkTerminology('x.cql', cql)).toHaveLength(1)
+  })
+})
+
+/**
+ * The same licensed descriptors reach a package a second way, through a FHIR
+ * resource rather than CQL. A `Measure` carries its effective data requirements
+ * as a contained `Library`, and that Library records every directly referenced
+ * code as a `cqf-directReferenceCode` extension with the descriptor in
+ * `valueCoding.display`. Measured against the pinned upstream release, that is
+ * the same six measures and the same twelve CPT codes the CQL rule already
+ * names, in a place the CQL regex cannot see and the CI grep does not look.
+ */
+describe('licensed display text inside a FHIR resource', () => {
+  const coding = (system: string, code: string, display?: string) =>
+    JSON.stringify({ resourceType: 'Measure', group: [{ code: { coding: [{ system, code, ...(display ? { display } : {}) }] } }] })
+
+  it('reports a CPT descriptor in a plain coding', () => {
+    const findings = checkTerminology(
+      'Measure-X.json',
+      coding('http://www.ama-assn.org/go/cpt', '97804', 'Medical nutrition therapy; group'),
+    )
+    expect(findings).toHaveLength(1)
+    expect(findings[0]).toMatchObject({ check: 'content.forbidden', severity: 'error' })
+    expect(findings[0].message).toContain('97804')
+  })
+
+  it('reports a CPT descriptor nested in a contained Library extension', () => {
+    // The shape upstream actually ships, which is why the walk cannot key off
+    // `coding` arrays alone.
+    const measure = JSON.stringify({
+      resourceType: 'Measure',
+      contained: [
+        {
+          resourceType: 'Library',
+          extension: [
+            {
+              url: 'http://hl7.org/fhir/StructureDefinition/cqf-directReferenceCode',
+              valueCoding: {
+                system: 'http://www.ama-assn.org/go/cpt',
+                code: '97802',
+                display: 'Medical nutrition therapy; initial assessment',
+              },
+            },
+          ],
+        },
+      ],
+    })
+    expect(checkTerminology('Measure-X.json', measure)).toHaveLength(1)
+  })
+
+  it('allows a code and code system with no display', () => {
+    expect(checkTerminology('m.json', coding('http://www.ama-assn.org/go/cpt', '97804'))).toEqual([])
+  })
+
+  it('allows display text for a code system whose licence permits it', () => {
+    expect(checkTerminology('m.json', coding('http://snomed.info/sct', '44054006', 'Diabetes mellitus'))).toEqual([])
+    expect(checkTerminology('m.json', coding('http://loinc.org', '97506-0', 'Glucose management indicator'))).toEqual([])
+  })
+
+  it('does not mistake the near-miss OID for CPT', () => {
+    // urn:oid:2.16.840.1.113883.6.120 is a different code system entirely.
+    expect(checkTerminology('m.json', coding('urn:oid:2.16.840.1.113883.6.120', '1', 'x'))).toEqual([])
+  })
+
+  it('finds it in a file renamed away from .json', () => {
+    // Detection must not depend on the extension: renaming was the original
+    // bypass, recorded as knowledge/corpus/2026-005.
+    expect(
+      checkTerminology('notes.txt', coding('http://www.ama-assn.org/go/cpt', '97804', 'licensed')),
+    ).toHaveLength(1)
+  })
+
+  it('reports one finding per code, not one per occurrence', () => {
+    const twice = JSON.stringify({
+      a: { system: 'http://www.ama-assn.org/go/cpt', code: '97804', display: 'x' },
+      b: { system: 'http://www.ama-assn.org/go/cpt', code: '97804', display: 'x' },
+    })
+    expect(checkTerminology('m.json', twice)).toHaveLength(1)
+  })
+
+  it('fails closed when a file naming CPT cannot be parsed', () => {
+    const broken = '{ "system": "http://www.ama-assn.org/go/cpt", "display": ["unclosed'
+    const findings = checkTerminology('m.json', broken)
+    expect(findings).toHaveLength(1)
+    expect(findings[0].message).toContain('could not be parsed')
+  })
+
+  it('does not parse or report a CQL file through the resource path', () => {
+    // CQL never spells the key `system`, so the cheap reject keeps the parse
+    // off all 302 CQL files and the CQL rule stays the one that reports them.
+    const cql = [
+      `codesystem "CPT": 'http://www.ama-assn.org/go/cpt'`,
+      `code "N": '97804' from "CPT" display 'licensed'`,
     ].join('\n')
     expect(checkTerminology('x.cql', cql)).toHaveLength(1)
   })

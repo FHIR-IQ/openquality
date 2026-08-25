@@ -158,7 +158,7 @@
     </p>
     <div class="counts">
       <div><b>54</b> packages</div>
-      <div><b>12</b> knowledge entries</div>
+      <div><b>13</b> knowledge entries</div>
       <div><b>15</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
     </div>
@@ -217,6 +217,13 @@
         <p><a class="elink" href="/knowledge/corpus-2026-006">Verifying a provenance claim without fetching</a></p>
         <p>A community package can declare relationship: unmodified against any upstream and nothing checks it. The CI job that makes that claim verifiable today only covers the 53 seeded packages, because it works by re-running the importer.</p>
       </div>
+      <div class="entry">
+        <div class="eh"><span class="et">defect</span>
+        <span class="es mono">corpus-2026-007</span>
+        <span class="es">resolved</span></div>
+        <p><a class="elink" href="/knowledge/corpus-2026-007">The licensing check could not see FHIR resources</a></p>
+        <p>The check that enforces this project's hardest content rule, that AMA-licensed CPT descriptors are never redistributed, read CQL and nothing else. It returned no findings for every other file type, including FHIR resources, where the same twelve licensed descriptors also appear.</p>
+      </div>
     </div>
     <div class="scope">
       <div class="scope-name mono">cql</div>
@@ -269,7 +276,7 @@
       the corpus supports: the finding is what has to be public, not the finder.
     </p>
     <div class="people">
-      <span class="person"><b>aks129</b> <span>7 entries</span></span>
+      <span class="person"><b>aks129</b> <span>8 entries</span></span>
       <span class="person"><b>anonymous</b> <span>4 entries</span></span>
       <span class="person"><b>evan-machusak</b> <span>1 entry</span></span>
     </div>
