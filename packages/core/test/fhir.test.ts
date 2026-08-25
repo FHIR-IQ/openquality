@@ -3,6 +3,7 @@ import {
   CANONICAL_BASE,
   buildFhirPackage,
   buildLibrary,
+  buildPackageBundle,
   buildPackageIndex,
   buildPackageJson,
   fhirPackageName,
@@ -205,5 +206,73 @@ describe('packaging resources the package already holds', () => {
     const index = JSON.parse(files.find((f) => f.path.endsWith('.index.json'))!.content)
     expect(index.files[0].kind).toBeUndefined()
     expect(index.files[0].resourceType).toBe('ViewDefinition')
+  })
+})
+
+/**
+ * The CRMI artifact Bundle, asked for by Bryn Rhodes on Zulip: the shape
+ * `$package` returns, emitted as a file because this repository has no server
+ * to run the operation on.
+ */
+describe('buildPackageBundle', () => {
+  const bundle = () => buildPackageBundle(MANIFEST, [MAIN])
+  const entries = (b: Record<string, unknown>) =>
+    b.entry as { fullUrl: string; resource: Record<string, unknown> }[]
+
+  it('is a collection Bundle', () => {
+    const b = bundle()
+    expect(b.resourceType).toBe('Bundle')
+    expect(b.type).toBe('collection')
+  })
+
+  it('leads with an asset-collection Library describing the rest', () => {
+    const [first, ...rest] = entries(bundle())
+    expect(first.resource.resourceType).toBe('Library')
+    const type = first.resource.type as { coding: { code: string }[] }
+    expect(type.coding[0].code).toBe('asset-collection')
+    const related = first.resource.relatedArtifact as { type: string; resource: string }[]
+    expect(related).toHaveLength(rest.length)
+    expect(related.every((r) => r.type === 'composed-of')).toBe(true)
+  })
+
+  it('every composed-of reference resolves to an entry in the same bundle', () => {
+    // A manifest that points at artifacts the bundle does not carry is worse
+    // than no manifest: it reads as complete while being unresolvable.
+    const b = bundle()
+    const urls = new Set(entries(b).map((e) => e.fullUrl))
+    const related = entries(b)[0].resource.relatedArtifact as { resource: string }[]
+    expect(related.every((r) => urls.has(r.resource))).toBe(true)
+  })
+
+  it('gives every entry a fullUrl under the project canonical base', () => {
+    expect(entries(bundle()).every((e) => e.fullUrl.startsWith(CANONICAL_BASE))).toBe(true)
+  })
+
+  it('carries FHIR resources the package already holds, not only the CQL', () => {
+    const measure = { resourceType: 'Measure', id: 'CMS122', status: 'active' }
+    const b = buildPackageBundle(MANIFEST, [MAIN], [{ path: 'fhir/Measure-CMS122.json', resource: measure }])
+    const types = entries(b).slice(1).map((e) => e.resource.resourceType)
+    expect(types).toContain('Measure')
+    expect(types).toContain('Library')
+  })
+
+  it('holds exactly the resources the npm package holds', () => {
+    // Two containers, one list. If these ever diverge, a consumer choosing a
+    // format is choosing different content, which is the thing to prevent.
+    const measure = { resourceType: 'Measure', id: 'CMS122', status: 'active' }
+    const resources = [{ path: 'fhir/Measure-CMS122.json', resource: measure }]
+    const inBundle = entries(buildPackageBundle(MANIFEST, [MAIN], resources))
+      .slice(1)
+      .map((e) => `${String(e.resource.resourceType)}-${String(e.resource.id)}.json`)
+      .sort()
+    const inPackage = buildFhirPackage(MANIFEST, [MAIN], resources)
+      .map((f) => f.path.replace('package/', ''))
+      .filter((n) => n !== 'package.json' && n !== '.index.json')
+      .sort()
+    expect(inBundle).toEqual(inPackage)
+  })
+
+  it('is byte-identical across runs', () => {
+    expect(JSON.stringify(bundle())).toBe(JSON.stringify(bundle()))
   })
 })

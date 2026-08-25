@@ -4,6 +4,7 @@ import { runValidate } from './commands/validate.js'
 import { runValidateAll } from './commands/validate-all.js'
 import { runPack } from './commands/pack.js'
 import { runFhirPackage } from './commands/fhir-package.js'
+import { runFhirBundle } from './commands/fhir-bundle.js'
 
 const write = (line: string) => console.log(line)
 
@@ -43,6 +44,15 @@ program
   .option('-o, --out <path>', 'output path')
   .action(async (dir: string, opts: { out?: string }) => {
     process.exitCode = await runFhirPackage(dir, opts.out, write)
+  })
+
+program
+  .command('fhir-bundle')
+  .description("Emit the package as a CRMI artifact Bundle, the shape CRMI's $package returns")
+  .argument('[dir]', 'package directory', '.')
+  .option('-o, --out <path>', 'output path')
+  .action(async (dir: string, opts: { out?: string }) => {
+    process.exitCode = await runFhirBundle(dir, opts.out, write)
   })
 
 await program.parseAsync()

@@ -223,12 +223,17 @@ export interface FhirPackageFile {
  * same bytes. That is the same requirement the tarball in pack.ts has, for the
  * same reason: a digest that changes between runs cannot address content.
  */
-export function buildFhirPackage(
+/**
+ * Every resource a package contributes, in a stable order. Shared by the npm
+ * package and the CRMI bundle so the two forms can never disagree about what
+ * the package contains: they are two containers for one list.
+ */
+function packageMembers(
   manifest: Manifest,
   files: CqlFile[],
-  resources: FhirResourceFile[] = [],
-  opts: FhirPackageOptions = {},
-): FhirPackageFile[] {
+  resources: FhirResourceFile[],
+  opts: FhirPackageOptions,
+): IndexedFile[] {
   const fromCql: IndexedFile[] = files.map((file) => {
     const resource = buildLibrary(file, manifest, opts)
     return { filename: `Library-${String(resource.id)}.json`, resource }
@@ -242,7 +247,74 @@ export function buildFhirPackage(
     return { filename: `${String(resource.resourceType)}-${String(resource.id)}.json`, resource }
   })
 
-  const indexed = [...fromCql, ...fromJson].sort((a, b) => byCodeUnit(a.filename, b.filename))
+  return [...fromCql, ...fromJson].sort((a, b) => byCodeUnit(a.filename, b.filename))
+}
+
+/**
+ * The package as a CRMI artifact Bundle, the shape CRMI's `$package` operation
+ * returns: a collection whose first entry is an `asset-collection` Library
+ * describing the contents, followed by the artifacts themselves.
+ *
+ * Open Quality has no server, so it cannot offer `$package` as an operation.
+ * That was taken for a while to mean it could not produce the output either,
+ * which was wrong: the Bundle is a file. Emitting it statically gives CRMI-aware
+ * tooling the artifact it already knows how to consume, with nothing to stand up.
+ *
+ * The npm tarball remains, because it is what a package registry and the tools
+ * built on one consume. They are two containers for the same resources, built
+ * from one list, rather than two formats that might drift.
+ */
+export function buildPackageBundle(
+  manifest: Manifest,
+  files: CqlFile[],
+  resources: FhirResourceFile[] = [],
+  opts: FhirPackageOptions = {},
+): Record<string, unknown> {
+  const members = packageMembers(manifest, files, resources, opts)
+  const id = fhirId(manifest.id.split('/').join('-'))
+
+  const collection: Record<string, unknown> = {
+    resourceType: 'Library',
+    id,
+    url: `${CANONICAL_BASE}/Library/${id}`,
+    version: manifest.version,
+    name: id,
+    title: manifest.measure?.title ?? manifest.id,
+    status: 'active',
+    experimental: true,
+    type: {
+      coding: [
+        { system: 'http://terminology.hl7.org/CodeSystem/library-type', code: 'asset-collection' },
+      ],
+    },
+    publisher: opts.author ?? 'Open Quality',
+    description:
+      `Contents of the Open Quality package ${manifest.id} version ${manifest.version}. ` +
+      `Not an authoritative publication of this logic.`,
+    relatedArtifact: members.map((m) => ({
+      type: 'composed-of',
+      resource: `${CANONICAL_BASE}/${String(m.resource.resourceType)}/${String(m.resource.id)}`,
+    })),
+  }
+
+  return {
+    resourceType: 'Bundle',
+    id,
+    type: 'collection',
+    entry: [collection, ...members.map((m) => m.resource)].map((resource) => ({
+      fullUrl: `${CANONICAL_BASE}/${String(resource.resourceType)}/${String(resource.id)}`,
+      resource,
+    })),
+  }
+}
+
+export function buildFhirPackage(
+  manifest: Manifest,
+  files: CqlFile[],
+  resources: FhirResourceFile[] = [],
+  opts: FhirPackageOptions = {},
+): FhirPackageFile[] {
+  const indexed = packageMembers(manifest, files, resources, opts)
 
   const out: FhirPackageFile[] = [
     { path: 'package/package.json', content: `${JSON.stringify(buildPackageJson(manifest, files, opts), null, 2)}\n` },

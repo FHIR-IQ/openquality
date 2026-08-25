@@ -67,9 +67,14 @@ already rely on. It is the open corpus and community layer that sits alongside t
 - **[HL7 CRMI](https://build.fhir.org/ig/HL7/crmi-ig/)** (Canonical Resource Management
   Infrastructure) defines how knowledge artifacts are packaged, versioned, and moved
   through a lifecycle. That is the interoperability target, and Open Quality tracks it
-  rather than inventing a parallel model. **No CRMI emitter exists yet.** What exists
-  today is `oq fhir-package`, which emits a FHIR NPM package that CQL Studio, the FHIR
-  package registry, and IG Publisher already read.
+  rather than inventing a parallel model. `oq fhir-bundle` emits the package as a CRMI
+  artifact Bundle, the shape CRMI's `$package` operation returns, written as a file
+  because there is no server here to run an operation on. `oq fhir-package` emits a FHIR
+  NPM package that CQL Studio, the FHIR package registry, and IG Publisher already read.
+  Both are built from one list of resources, so the two forms cannot drift apart.
+
+  What still does not exist is a repository *service*: no `$package`, no `$data-requirements`,
+  no search API. The artifacts are CRMI-shaped; the operations are not implemented.
 
   Format is deliberately not the product. Open Quality aims to ingest whatever standard
   format a tool already emits, so nobody has to adopt anything of ours to publish here.
@@ -102,7 +107,7 @@ Pre-launch.
 |-------|-------|------------|
 | Package format | shipped | Manifest schema, conformance levels, license policy, content scanning, provenance |
 | Validation core | shipped | Validates a package directory and computes its level |
-| `oq` CLI | shipped | `oq validate`, `oq validate-all`, `oq pack`, `oq fhir-package` |
+| `oq` CLI | shipped | `oq validate`, `oq validate-all`, `oq pack`, `oq fhir-package`, `oq fhir-bundle` |
 | Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |

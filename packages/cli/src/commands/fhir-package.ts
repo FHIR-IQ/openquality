@@ -8,6 +8,7 @@ import {
   parseManifest,
   type CqlFile,
   type FhirResourceFile,
+  type Manifest,
 } from '@openquality/core'
 import type { Writer } from './validate.js'
 
@@ -39,28 +40,7 @@ export async function runFhirPackage(dir: string, outPath: string | undefined, w
   }
   const manifest = parsed.manifest
 
-  const cql: CqlFile[] = []
-  const resources: FhirResourceFile[] = []
-  for (const rel of await listPackageFiles(dir)) {
-    if (rel.endsWith('.cql')) {
-      cql.push({ path: rel, source: await readFile(join(dir, rel), 'utf8') })
-      continue
-    }
-    if (!rel.endsWith('.json')) continue
-    // Anything already shaped like a FHIR resource goes in as it is. A
-    // ViewDefinition is one, so a SQL-on-FHIR package becomes a FHIR package
-    // without conversion. Files that are not resources are skipped rather than
-    // reported: a package may hold JSON for its own reasons.
-    let parsed: unknown
-    try {
-      parsed = JSON.parse(await readFile(join(dir, rel), 'utf8'))
-    } catch {
-      continue
-    }
-    if (parsed && typeof parsed === 'object' && typeof (parsed as Record<string, unknown>).resourceType === 'string') {
-      resources.push({ path: rel, resource: parsed as Record<string, unknown> })
-    }
-  }
+  const { cql, resources } = await collectPackageResources(dir)
 
   if (cql.length === 0 && resources.length === 0) {
     write(`error  ${dir} holds no CQL and no FHIR resource, so there is nothing to package`)
@@ -89,4 +69,60 @@ export async function runFhirPackage(dir: string, outPath: string | undefined, w
   write('experimental and their canonical URLs point at openquality.us rather than at')
   write('the steward, because this is not an authoritative publication of the logic.')
   return 0
+}
+
+/**
+ * The CQL and FHIR resources a package directory holds. Shared by the npm
+ * package and the CRMI bundle commands, so the two forms are always built from
+ * the same reading of the directory.
+ */
+export async function collectPackageResources(
+  dir: string,
+): Promise<{ cql: CqlFile[]; resources: FhirResourceFile[] }> {
+  const cql: CqlFile[] = []
+  const resources: FhirResourceFile[] = []
+  for (const rel of await listPackageFiles(dir)) {
+    if (rel.endsWith('.cql')) {
+      cql.push({ path: rel, source: await readFile(join(dir, rel), 'utf8') })
+      continue
+    }
+    if (!rel.endsWith('.json')) continue
+    // Anything already shaped like a FHIR resource goes in as it is. A
+    // ViewDefinition is one, so a SQL-on-FHIR package becomes a FHIR package
+    // without conversion. Files that are not resources are skipped rather than
+    // reported: a package may hold JSON for its own reasons.
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(await readFile(join(dir, rel), 'utf8'))
+    } catch {
+      continue
+    }
+    if (parsed && typeof parsed === 'object' && typeof (parsed as Record<string, unknown>).resourceType === 'string') {
+      resources.push({ path: rel, resource: parsed as Record<string, unknown> })
+    }
+  }
+  return { cql, resources }
+}
+
+/**
+ * Reads and validates a package manifest, or explains why it could not.
+ * Shared for the same reason as collectPackageResources.
+ */
+export async function readPackageManifest(
+  dir: string,
+  write: Writer,
+): Promise<Manifest | undefined> {
+  let source: string
+  try {
+    source = await readFile(join(dir, 'openquality.yaml'), 'utf8')
+  } catch {
+    write(`error  openquality.yaml not found at ${dir}`)
+    return undefined
+  }
+  const parsed = parseManifest(source)
+  if (!parsed.ok) {
+    for (const finding of parsed.findings) write(`error  ${finding.path ?? ''} ${finding.message}`)
+    return undefined
+  }
+  return parsed.manifest
 }

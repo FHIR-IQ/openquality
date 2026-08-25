@@ -116,8 +116,8 @@ manifest that pins the versions used, rather than by embedding expansions.
 
 ### Distribution
 
-A package is designed to be emitted as a CRMI artifact bundle via the `$package` shape
-(no emitter exists yet) — the target
+A package is emitted as a CRMI artifact bundle in the `$package` shape by
+`oq fhir-bundle` — the target
 artifact plus its traced dependencies, first entry an outcome manifest that characterizes
 the bundle. This is what lets an Open Quality package be installed and evaluated by tooling
 that has never heard of `openquality.yaml`. Packaging measures as standard FHIR NPM
