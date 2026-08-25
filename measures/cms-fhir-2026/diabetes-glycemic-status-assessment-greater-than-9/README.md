@@ -21,7 +21,8 @@ Redistributed from [https://github.com/cqframework/ecqm-content-qicore-2025](htt
 
 Modified from the upstream content:
 
-- removed licensed display text from 3 code declarations: CPT 97804, CPT 97802, CPT 97803
+- removed licensed display text from 3 code declarations in the CQL: CPT 97804, CPT 97802, CPT 97803
+- removed licensed display text from 3 codings in the Measure resource: CPT 97802, CPT 97803, CPT 97804
 
 Measure steward: National Committee for Quality Assurance. The steward is not the publisher of this
 package, and Open Quality is not a measure steward. See

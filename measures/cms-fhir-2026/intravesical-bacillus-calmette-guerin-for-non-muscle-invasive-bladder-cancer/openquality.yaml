@@ -9,6 +9,8 @@ measure:
     - CMS646FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer.json
+    type: fhir/Measure
   - path: cql/CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer.cql
     type: cql
   - path: cql/FHIRHelpers.cql

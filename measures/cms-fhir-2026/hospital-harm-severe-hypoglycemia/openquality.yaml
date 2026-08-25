@@ -9,6 +9,8 @@ measure:
     - CMS816FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS816FHIRHHHypo.json
+    type: fhir/Measure
   - path: cql/CMS816FHIRHHHypo.cql
     type: cql
   - path: cql/CQMCommon.cql

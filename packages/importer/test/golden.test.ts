@@ -14,9 +14,10 @@ const CONTEXT = {
 }
 
 async function planFixture() {
-  const measure = readMeasure(await readFile(join(FIXTURES, 'upstream/measure/Example.json'), 'utf8'))
+  const raw = await readFile(join(FIXTURES, 'upstream/measure/Example.json'), 'utf8')
+  const measure = readMeasure(raw)
   const cql = await readFile(join(FIXTURES, 'upstream/cql/Example.cql'), 'utf8')
-  const result = planPackage(measure!, cql, CONTEXT)
+  const result = planPackage(measure!, cql, CONTEXT, raw)
   expect(result.skipped).toBeUndefined()
   return result
 }
@@ -37,5 +38,20 @@ describe('golden import', () => {
   it('marks the fixture derived because it carries CPT display text', async () => {
     const { plan } = await planFixture()
     expect(plan!.provenance.relationship).toBe('derived')
+  })
+
+  it('strips the CPT descriptor from the Measure and keeps the LOINC one', async () => {
+    // The fixture carries the shape upstream ships: effective data requirements
+    // as a contained Library with a descriptor per direct reference code. Both
+    // the CQL and the resource carry a licensed descriptor, and both are
+    // reported, because a reader checking the claim needs to know which file.
+    const { measureJson, plan } = await planFixture()
+    expect(measureJson).not.toContain('Medical nutrition therapy; group')
+    expect(measureJson).toContain('"code": "97804"')
+    expect(measureJson).toContain('Glucose management indicator')
+    expect(plan!.provenance.modifications).toEqual([
+      'removed licensed display text from 1 code declaration in the CQL: CPT 97804',
+      'removed licensed display text from 1 coding in the Measure resource: CPT 97804',
+    ])
   })
 })

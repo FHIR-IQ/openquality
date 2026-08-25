@@ -9,6 +9,8 @@ measure:
     - CMS146FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS146FHIRAppropriateTestingforPharyngitis.json
+    type: fhir/Measure
   - path: cql/CMS146FHIRAppropriateTestingforPharyngitis.cql
     type: cql
   - path: cql/Antibiotic.cql
@@ -89,4 +91,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 1 code declaration: CPT 99429"
+    - "removed licensed display text from 1 code declaration in the CQL: CPT 99429"
+    - "removed licensed display text from 1 coding in the Measure resource: CPT 99429"

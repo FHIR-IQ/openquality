@@ -9,6 +9,8 @@ measure:
     - CMS155FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS155FHIRWeightAssessandCounselforKids.json
+    type: fhir/Measure
   - path: cql/CMS155FHIRWeightAssessandCounselforKids.cql
     type: cql
   - path: cql/FHIRHelpers.cql

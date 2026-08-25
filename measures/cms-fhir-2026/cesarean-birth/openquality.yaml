@@ -9,6 +9,8 @@ measure:
     - CMS0334FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS0334FHIRPCCesareanBirth.json
+    type: fhir/Measure
   - path: cql/CMS0334FHIRPCCesareanBirth.cql
     type: cql
   - path: cql/CQMCommon.cql

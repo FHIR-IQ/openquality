@@ -9,6 +9,8 @@ measure:
     - CMS122FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS122FHIRDiabetesAssessGreaterThan9Percent.json
+    type: fhir/Measure
   - path: cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql
     type: cql
   - path: cql/AdvancedIllnessandFrailty.cql
@@ -61,4 +63,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 3 code declarations: CPT 97804, CPT 97802, CPT 97803"
+    - "removed licensed display text from 3 code declarations in the CQL: CPT 97804, CPT 97802, CPT 97803"
+    - "removed licensed display text from 3 codings in the Measure resource: CPT 97802, CPT 97803, CPT 97804"

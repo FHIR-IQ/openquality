@@ -83,8 +83,11 @@ async function writePackage(
   plan: PackagePlan,
   cql: string,
   libraries: Map<string, string>,
+  measureJson: string,
 ): Promise<void> {
   await mkdir(join(dir, 'cql'), { recursive: true })
+  await mkdir(join(dir, 'fhir'), { recursive: true })
+  await writeFile(join(dir, 'fhir', plan.measureFileName), toLf(measureJson))
   await writeFile(join(dir, 'openquality.yaml'), emitManifest(plan))
   await writeFile(join(dir, 'README.md'), emitReadme(plan))
   await writeFile(join(dir, 'cql', plan.cqlFileName), toLf(cql))
@@ -129,7 +132,8 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
   const skipped: Skip[] = []
 
   for (const path of await listMeasureFiles(root)) {
-    const measure = readMeasure(await readText(path))
+    const measureJson = await readText(path)
+    const measure = readMeasure(measureJson)
     if (!measure) {
       skipped.push({ measure: basename(path, '.json'), reason: 'not a readable Measure resource' })
       continue
@@ -141,7 +145,12 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
       continue
     }
 
-    const { plan, cql, skipped: skip } = planPackage(measure, source, context)
+    const { plan, cql, measureJson: resource, skipped: skip } = planPackage(
+      measure,
+      source,
+      context,
+      measureJson,
+    )
     if (!plan || !cql) {
       if (skip) skipped.push(skip)
       continue
@@ -159,7 +168,7 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
     }
     plan.libraryFileNames = resolved.map((name) => `${name}.cql`)
 
-    await writePackage(join(MEASURES_DIR, plan.slug), plan, cql, cqlByLibrary)
+    await writePackage(join(MEASURES_DIR, plan.slug), plan, cql, cqlByLibrary, resource ?? '')
     imported.push(plan.id)
   }
 

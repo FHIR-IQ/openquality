@@ -9,6 +9,8 @@ measure:
     - CMS143FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS143FHIRPOAGOpticNerveEvaluation.json
+    type: fhir/Measure
   - path: cql/CMS143FHIRPOAGOpticNerveEvaluation.cql
     type: cql
   - path: cql/FHIRHelpers.cql

@@ -9,6 +9,8 @@ measure:
     - CMS71FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS71FHIRSTKAnticoagAFFlutter.json
+    type: fhir/Measure
   - path: cql/CMS71FHIRSTKAnticoagAFFlutter.cql
     type: cql
   - path: cql/CQMCommon.cql

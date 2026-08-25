@@ -9,6 +9,8 @@ measure:
     - CMS56FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement.json
+    type: fhir/Measure
   - path: cql/CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement.cql
     type: cql
   - path: cql/FHIRHelpers.cql
@@ -58,4 +60,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 1 code declaration: CPT 99024"
+    - "removed licensed display text from 1 code declaration in the CQL: CPT 99024"
+    - "removed licensed display text from 1 coding in the Measure resource: CPT 99024"

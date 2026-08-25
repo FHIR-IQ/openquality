@@ -9,6 +9,8 @@ measure:
     - CMS130FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS130FHIRColorectalCancerScreening.json
+    type: fhir/Measure
   - path: cql/CMS130FHIRColorectalCancerScreening.cql
     type: cql
   - path: cql/AdultOutpatientEncounters.cql

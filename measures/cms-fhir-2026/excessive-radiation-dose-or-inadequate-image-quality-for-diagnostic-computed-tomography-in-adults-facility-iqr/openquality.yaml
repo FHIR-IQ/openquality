@@ -9,6 +9,8 @@ measure:
     - CMS1074FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS1074FHIRCTIQR.json
+    type: fhir/Measure
   - path: cql/CMS1074FHIRCTIQR.cql
     type: cql
   - path: cql/AlaraCommonFunctions.cql

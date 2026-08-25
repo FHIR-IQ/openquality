@@ -9,6 +9,8 @@ measure:
     - CMS133FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS133FHIRCataracts2040BCVAwithin90Days.json
+    type: fhir/Measure
   - path: cql/CMS133FHIRCataracts2040BCVAwithin90Days.cql
     type: cql
   - path: cql/FHIRHelpers.cql

@@ -9,6 +9,8 @@ measure:
     - CMS645FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy.json
+    type: fhir/Measure
   - path: cql/CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy.cql
     type: cql
   - path: cql/FHIRHelpers.cql

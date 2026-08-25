@@ -9,6 +9,8 @@ measure:
     - CMS72FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS72FHIRSTKAntithromboticDay2.json
+    type: fhir/Measure
   - path: cql/CMS72FHIRSTKAntithromboticDay2.cql
     type: cql
   - path: cql/CQMCommon.cql

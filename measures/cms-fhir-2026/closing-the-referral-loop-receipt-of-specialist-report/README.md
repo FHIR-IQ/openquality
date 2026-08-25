@@ -21,7 +21,8 @@ Redistributed from [https://github.com/cqframework/ecqm-content-qicore-2025](htt
 
 Modified from the upstream content:
 
-- removed licensed display text from 5 code declarations: CPT 96112, CPT 96156, CPT 96136, CPT 96138, CPT 90839
+- removed licensed display text from 5 code declarations in the CQL: CPT 96112, CPT 96156, CPT 96136, CPT 96138, CPT 90839
+- removed licensed display text from 5 codings in the Measure resource: CPT 90839, CPT 96112, CPT 96136, CPT 96138, CPT 96156
 
 Measure steward: Centers for Medicare & Medicaid Services (CMS). The steward is not the publisher of this
 package, and Open Quality is not a measure steward. See

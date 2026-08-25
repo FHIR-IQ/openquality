@@ -9,6 +9,8 @@ measure:
     - CMS75FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS75FHIRChildrenWhoHaveDentalDecayOrCavities.json
+    type: fhir/Measure
   - path: cql/CMS75FHIRChildrenWhoHaveDentalDecayOrCavities.cql
     type: cql
   - path: cql/FHIRHelpers.cql

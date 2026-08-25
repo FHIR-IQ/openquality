@@ -1,3 +1,5 @@
+import { policyFor } from '@openquality/core'
+
 export interface UpstreamMeasure {
   name: string
   version?: string
@@ -95,4 +97,65 @@ export function readMeasure(json: string): UpstreamMeasure | undefined {
     library: resource.library?.[0]?.split('/').pop(),
     status: resource.status,
   }
+}
+
+
+export interface MeasureStripResult {
+  /** The resource to write. Byte-identical to the input when nothing was removed. */
+  json: string
+  /** One entry per removed display, as "<system name> <code>", sorted and deduplicated. */
+  removed: string[]
+}
+
+/**
+ * Removes display text for code systems whose licence does not permit
+ * redistributing it, keeping the code and the code system. The same rule
+ * `stripRestrictedDisplays` applies to CQL, applied to a FHIR resource.
+ *
+ * A `Measure` carries its effective data requirements as a contained `Library`,
+ * and each directly referenced code appears there as a `cqf-directReferenceCode`
+ * extension with the descriptor in `valueCoding.display`. Against the pinned
+ * upstream release that is 6 measures, 20 codings, 12 distinct CPT codes: the
+ * same twelve the CQL rule already strips.
+ *
+ * When nothing is removed the input is returned unchanged rather than
+ * reserialised. That is what keeps `relationship: unmodified` a true statement
+ * about bytes: a package that claims to carry the upstream resource untouched
+ * carries it untouched, whitespace and key order included.
+ */
+export function stripMeasureDisplays(raw: string): MeasureStripResult {
+  let doc: unknown
+  try {
+    doc = JSON.parse(raw)
+  } catch {
+    // Not parseable, so not modifiable. The caller has already rejected a
+    // measure this shape via readMeasure; returning the input unchanged keeps
+    // this function total rather than throwing on a path that cannot happen.
+    return { json: raw, removed: [] }
+  }
+
+  const removed = new Set<string>()
+  const stack: unknown[] = [doc]
+  const seen = new Set<object>()
+  while (stack.length) {
+    const node = stack.pop()
+    if (Array.isArray(node)) {
+      stack.push(...node)
+    } else if (node && typeof node === 'object') {
+      if (seen.has(node)) continue
+      seen.add(node)
+      const obj = node as Record<string, unknown>
+      if (typeof obj.system === 'string' && typeof obj.display === 'string') {
+        const policy = policyFor(obj.system)
+        if (policy && !policy.displayAllowed) {
+          removed.add(`${policy.name} ${typeof obj.code === 'string' ? obj.code : '?'}`)
+          delete obj.display
+        }
+      }
+      stack.push(...Object.values(obj))
+    }
+  }
+
+  if (removed.size === 0) return { json: raw, removed: [] }
+  return { json: `${JSON.stringify(doc, null, 2)}\n`, removed: [...removed].sort() }
 }

@@ -9,6 +9,8 @@ measure:
     - CMS142FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes.json
+    type: fhir/Measure
   - path: cql/CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes.cql
     type: cql
   - path: cql/FHIRHelpers.cql

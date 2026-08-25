@@ -9,6 +9,8 @@ measure:
     - CMS986FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS986FHIRMalnutritionScore.json
+    type: fhir/Measure
   - path: cql/CMS986FHIRMalnutritionScore.cql
     type: cql
   - path: cql/CQMCommon.cql

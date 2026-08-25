@@ -9,6 +9,8 @@ measure:
     - CMS771FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia.json
+    type: fhir/Measure
   - path: cql/CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia.cql
     type: cql
   - path: cql/FHIRHelpers.cql

@@ -9,6 +9,8 @@ measure:
     - CMS50FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS50FHIRCRLReceiptofSpecialistReport.json
+    type: fhir/Measure
   - path: cql/CMS50FHIRCRLReceiptofSpecialistReport.cql
     type: cql
   - path: cql/FHIRHelpers.cql
@@ -56,4 +58,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 5 code declarations: CPT 96112, CPT 96156, CPT 96136, CPT 96138, CPT 90839"
+    - "removed licensed display text from 5 code declarations in the CQL: CPT 96112, CPT 96156, CPT 96136, CPT 96138, CPT 90839"
+    - "removed licensed display text from 5 codings in the Measure resource: CPT 90839, CPT 96112, CPT 96136, CPT 96138, CPT 96156"

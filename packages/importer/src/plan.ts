@@ -1,6 +1,6 @@
 import { parseHeader, parseIncludes, parseValueSets, stripRestrictedDisplays } from './cql.js'
 import { normalizeVersion, packageId, slugFor } from './naming.js'
-import type { UpstreamMeasure } from './measure.js'
+import { stripMeasureDisplays, type UpstreamMeasure } from './measure.js'
 import type { PackagePlan } from './emit.js'
 
 export interface ImportContext {
@@ -18,6 +18,8 @@ export interface PlanResult {
   plan?: PackagePlan
   /** The rewritten CQL to write alongside the plan. */
   cql?: string
+  /** The Measure resource to write, stripped of licensed display text. */
+  measureJson?: string
   skipped?: Skip
 }
 
@@ -71,6 +73,7 @@ export function planPackage(
   measure: UpstreamMeasure,
   cqlSource: string,
   context: ImportContext,
+  measureJson = '',
 ): PlanResult {
   const skip = (reason: string): PlanResult => ({ skipped: { measure: measure.name, reason } })
 
@@ -91,8 +94,24 @@ export function planPackage(
   }
 
   const { cql, removed } = stripRestrictedDisplays(cqlSource)
+  const measureResource = stripMeasureDisplays(measureJson)
 
   const slug = slugFor(measure.title)
+
+  const modifications: string[] = []
+  if (removed.length > 0) {
+    modifications.push(
+      `removed licensed display text from ${removed.length} code ` +
+        `${removed.length === 1 ? 'declaration' : 'declarations'} in the CQL: ${removed.join(', ')}`,
+    )
+  }
+  if (measureResource.removed.length > 0) {
+    const n = measureResource.removed.length
+    modifications.push(
+      `removed licensed display text from ${n} ${n === 1 ? 'coding' : 'codings'} in the ` +
+        `Measure resource: ${measureResource.removed.join(', ')}`,
+    )
+  }
 
   const plan: PackagePlan = {
     id: packageId(MEASURE_NAMESPACE, slug),
@@ -105,22 +124,21 @@ export function planPackage(
     measurementPeriod: measure.measurementPeriod,
     dataModel,
     cqlFileName: `${header.name}.cql`,
+    measureFileName: `Measure-${measure.name}.json`,
     libraryFileNames: [],
     valueSets: parseValueSets(cqlSource),
     provenance: {
       upstream: context.upstream,
       ref: context.ref,
       retrieved: context.retrieved,
-      relationship: removed.length > 0 ? 'derived' : 'unmodified',
-      modifications:
-        removed.length > 0
-          ? [
-              `removed licensed display text from ${removed.length} code ` +
-                `${removed.length === 1 ? 'declaration' : 'declarations'}: ${removed.join(', ')}`,
-            ]
-          : undefined,
+      // Both the CQL and the Measure resource carry the same licensed
+      // descriptors, and both are stripped, so either one makes the package
+      // derived. They are reported as separate modifications because they are
+      // separate files: a reader checking the claim needs to know which.
+      relationship: modifications.length > 0 ? 'derived' : 'unmodified',
+      modifications: modifications.length > 0 ? modifications : undefined,
     },
   }
 
-  return { plan, cql }
+  return { plan, cql, measureJson: measureResource.json }
 }

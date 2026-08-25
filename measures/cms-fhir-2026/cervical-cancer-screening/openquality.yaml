@@ -9,6 +9,8 @@ measure:
     - CMS124FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS124FHIRCervicalCancerScreening.json
+    type: fhir/Measure
   - path: cql/CMS124FHIRCervicalCancerScreening.cql
     type: cql
   - path: cql/FHIRHelpers.cql

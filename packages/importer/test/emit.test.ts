@@ -13,6 +13,7 @@ const PLAN: PackagePlan = {
   identifiers: ['CMS122FHIR'],
   measurementPeriod: 2026,
   dataModel: 'qi-core',
+  measureFileName: 'Measure-Example.json',
   cqlFileName: 'CMS122FHIRDiabetesAssessGreaterThan9Percent.cql',
   valueSets: [
     {
@@ -53,6 +54,7 @@ describe('emitManifest', () => {
   it('declares the measure CQL and every vendored library as artifacts', () => {
     const manifest = parse(emitManifest(PLAN))
     expect(manifest.artifacts).toEqual([
+      { path: 'fhir/Measure-Example.json', type: 'fhir/Measure' },
       { path: 'cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql', type: 'cql' },
       { path: 'cql/FHIRHelpers.cql', type: 'cql' },
       { path: 'cql/QICoreCommon.cql', type: 'cql' },

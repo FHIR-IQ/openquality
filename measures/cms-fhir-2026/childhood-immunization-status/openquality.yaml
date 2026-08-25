@@ -9,6 +9,8 @@ measure:
     - CMS117FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS117FHIRChildhoodImmunizationStatus.json
+    type: fhir/Measure
   - path: cql/CMS117FHIRChildhoodImmunizationStatus.cql
     type: cql
   - path: cql/FHIRHelpers.cql
@@ -166,4 +168,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 1 code declaration: CPT 99211"
+    - "removed licensed display text from 1 code declaration in the CQL: CPT 99211"
+    - "removed licensed display text from 1 coding in the Measure resource: CPT 99211"

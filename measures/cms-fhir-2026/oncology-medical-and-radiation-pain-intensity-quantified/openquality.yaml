@@ -9,6 +9,8 @@ measure:
     - CMS157FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-OncologyPainIntensityQuantifiedFHIR.json
+    type: fhir/Measure
   - path: cql/OncologyPainIntensityQuantifiedFHIR.cql
     type: cql
   - path: cql/CQMCommon.cql
@@ -44,4 +46,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 1 code declaration: CPT 77427"
+    - "removed licensed display text from 1 code declaration in the CQL: CPT 77427"
+    - "removed licensed display text from 1 coding in the Measure resource: CPT 77427"

@@ -9,6 +9,8 @@ measure:
     - CMS190FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS190VTEProphylaxisICUFHIR.json
+    type: fhir/Measure
   - path: cql/CMS190VTEProphylaxisICUFHIR.cql
     type: cql
   - path: cql/CQMCommon.cql

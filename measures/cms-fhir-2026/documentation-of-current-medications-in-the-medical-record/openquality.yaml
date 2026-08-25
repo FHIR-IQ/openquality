@@ -9,6 +9,8 @@ measure:
     - CMS68FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS68FHIRDocumentationofCurrentMedications.json
+    type: fhir/Measure
   - path: cql/CMS68FHIRDocumentationofCurrentMedications.cql
     type: cql
   - path: cql/FHIRHelpers.cql

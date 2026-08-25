@@ -9,6 +9,8 @@ measure:
     - CMS128FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS128FHIRAntidepressantMedManagement.json
+    type: fhir/Measure
   - path: cql/CMS128FHIRAntidepressantMedManagement.cql
     type: cql
   - path: cql/CQMCommon.cql

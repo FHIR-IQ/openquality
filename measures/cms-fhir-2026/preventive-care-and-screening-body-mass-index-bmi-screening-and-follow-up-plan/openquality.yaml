@@ -9,6 +9,8 @@ measure:
     - CMS69FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS69FHIRPCSBMIScreenAndFollowUp.json
+    type: fhir/Measure
   - path: cql/CMS69FHIRPCSBMIScreenAndFollowUp.cql
     type: cql
   - path: cql/FHIRHelpers.cql

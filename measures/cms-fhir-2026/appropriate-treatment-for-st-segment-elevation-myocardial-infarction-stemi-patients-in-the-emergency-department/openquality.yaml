@@ -9,6 +9,8 @@ measure:
     - CMS996FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS996FHIRAptTxforSTEMI.json
+    type: fhir/Measure
   - path: cql/CMS996FHIRAptTxforSTEMI.cql
     type: cql
   - path: cql/CQMCommon.cql

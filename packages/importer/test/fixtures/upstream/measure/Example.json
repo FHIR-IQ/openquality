@@ -7,13 +7,56 @@
   "status": "active",
   "publisher": "National Committee for Quality Assurance",
   "description": "Percentage of patients 18-75 years of age with an example condition.",
-  "effectivePeriod": { "start": "2026-01-01", "end": "2026-12-31" },
-  "library": ["https://madie.cms.gov/Library/Example"],
+  "effectivePeriod": {
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  "library": [
+    "https://madie.cms.gov/Library/Example"
+  ],
   "identifier": [
     {
-      "type": { "coding": [{ "code": "short-name" }] },
+      "type": {
+        "coding": [
+          {
+            "code": "short-name"
+          }
+        ]
+      },
       "system": "https://madie.cms.gov/measure/shortName",
       "value": "CMS999FHIR"
+    }
+  ],
+  "contained": [
+    {
+      "resourceType": "Library",
+      "id": "effective-data-requirements",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/cqf-directReferenceCode",
+          "valueCoding": {
+            "system": "http://www.ama-assn.org/go/cpt",
+            "code": "97804",
+            "display": "Medical nutrition therapy; group (2 or more individuals), each 30 minutes"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/cqf-directReferenceCode",
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "97506-0",
+            "display": "Glucose management indicator"
+          }
+        }
+      ],
+      "status": "active",
+      "type": {
+        "coding": [
+          {
+            "code": "logic-library"
+          }
+        ]
+      }
     }
   ]
 }

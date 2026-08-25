@@ -9,6 +9,8 @@ measure:
     - CMS165FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS165FHIRControllingHighBloodPressure.json
+    type: fhir/Measure
   - path: cql/CMS165FHIRControllingHighBloodPressure.cql
     type: cql
   - path: cql/AdultOutpatientEncounters.cql

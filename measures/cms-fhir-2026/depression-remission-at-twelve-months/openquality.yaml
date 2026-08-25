@@ -9,6 +9,8 @@ measure:
     - CMS159FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS159FHIRDepressionRemissionatTwelveMonths.json
+    type: fhir/Measure
   - path: cql/CMS159FHIRDepressionRemissionatTwelveMonths.cql
     type: cql
   - path: cql/FHIRHelpers.cql

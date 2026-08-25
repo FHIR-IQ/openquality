@@ -21,6 +21,14 @@ export interface PackagePlan {
   dataModel: string
   cqlFileName: string
   /**
+   * The FHIR Measure resource written into the package, as `fhir/<name>.json`.
+   * Without it a package carries the logic but not the measure: nothing states
+   * the populations, the scoring, or the canonical identity, so no evaluator
+   * can run it. It is also what the Shareable Measure Repository role in
+   * CQFMeasures expects a repository to represent.
+   */
+  measureFileName: string
+  /**
    * Included libraries vendored into this package's cql/ directory, resolved
    * transitively. They are artifacts of this package, not dependencies on other
    * packages: see the note in emitManifest.
@@ -57,6 +65,7 @@ export function emitManifest(plan: PackagePlan): string {
   // publishing FHIRHelpers as its own package would mean inventing measure
   // identity for something that is not a measure.
   manifest.artifacts = [
+    { path: `fhir/${plan.measureFileName}`, type: 'fhir/Measure' },
     { path: `cql/${plan.cqlFileName}`, type: 'cql' },
     ...plan.libraryFileNames.map((name) => ({ path: `cql/${name}`, type: 'cql' })),
   ]

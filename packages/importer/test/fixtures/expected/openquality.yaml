@@ -9,6 +9,8 @@ measure:
     - CMS999FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-Example.json
+    type: fhir/Measure
   - path: cql/Example.cql
     type: cql
 valueSets:
@@ -21,4 +23,5 @@ provenance:
   retrieved: 2026-08-01
   relationship: derived
   modifications:
-    - "removed licensed display text from 1 code declaration: CPT 97804"
+    - "removed licensed display text from 1 code declaration in the CQL: CPT 97804"
+    - "removed licensed display text from 1 coding in the Measure resource: CPT 97804"

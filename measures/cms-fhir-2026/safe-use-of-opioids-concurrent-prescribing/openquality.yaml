@@ -9,6 +9,8 @@ measure:
     - CMS506FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS506FHIRSafeUseofOpioids.json
+    type: fhir/Measure
   - path: cql/CMS506FHIRSafeUseofOpioids.cql
     type: cql
   - path: cql/CQMCommon.cql

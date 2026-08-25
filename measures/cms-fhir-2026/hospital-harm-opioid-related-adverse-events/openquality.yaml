@@ -9,6 +9,8 @@ measure:
     - CMS819FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS819FHIRHHORAE.json
+    type: fhir/Measure
   - path: cql/CMS819FHIRHHORAE.cql
     type: cql
   - path: cql/CQMCommon.cql

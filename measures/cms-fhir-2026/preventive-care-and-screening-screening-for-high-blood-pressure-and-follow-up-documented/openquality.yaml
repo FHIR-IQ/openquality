@@ -9,6 +9,8 @@ measure:
     - CMS22FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS22FHIRPCSBPScreeningFollowUp.json
+    type: fhir/Measure
   - path: cql/CMS22FHIRPCSBPScreeningFollowUp.cql
     type: cql
   - path: cql/FHIRHelpers.cql

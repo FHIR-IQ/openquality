@@ -9,6 +9,8 @@ measure:
     - CMS349FHIR
 dataModel: qi-core
 artifacts:
+  - path: fhir/Measure-CMS349FHIRHIVScreening.json
+    type: fhir/Measure
   - path: cql/CMS349FHIRHIVScreening.cql
     type: cql
   - path: cql/CQMCommon.cql
