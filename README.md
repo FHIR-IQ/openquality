@@ -129,7 +129,7 @@ This is a single repository, laid out so the intent is legible at a glance.
 | [`TERMINOLOGY.md`](TERMINOLOGY.md) | Which code systems may be redistributed, and with or without display text |
 | `packages/` | The tooling: `@openquality/core` and the `oq` CLI |
 | `site/` | The openquality.us front end |
-| `docs/` | Design specs and implementation plans |
+| `docs/` | Design specs, implementation plans, and the [connectathon scenario](docs/connectathon-clinical-reasoning.md) |
 
 ## Try it
 
