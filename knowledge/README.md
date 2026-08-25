@@ -90,9 +90,10 @@ measureVersion: "0.5.0"                     # pin when the issue is version-spec
 measurementPeriod: 2026
 status: open                                # open | acknowledged | resolved | wont-fix
 # Optional cross-reference to where this was also filed, so the corpus stays
-# continuous with the official trackers:
+# continuous with the trackers people already use. Cross-reference rather than
+# copy: the answer should stay where the measure developers are working.
 externalRef:
-  tracker: onc-ecqm-issue-tracker           # onc-ecqm-issue-tracker | onc-cql-issue-tracker | eki
+  tracker: onc-ecqm-issue-tracker           # see the table below
   id: CQM-1234
 categories: [measure-logic, cql]            # aligned to the eCQM Issue Tracker categories
 reporter: your-github-handle
@@ -110,6 +111,27 @@ The two readings, the input that exposes them, and why it matters for the result
 
 Filled in when the thread reaches acknowledged / resolved / wont-fix, with the reason.
 ```
+
+### Where else it was filed
+
+`externalRef.tracker` is one of:
+
+| `tracker` | Where | `id` looks like |
+|---------------------------|-------------------------------------------------------|--------------------------|
+| `onc-ecqm-issue-tracker` | The ONC eCQM Issue Tracker (JIRA) | `CQM-1234` |
+| `onc-cql-issue-tracker` | The ONC CQL Issue Tracker (JIRA) | `CQL-123` |
+| `eki` | The eCQM Known Issues list | the issue's identifier |
+| `github` | Any GitHub repository, including the cqframework ones | `owner/repo#123` |
+| `jira` | Any other JIRA | `PROJECT-123` |
+
+`github` exists because that is where connectathon findings actually live: the
+measures used at connectathon carry their issues in per-measure repositories,
+which is the archaeology problem this corpus exists to fix. Pointing at those
+threads keeps the two continuous instead of forking the discussion.
+
+**Nothing validates this yet.** The front matter of a knowledge entry is not
+schema-checked, so this table is the specification and a typo will not be
+caught. Worth knowing before relying on it.
 
 `status` mirrors how a maintainer or steward dispositions the thread: **open**,
 **acknowledged**, **resolved**, or **wont-fix**, always with a stated reason once it leaves
