@@ -1,0 +1,3337 @@
+{
+  "cms/anticoagulation-therapy-for-atrial-fibrillation-flutter": [
+    {
+      "id": "CMS71FHIRSTKAnticoagAFFlutter",
+      "url": "https://openquality.us/fhir/Library/CMS71FHIRSTKAnticoagAFFlutter",
+      "version": "0.3.002",
+      "name": "CMS71FHIRSTKAnticoagAFFlutter",
+      "cqlSha256": "57e4683b7df5d1269a5562d5df8e779fd9d7c67d687880a2b09c5bb548ab66df",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements",
+        "https://openquality.us/fhir/Library/TJCOverall"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "TJCOverall",
+      "url": "https://openquality.us/fhir/Library/TJCOverall",
+      "version": "8.24.000",
+      "name": "TJCOverall",
+      "cqlSha256": "1456613573013be26d216f4a991df39dc0cb154436abc231d84e84b96fdebd9d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    }
+  ],
+  "cms/antidepressant-medication-management": [
+    {
+      "id": "CMS128FHIRAntidepressantMedManagement",
+      "url": "https://openquality.us/fhir/Library/CMS128FHIRAntidepressantMedManagement",
+      "version": "0.3.000",
+      "name": "CMS128FHIRAntidepressantMedManagement",
+      "cqlSha256": "24da2067bca4eb8fc8e6810e1697e29d319151ba83b858800117d54f7c404f5a",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/antithrombotic-therapy-by-end-of-hospital-day-2": [
+    {
+      "id": "CMS72FHIRSTKAntithromboticDay2",
+      "url": "https://openquality.us/fhir/Library/CMS72FHIRSTKAntithromboticDay2",
+      "version": "0.7.002",
+      "name": "CMS72FHIRSTKAntithromboticDay2",
+      "cqlSha256": "f6179bfc0c445c26f7b4c38dffa5f4e5180e0b6a7f2bd85517e4c57501ccf835",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements",
+        "https://openquality.us/fhir/Library/TJCOverall"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "TJCOverall",
+      "url": "https://openquality.us/fhir/Library/TJCOverall",
+      "version": "8.24.000",
+      "name": "TJCOverall",
+      "cqlSha256": "1456613573013be26d216f4a991df39dc0cb154436abc231d84e84b96fdebd9d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    }
+  ],
+  "cms/appropriate-testing-for-pharyngitis": [
+    {
+      "id": "Antibiotic",
+      "url": "https://openquality.us/fhir/Library/Antibiotic",
+      "version": "1.9.000",
+      "name": "Antibiotic",
+      "cqlSha256": "7db6859909124281908ad8c404902463a3478cf60ec729b442614074c45930a7",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CMS146FHIRAppropriateTestingforPharyngitis",
+      "url": "https://openquality.us/fhir/Library/CMS146FHIRAppropriateTestingforPharyngitis",
+      "version": "0.3.000",
+      "name": "CMS146FHIRAppropriateTestingforPharyngitis",
+      "cqlSha256": "dc408ea3d6de2e34793dd041add258ee470ef57fdab97aca035c28e9a231225f",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/Antibiotic",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department": [
+    {
+      "id": "CMS996FHIRAptTxforSTEMI",
+      "url": "https://openquality.us/fhir/Library/CMS996FHIRAptTxforSTEMI",
+      "version": "1.4.001",
+      "name": "CMS996FHIRAptTxforSTEMI",
+      "cqlSha256": "44a143b95369ec6cbc8ba1cb0cd8321699caa7701b323ae63754e035e697fa18",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy": [
+    {
+      "id": "CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy",
+      "url": "https://openquality.us/fhir/Library/CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy",
+      "version": "1.5.000",
+      "name": "CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy",
+      "cqlSha256": "39ea0ff4c69dbacb5286d3a4d8c72f949bccd48f78ebde46b8259c944bf88a30",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/breast-cancer-screening": [
+    {
+      "id": "AdultOutpatientEncounters",
+      "url": "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+      "version": "4.19.000",
+      "name": "AdultOutpatientEncounters",
+      "cqlSha256": "ce3fc1accebd510bd13a34572c9fb6f7548a42fa15da4ae3b22971b0c5d9fda9",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "AdvancedIllnessandFrailty",
+      "url": "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+      "version": "1.27.000",
+      "name": "AdvancedIllnessandFrailty",
+      "cqlSha256": "3fe0966cc9c03403467369ccd839fee082bf1ea3150d2fe71f815860906b5adf",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "CMS125FHIRBreastCancerScreening",
+      "url": "https://openquality.us/fhir/Library/CMS125FHIRBreastCancerScreening",
+      "version": "0.4.000",
+      "name": "CMS125FHIRBreastCancerScreening",
+      "cqlSha256": "16d5c4625664e047a8f0b19dfcd1edee61f6dec0c20b5e39e76eb6b95a9b1c5d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+        "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery": [
+    {
+      "id": "CMS133FHIRCataracts2040BCVAwithin90Days",
+      "url": "https://openquality.us/fhir/Library/CMS133FHIRCataracts2040BCVAwithin90Days",
+      "version": "0.2.000",
+      "name": "CMS133FHIRCataracts2040BCVAwithin90Days",
+      "cqlSha256": "4bd5a837e1a58838d76f7e99fa30a47ac250710967a74e3e2d1bcfac0dc83334",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/cervical-cancer-screening": [
+    {
+      "id": "CMS124FHIRCervicalCancerScreening",
+      "url": "https://openquality.us/fhir/Library/CMS124FHIRCervicalCancerScreening",
+      "version": "0.4.000",
+      "name": "CMS124FHIRCervicalCancerScreening",
+      "cqlSha256": "077feb3090b290047eff25971b9a4adcbe39359bd7c6c2ca6dc06dc710d0bb88",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/cesarean-birth": [
+    {
+      "id": "CMS0334FHIRPCCesareanBirth",
+      "url": "https://openquality.us/fhir/Library/CMS0334FHIRPCCesareanBirth",
+      "version": "0.6.000",
+      "name": "CMS0334FHIRPCCesareanBirth",
+      "cqlSha256": "b57a68ae048ccf6e6f6d861795bfe7c61b65a738fbe5c72e97304b8ac3f282fa",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/PCMaternal",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "PCMaternal",
+      "url": "https://openquality.us/fhir/Library/PCMaternal",
+      "version": "5.25.000",
+      "name": "PCMaternal",
+      "cqlSha256": "82ff4d83cb0f20369688f51bcb612c121af37f4bd78ae28fede19f817cc3005e",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/childhood-immunization-status": [
+    {
+      "id": "CMS117FHIRChildhoodImmunizationStatus",
+      "url": "https://openquality.us/fhir/Library/CMS117FHIRChildhoodImmunizationStatus",
+      "version": "0.3.000",
+      "name": "CMS117FHIRChildhoodImmunizationStatus",
+      "cqlSha256": "9bbfadf3d251bf84315f7fe6a9f8c86d049264fce1ada54247befa4ead559b7b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/children-who-have-dental-decay-or-cavities": [
+    {
+      "id": "CMS75FHIRChildrenWhoHaveDentalDecayOrCavities",
+      "url": "https://openquality.us/fhir/Library/CMS75FHIRChildrenWhoHaveDentalDecayOrCavities",
+      "version": "1.1.000",
+      "name": "CMS75FHIRChildrenWhoHaveDentalDecayOrCavities",
+      "cqlSha256": "5a660f87d692caf4a21862688add4948d4d3c99cd680fab311571c8c4de6dcb2",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/closing-the-referral-loop-receipt-of-specialist-report": [
+    {
+      "id": "CMS50FHIRCRLReceiptofSpecialistReport",
+      "url": "https://openquality.us/fhir/Library/CMS50FHIRCRLReceiptofSpecialistReport",
+      "version": "0.4.000",
+      "name": "CMS50FHIRCRLReceiptofSpecialistReport",
+      "cqlSha256": "4272eef9e304277cbc3b22242415b3b1995e6bdd135f11d0732dd87e0e0738fb",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/colorectal-cancer-screening": [
+    {
+      "id": "AdultOutpatientEncounters",
+      "url": "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+      "version": "4.19.000",
+      "name": "AdultOutpatientEncounters",
+      "cqlSha256": "ce3fc1accebd510bd13a34572c9fb6f7548a42fa15da4ae3b22971b0c5d9fda9",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "AdvancedIllnessandFrailty",
+      "url": "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+      "version": "1.27.000",
+      "name": "AdvancedIllnessandFrailty",
+      "cqlSha256": "3fe0966cc9c03403467369ccd839fee082bf1ea3150d2fe71f815860906b5adf",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "CMS130FHIRColorectalCancerScreening",
+      "url": "https://openquality.us/fhir/Library/CMS130FHIRColorectalCancerScreening",
+      "version": "0.4.000",
+      "name": "CMS130FHIRColorectalCancerScreening",
+      "cqlSha256": "22be3dec57bce66da04170a978f4e7f15c5ea87431df410fa47298751bc11fea",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+        "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/controlling-high-blood-pressure": [
+    {
+      "id": "AdultOutpatientEncounters",
+      "url": "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+      "version": "4.19.000",
+      "name": "AdultOutpatientEncounters",
+      "cqlSha256": "ce3fc1accebd510bd13a34572c9fb6f7548a42fa15da4ae3b22971b0c5d9fda9",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "AdvancedIllnessandFrailty",
+      "url": "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+      "version": "1.27.000",
+      "name": "AdvancedIllnessandFrailty",
+      "cqlSha256": "3fe0966cc9c03403467369ccd839fee082bf1ea3150d2fe71f815860906b5adf",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "CMS165FHIRControllingHighBloodPressure",
+      "url": "https://openquality.us/fhir/Library/CMS165FHIRControllingHighBloodPressure",
+      "version": "0.5.000",
+      "name": "CMS165FHIRControllingHighBloodPressure",
+      "cqlSha256": "d56ba8f4cb7ebe0273b3da894e72c9829a0a29316ea8831049498047b50a72a9",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AdultOutpatientEncounters",
+        "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40": [
+    {
+      "id": "AHAOverall",
+      "url": "https://openquality.us/fhir/Library/AHAOverall",
+      "version": "3.0.000",
+      "name": "AHAOverall",
+      "cqlSha256": "e6b1c730f7b9c22f0ec12ee1df3ddadf3f30afab83e7685eea3f2fc430ef9575",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD",
+      "url": "https://openquality.us/fhir/Library/CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD",
+      "version": "0.4.000",
+      "name": "CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD",
+      "cqlSha256": "ac8dda3a00b9e63e628fb5cda8264005492c3c644f6175f16c7e71bf36222d50",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AHAOverall",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/dementia-cognitive-assessment": [
+    {
+      "id": "CMS149FHIRDementiaCognitiveAssessment",
+      "url": "https://openquality.us/fhir/Library/CMS149FHIRDementiaCognitiveAssessment",
+      "version": "0.2.000",
+      "name": "CMS149FHIRDementiaCognitiveAssessment",
+      "cqlSha256": "2584c7d5d2045daa1fb4ebf02fbf9d31686effe93b136c9f91d58bcba8091e00",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/depression-remission-at-twelve-months": [
+    {
+      "id": "CMS159FHIRDepressionRemissionatTwelveMonths",
+      "url": "https://openquality.us/fhir/Library/CMS159FHIRDepressionRemissionatTwelveMonths",
+      "version": "0.3.000",
+      "name": "CMS159FHIRDepressionRemissionatTwelveMonths",
+      "cqlSha256": "903f8048c363e447e5339a5e6b26f0042d24e0edcbbb1226eb707cf52bbbff72",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/diabetes-glycemic-status-assessment-greater-than-9": [
+    {
+      "id": "AdvancedIllnessandFrailty",
+      "url": "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+      "version": "1.27.000",
+      "name": "AdvancedIllnessandFrailty",
+      "cqlSha256": "3fe0966cc9c03403467369ccd839fee082bf1ea3150d2fe71f815860906b5adf",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "CMS122FHIRDiabetesAssessGreaterThan9Percent",
+      "url": "https://openquality.us/fhir/Library/CMS122FHIRDiabetesAssessGreaterThan9Percent",
+      "version": "0.5.000",
+      "name": "CMS122FHIRDiabetesAssessGreaterThan9Percent",
+      "cqlSha256": "a9da17ea492bc54bcc45356c912eb1ac573ea64ef1c1a87872222f234097e5ff",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AdvancedIllnessandFrailty",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care": [
+    {
+      "id": "CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes",
+      "url": "https://openquality.us/fhir/Library/CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes",
+      "version": "0.2.000",
+      "name": "CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes",
+      "cqlSha256": "433da056c63831708eef420d8671c15710fa29d68a0e8e9055d7188cf1c360d8",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/discharged-on-antithrombotic-therapy": [
+    {
+      "id": "CMS104FHIRSTKDCAntithrombotic",
+      "url": "https://openquality.us/fhir/Library/CMS104FHIRSTKDCAntithrombotic",
+      "version": "0.9.003",
+      "name": "CMS104FHIRSTKDCAntithrombotic",
+      "cqlSha256": "55ab745574cee414c5e2699007aa886f662996dbb56ece8afb35a2b8159bf807",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements",
+        "https://openquality.us/fhir/Library/TJCOverall"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "TJCOverall",
+      "url": "https://openquality.us/fhir/Library/TJCOverall",
+      "version": "8.24.000",
+      "name": "TJCOverall",
+      "cqlSha256": "1456613573013be26d216f4a991df39dc0cb154436abc231d84e84b96fdebd9d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    }
+  ],
+  "cms/documentation-of-current-medications-in-the-medical-record": [
+    {
+      "id": "CMS68FHIRDocumentationofCurrentMedications",
+      "url": "https://openquality.us/fhir/Library/CMS68FHIRDocumentationofCurrentMedications",
+      "version": "0.3.000",
+      "name": "CMS68FHIRDocumentationofCurrentMedications",
+      "cqlSha256": "b9d2318b190893e686f92e9e30c39bf8d711b9d3472480af0201a377dbc50941",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/emergency-care-access-timeliness-hoqr": [
+    {
+      "id": "CMS1244FHIRECATHOQR",
+      "url": "https://openquality.us/fhir/Library/CMS1244FHIRECATHOQR",
+      "version": "0.4.001",
+      "name": "CMS1244FHIRECATHOQR",
+      "cqlSha256": "17ca53c81546ca26f476e19ba8fb81a207cce382712e43e1186bb6e8aa1a8e21",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/emergency-care-access-timeliness-rehqr": [
+    {
+      "id": "CMS1264FHIRECATREHQR",
+      "url": "https://openquality.us/fhir/Library/CMS1264FHIRECATREHQR",
+      "version": "0.5.001",
+      "name": "CMS1264FHIRECATREHQR",
+      "cqlSha256": "c5b5fc510c70d4b4119d9d2ea69d052579752f803fdcea453c2b3147269c9905",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician": [
+    {
+      "id": "AlaraCommonFunctions",
+      "url": "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+      "version": "1.10.000",
+      "name": "AlaraCommonFunctions",
+      "cqlSha256": "8b621bdc5dd2d2b43c48aede1f8ab32dffc5a34db80ad2931cf2b4b4d4a31616",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "CMS1056CTClinicalFHIR",
+      "url": "https://openquality.us/fhir/Library/CMS1056CTClinicalFHIR",
+      "version": "0.6.000",
+      "name": "CMS1056CTClinicalFHIR",
+      "cqlSha256": "70314bd8a7bd7356413d60ca8dc9e8c86a6b816f0f77d5084f56324e34a2f629",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr": [
+    {
+      "id": "AlaraCommonFunctions",
+      "url": "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+      "version": "1.10.000",
+      "name": "AlaraCommonFunctions",
+      "cqlSha256": "8b621bdc5dd2d2b43c48aede1f8ab32dffc5a34db80ad2931cf2b4b4d4a31616",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "CMS1074FHIRCTIQR",
+      "url": "https://openquality.us/fhir/Library/CMS1074FHIRCTIQR",
+      "version": "0.9.000",
+      "name": "CMS1074FHIRCTIQR",
+      "cqlSha256": "59116713f1eeecbfe9908139ea29032f67e471ce0c057266f8c865e42c2f4e73",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr": [
+    {
+      "id": "AlaraCommonFunctions",
+      "url": "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+      "version": "1.10.000",
+      "name": "AlaraCommonFunctions",
+      "cqlSha256": "8b621bdc5dd2d2b43c48aede1f8ab32dffc5a34db80ad2931cf2b4b4d4a31616",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "CMS1206FHIRCTOQR",
+      "url": "https://openquality.us/fhir/Library/CMS1206FHIRCTOQR",
+      "version": "0.8.000",
+      "name": "CMS1206FHIRCTOQR",
+      "cqlSha256": "b32511aad44b9ee9bb8a2be5bcc1480d4c9beb45e163b20a17746b96c12fc211",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AlaraCommonFunctions",
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/functional-status-assessment-for-total-hip-replacement": [
+    {
+      "id": "CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement",
+      "url": "https://openquality.us/fhir/Library/CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement",
+      "version": "1.1.000",
+      "name": "CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement",
+      "cqlSha256": "dd9f1e83da8132c282d882f1d437322a215c9f06dae7df7496627874172a6698",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd": [
+    {
+      "id": "AHAOverall",
+      "url": "https://openquality.us/fhir/Library/AHAOverall",
+      "version": "3.0.000",
+      "name": "AHAOverall",
+      "cqlSha256": "e6b1c730f7b9c22f0ec12ee1df3ddadf3f30afab83e7685eea3f2fc430ef9575",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CMS135FHIRHFACEIorARBorARNIforLVSD",
+      "url": "https://openquality.us/fhir/Library/CMS135FHIRHFACEIorARBorARNIforLVSD",
+      "version": "0.4.000",
+      "name": "CMS135FHIRHFACEIorARBorARNIforLVSD",
+      "cqlSha256": "43c9c7a23f0d5f79d492e1cf9a4f6d043ef6484c1247b569832ccd286ea819a9",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AHAOverall",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd": [
+    {
+      "id": "AHAOverall",
+      "url": "https://openquality.us/fhir/Library/AHAOverall",
+      "version": "3.0.000",
+      "name": "AHAOverall",
+      "cqlSha256": "e6b1c730f7b9c22f0ec12ee1df3ddadf3f30afab83e7685eea3f2fc430ef9575",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CMS144FHIRHFBetaBlockerTherapyforLVSD",
+      "url": "https://openquality.us/fhir/Library/CMS144FHIRHFBetaBlockerTherapyforLVSD",
+      "version": "1.5.000",
+      "name": "CMS144FHIRHFBetaBlockerTherapyforLVSD",
+      "cqlSha256": "df5084057c9716b745f00b31eec2c5116477f2e1498b7e7587983287b544cf58",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/AHAOverall",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hiv-screening": [
+    {
+      "id": "CMS349FHIRHIVScreening",
+      "url": "https://openquality.us/fhir/Library/CMS349FHIRHIVScreening",
+      "version": "0.3.000",
+      "name": "CMS349FHIRHIVScreening",
+      "cqlSha256": "cd7659e0032849702c81e7098f80f9b3a7ffd9a6bee5c06c4030ed7711176d7e",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-acute-kidney-injury": [
+    {
+      "id": "CMS832HHAKIFHIR",
+      "url": "https://openquality.us/fhir/Library/CMS832HHAKIFHIR",
+      "version": "0.2.000",
+      "name": "CMS832HHAKIFHIR",
+      "cqlSha256": "36e03e20f2532a7558a03a2241dc99f745a1b6267d0d64b8f6082a55a7e5a54c",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/HospitalHarm",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "HospitalHarm",
+      "url": "https://openquality.us/fhir/Library/HospitalHarm",
+      "version": "2.5.000",
+      "name": "HospitalHarm",
+      "cqlSha256": "9c2ae3ea924d62f8942506faa2b1f4fbc19412bad6bad25b4c7775316339fb17",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-falls-with-injury": [
+    {
+      "id": "CMS1017FHIRHHFI",
+      "url": "https://openquality.us/fhir/Library/CMS1017FHIRHHFI",
+      "version": "0.2.000",
+      "name": "CMS1017FHIRHHFI",
+      "cqlSha256": "9a688a448cd4e0d25a8242a2491e82c95d49eb1481fa89875062466b83537253",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-opioid-related-adverse-events": [
+    {
+      "id": "CMS819FHIRHHORAE",
+      "url": "https://openquality.us/fhir/Library/CMS819FHIRHHORAE",
+      "version": "0.4.000",
+      "name": "CMS819FHIRHHORAE",
+      "cqlSha256": "25c2f715b0876f1edcadac108cb3009abf112d7f33c564dcbf9588bd89909078",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-postoperative-respiratory-failure": [
+    {
+      "id": "CMS1218FHIRHHRF",
+      "url": "https://openquality.us/fhir/Library/CMS1218FHIRHHRF",
+      "version": "0.2.000",
+      "name": "CMS1218FHIRHHRF",
+      "cqlSha256": "b78e69ad53cf57adf008aca6d8d5485304d7d841ab75795909c86a640a01e6ca",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-pressure-injury": [
+    {
+      "id": "CMS826FHIRHHPI",
+      "url": "https://openquality.us/fhir/Library/CMS826FHIRHHPI",
+      "version": "0.3.000",
+      "name": "CMS826FHIRHHPI",
+      "cqlSha256": "5f9e291ed2f27752c3311dba2cf46c534edeb62476c7b114ba8a8248b5ecbc1b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-severe-hyperglycemia": [
+    {
+      "id": "CMS871HHHyperFHIR",
+      "url": "https://openquality.us/fhir/Library/CMS871HHHyperFHIR",
+      "version": "0.3.000",
+      "name": "CMS871HHHyperFHIR",
+      "cqlSha256": "fa56e04e2b15801525aeaae197891e4007d51732defc340917a29a4f294d1f8d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/hospital-harm-severe-hypoglycemia": [
+    {
+      "id": "CMS816FHIRHHHypo",
+      "url": "https://openquality.us/fhir/Library/CMS816FHIRHHHypo",
+      "version": "0.3.000",
+      "name": "CMS816FHIRHHHypo",
+      "cqlSha256": "d0946f611acfa2f3028ced9e471b14f8eca6e20064b683ee02d29b7295fd097f",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/intensive-care-unit-venous-thromboembolism-prophylaxis": [
+    {
+      "id": "CMS190VTEProphylaxisICUFHIR",
+      "url": "https://openquality.us/fhir/Library/CMS190VTEProphylaxisICUFHIR",
+      "version": "0.3.001",
+      "name": "CMS190VTEProphylaxisICUFHIR",
+      "cqlSha256": "c3c601e5dafd967db177b59b919d5b4f604d9cb5245fcb1b9c360adf056cd946",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements",
+        "https://openquality.us/fhir/Library/TJCOverall",
+        "https://openquality.us/fhir/Library/VTE"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "TJCOverall",
+      "url": "https://openquality.us/fhir/Library/TJCOverall",
+      "version": "8.24.000",
+      "name": "TJCOverall",
+      "cqlSha256": "1456613573013be26d216f4a991df39dc0cb154436abc231d84e84b96fdebd9d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "VTE",
+      "url": "https://openquality.us/fhir/Library/VTE",
+      "version": "8.18.000",
+      "name": "VTE",
+      "cqlSha256": "e7b08706a1c26a1a727809569c253e871792e2940173142343d4bde673577d81",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    }
+  ],
+  "cms/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer": [
+    {
+      "id": "CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer",
+      "url": "https://openquality.us/fhir/Library/CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer",
+      "version": "1.5.000",
+      "name": "CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer",
+      "cqlSha256": "6f83b9c642f1d1460492fa08039bf4bde6d35f43f8a6c33ae24bef0c9d147179",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/malnutrition-care-score": [
+    {
+      "id": "CMS986FHIRMalnutritionScore",
+      "url": "https://openquality.us/fhir/Library/CMS986FHIRMalnutritionScore",
+      "version": "0.3.003",
+      "name": "CMS986FHIRMalnutritionScore",
+      "cqlSha256": "11d7e4383401f33f94bc9a957e238fb778d3146fd4e5f2eb99a87fb4e15011d0",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/oncology-medical-and-radiation-pain-intensity-quantified": [
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "OncologyPainIntensityQuantifiedFHIR",
+      "url": "https://openquality.us/fhir/Library/OncologyPainIntensityQuantifiedFHIR",
+      "version": "0.3.000",
+      "name": "OncologyPainIntensityQuantifiedFHIR",
+      "cqlSha256": "51b7cea5c96bfd28980af835c08b8d0112a469f6e724c43495ac945435dc0f8a",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan": [
+    {
+      "id": "CMS69FHIRPCSBMIScreenAndFollowUp",
+      "url": "https://openquality.us/fhir/Library/CMS69FHIRPCSBMIScreenAndFollowUp",
+      "version": "0.3.000",
+      "name": "CMS69FHIRPCSBMIScreenAndFollowUp",
+      "cqlSha256": "9762a99bb44b2f23ce6df167d98ea89b9d0e38885a8799a7a3507b028ffdc0d7",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/PalliativeCare",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "PalliativeCare",
+      "url": "https://openquality.us/fhir/Library/PalliativeCare",
+      "version": "1.18.000",
+      "name": "PalliativeCare",
+      "cqlSha256": "d3e8be1a74ac431c0ff0e4dbbfec4e641e89aaa6a226239cee23ba2319ab40e3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/preventive-care-and-screening-screening-for-depression-and-follow-up-plan": [
+    {
+      "id": "CMS2FHIRPCSDepressionScreenAndFollowUp",
+      "url": "https://openquality.us/fhir/Library/CMS2FHIRPCSDepressionScreenAndFollowUp",
+      "version": "0.4.001",
+      "name": "CMS2FHIRPCSDepressionScreenAndFollowUp",
+      "cqlSha256": "415dd1d7cfc49f6d92bc4f0f555932b6ebac3c194650e239691d24ba6ac4636b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CumulativeMedicationDuration",
+      "url": "https://openquality.us/fhir/Library/CumulativeMedicationDuration",
+      "version": "6.0.000",
+      "name": "CumulativeMedicationDuration",
+      "cqlSha256": "a528a6e9a22bd465779f3f240e5406ba95dda8708b78001996efc8e0db1c71dd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented": [
+    {
+      "id": "CMS22FHIRPCSBPScreeningFollowUp",
+      "url": "https://openquality.us/fhir/Library/CMS22FHIRPCSBPScreeningFollowUp",
+      "version": "0.3.000",
+      "name": "CMS22FHIRPCSBPScreeningFollowUp",
+      "cqlSha256": "de9fc9b700be9f9d07dae8bb764f1f758eeae621986e66c2dd639f1d50c2a163",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/primary-caries-prevention-intervention-as-offered-by-dentists": [
+    {
+      "id": "CMS74FHIRPrimaryCariesPreventionasOfferedbyDentists",
+      "url": "https://openquality.us/fhir/Library/CMS74FHIRPrimaryCariesPreventionasOfferedbyDentists",
+      "version": "1.1.000",
+      "name": "CMS74FHIRPrimaryCariesPreventionasOfferedbyDentists",
+      "cqlSha256": "860c7141b88e03c559a6f84541fc262697adf3dd903ed019f720906e52a4fc12",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/primary-open-angle-glaucoma-poag-optic-nerve-evaluation": [
+    {
+      "id": "CMS143FHIRPOAGOpticNerveEvaluation",
+      "url": "https://openquality.us/fhir/Library/CMS143FHIRPOAGOpticNerveEvaluation",
+      "version": "0.2.000",
+      "name": "CMS143FHIRPOAGOpticNerveEvaluation",
+      "cqlSha256": "9f9ca4f0a1ecff4e1f7acecabe5d6f6413186cfb3594005a4bcbe56c1a2d3aea",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/safe-use-of-opioids-concurrent-prescribing": [
+    {
+      "id": "CMS506FHIRSafeUseofOpioids",
+      "url": "https://openquality.us/fhir/Library/CMS506FHIRSafeUseofOpioids",
+      "version": "0.3.007",
+      "name": "CMS506FHIRSafeUseofOpioids",
+      "cqlSha256": "10aa63e4c538e84667f4869901a3e1565e6121cca2660b6f6e1b5cdda324b6e5",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/severe-obstetric-complications": [
+    {
+      "id": "CMS1028FHIRPCSevereOBComps",
+      "url": "https://openquality.us/fhir/Library/CMS1028FHIRPCSevereOBComps",
+      "version": "0.3.000",
+      "name": "CMS1028FHIRPCSevereOBComps",
+      "cqlSha256": "213c647f2e0e69c3d4066885bca051a599d28c4caa873a5eff6f27fb7148c0e8",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/PCMaternal",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "PCMaternal",
+      "url": "https://openquality.us/fhir/Library/PCMaternal",
+      "version": "5.25.000",
+      "name": "PCMaternal",
+      "cqlSha256": "82ff4d83cb0f20369688f51bcb612c121af37f4bd78ae28fede19f817cc3005e",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia": [
+    {
+      "id": "CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia",
+      "url": "https://openquality.us/fhir/Library/CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia",
+      "version": "1.5.000",
+      "name": "CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia",
+      "cqlSha256": "b00aa252e7b952c2cb8e33c755e981138dcc71d542f6e843f48589e36f74535c",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "cms/venous-thromboembolism-prophylaxis": [
+    {
+      "id": "CMS108FHIRVTEProphylaxis",
+      "url": "https://openquality.us/fhir/Library/CMS108FHIRVTEProphylaxis",
+      "version": "0.3.002",
+      "name": "CMS108FHIRVTEProphylaxis",
+      "cqlSha256": "a117d90db209e3589db0af4bb48ec431320d5576e6e9b14b6cf8642096cf7234",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements",
+        "https://openquality.us/fhir/Library/TJCOverall",
+        "https://openquality.us/fhir/Library/VTE"
+      ]
+    },
+    {
+      "id": "CQMCommon",
+      "url": "https://openquality.us/fhir/Library/CQMCommon",
+      "version": "4.1.000",
+      "name": "CQMCommon",
+      "cqlSha256": "c6d9f10150fb9a790589537190c8c9fe13b726a8d7fdf62ce9a2f2d70d698dc1",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "TJCOverall",
+      "url": "https://openquality.us/fhir/Library/TJCOverall",
+      "version": "8.24.000",
+      "name": "TJCOverall",
+      "cqlSha256": "1456613573013be26d216f4a991df39dc0cb154436abc231d84e84b96fdebd9d",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "VTE",
+      "url": "https://openquality.us/fhir/Library/VTE",
+      "version": "8.18.000",
+      "name": "VTE",
+      "cqlSha256": "e7b08706a1c26a1a727809569c253e871792e2940173142343d4bde673577d81",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/CQMCommon",
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon"
+      ]
+    }
+  ],
+  "cms/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents": [
+    {
+      "id": "CMS155FHIRWeightAssessandCounselforKids",
+      "url": "https://openquality.us/fhir/Library/CMS155FHIRWeightAssessandCounselforKids",
+      "version": "0.3.000",
+      "name": "CMS155FHIRWeightAssessandCounselforKids",
+      "cqlSha256": "e3f71d0ed158744453cad95cba98924debddfb5d827d8cd38654468b3df6e9cd",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/Hospice",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status",
+        "https://openquality.us/fhir/Library/SupplementalDataElements"
+      ]
+    },
+    {
+      "id": "FHIRHelpers",
+      "url": "https://openquality.us/fhir/Library/FHIRHelpers",
+      "version": "4.4.000",
+      "name": "FHIRHelpers",
+      "cqlSha256": "33244dc304685b9e78d92c4675f4c0fc871ef56a33ccb230d6c175b95d59b9e6",
+      "dependsOn": []
+    },
+    {
+      "id": "Hospice",
+      "url": "https://openquality.us/fhir/Library/Hospice",
+      "version": "6.18.000",
+      "name": "Hospice",
+      "cqlSha256": "e6be47def196eedd6815e8d9a8b42ba0ce8189dcd1498262a8e084121ebce569",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers",
+        "https://openquality.us/fhir/Library/QICoreCommon",
+        "https://openquality.us/fhir/Library/Status"
+      ]
+    },
+    {
+      "id": "QICoreCommon",
+      "url": "https://openquality.us/fhir/Library/QICoreCommon",
+      "version": "4.0.000",
+      "name": "QICoreCommon",
+      "cqlSha256": "88533a819538233557c11ab652e0ba9167f7c3209e855621b6329e3586b4415b",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "Status",
+      "url": "https://openquality.us/fhir/Library/Status",
+      "version": "1.15.000",
+      "name": "Status",
+      "cqlSha256": "1412ab385077c9ebc73c067c1cf23b508133a8997bc11475ecbc2cdfcb5046b3",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    },
+    {
+      "id": "SupplementalDataElements",
+      "url": "https://openquality.us/fhir/Library/SupplementalDataElements",
+      "version": "5.1.000",
+      "name": "SupplementalDataElements",
+      "cqlSha256": "0fac72ae2cd536d9db4aea047d80996a55abb34a2063b1da1ebf3722353107db",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ],
+  "community/glycemic-status-assessment-sql-on-fhir": [],
+  "community/hospital-at-home-eligibility": [
+    {
+      "id": "HaHEligibilityLeffDemo",
+      "url": "https://openquality.us/fhir/Library/HaHEligibilityLeffDemo",
+      "version": "1.0.0",
+      "name": "HaHEligibilityLeffDemo",
+      "cqlSha256": "a40bfef43102175b28f3101939974a7b15279dc6721f9ca8a9577284230617ad",
+      "dependsOn": [
+        "https://openquality.us/fhir/Library/FHIRHelpers"
+      ]
+    }
+  ]
+}
