@@ -131,14 +131,20 @@
   <pre>npx @modelcontextprotocol/inspector</pre>
   <p>Choose Streamable HTTP and enter <code>https://openquality.us/mcp</code>.</p>
 
-  <h3>Offline, or pinned to a commit</h3>
-  <p>The same server runs over stdio from a clone of the repository:</p>
-  <pre>git clone https://github.com/FHIR-IQ/openquality && cd openquality
-pnpm install
-node --import tsx packages/mcp/src/stdio.ts --root .</pre>
+  <h3>Local, over stdio</h3>
+  <p>The same server, run by your client as a local process (Node 22 or later):</p>
+  <pre>npx -y @openquality/mcp</pre>
+  <p>In Claude Code:</p>
+  <pre>claude mcp add openquality -- npx -y @openquality/mcp</pre>
+  <p>In a JSON config (Cursor, Claude Desktop):</p>
+  <pre>{
+  "mcpServers": {
+    "openquality": { "command": "npx", "args": ["-y", "@openquality/mcp"] }
+  }
+}</pre>
   <p class="muted">
-    <code>--root</code> reads the clone and works with no network.
-    <code>--ref &lt;sha&gt;</code> instead reads GitHub at a fixed commit.
+    By default it reads GitHub at <code>main</code>. Add <code>--ref &lt;sha&gt;</code> to pin a
+    commit, or <code>--root &lt;clone&gt;</code> to read a local clone with no network.
   </p>
 </section>
 

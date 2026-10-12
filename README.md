@@ -200,11 +200,12 @@ content policy, so the terms travel with the code into the agent's context. The
 server reads only the files `index.json` lists. The hosted endpoint reads the
 repository at the commit it was deployed from.
 
-To run it over stdio, offline against a clone or pinned to a commit:
+To run it locally over stdio, from npm:
 
 ```bash
-node --import tsx packages/mcp/src/stdio.ts --root .        # this clone, no network
-node --import tsx packages/mcp/src/stdio.ts --ref <sha>     # GitHub at a fixed commit
+npx -y @openquality/mcp                  # GitHub, main
+npx -y @openquality/mcp --ref <sha>      # GitHub, a fixed commit
+npx -y @openquality/mcp --root <clone>   # a local clone, no network
 ```
 
 ## Using a measure in CQL Studio or another FHIR tool

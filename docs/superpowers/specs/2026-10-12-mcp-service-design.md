@@ -1,7 +1,7 @@
 # MCP service: design
 
 Date: 2026-10-12
-Status: Implemented 2026-10-12 (`packages/mcp`, `site/api/mcp.ts`). npm publish and MCP Registry listing pending
+Status: Implemented 2026-10-12 (`packages/mcp`, `site/api/mcp.ts`). Published to npm as @openquality/mcp 0.1.0. MCP Registry listing pending
 
 ## Goal
 
