@@ -109,6 +109,7 @@ Pre-launch.
 | Validation core | shipped | Validates a package directory and computes its level |
 | `oq` CLI | shipped | `oq validate`, `oq validate-all`, `oq pack`, `oq fhir-package`, `oq fhir-bundle` |
 | Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
+| MCP server | shipped | Read-only, five tools, at `https://openquality.us/mcp`; see [below](#connecting-an-agent-or-ide-mcp) |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
 | Registry-hosted feedback | planned | The [`knowledge/`](knowledge/) corpus, searchable and writable from a web UI instead of a pull request |
@@ -127,8 +128,8 @@ This is a single repository, laid out so the intent is legible at a glance.
 | [`measures/`](measures/) | Measure package collections, indexed by data model and year |
 | [`knowledge/`](knowledge/) | The interpretation-issue corpus — questions, defects, and test cases per measure |
 | [`TERMINOLOGY.md`](TERMINOLOGY.md) | Which code systems may be redistributed, and with or without display text |
-| `packages/` | The tooling: `@openquality/core` and the `oq` CLI |
-| `site/` | The openquality.us front end |
+| `packages/` | The tooling: `@openquality/core`, the `oq` CLI, the importer, and the MCP server (`@openquality/mcp`) |
+| `site/` | The openquality.us front end, and the hosted MCP endpoint (`site/api/mcp.ts`) |
 | `docs/` | Design specs, implementation plans, and the [connectathon scenario](docs/connectathon-clinical-reasoning.md) |
 
 ## Try it
@@ -167,6 +168,44 @@ describes.
 
 `ref` is `main`, which moves. Pin a commit or tag and substitute it into `raw` if you
 need the same bytes twice.
+
+## Connecting an agent or IDE (MCP)
+
+The corpus is also served over the [Model Context Protocol](https://modelcontextprotocol.io),
+so a coding agent can read a measure's code and the context around it while you work:
+
+```text
+https://openquality.us/mcp
+```
+
+Streamable HTTP, read-only, no account or key. In Claude Code:
+
+```bash
+claude mcp add --transport http openquality https://openquality.us/mcp
+```
+
+Configs for Cursor, VS Code and the MCP Inspector are at
+[openquality.us/mcp-setup](https://openquality.us/mcp-setup).
+
+| Tool | Returns |
+|------|---------|
+| `search_measures` | Packages matching a CMS id, title words, steward or package id |
+| `get_measure` | License, provenance (upstream commit, `unmodified` or `derived`, and exactly what changed), value set references, file list, known issue summaries |
+| `get_artifact` | The raw text of one file the package lists |
+| `get_bundle` | The CRMI artifact Bundle, the shape `$package` returns |
+| `known_issues` | Knowledge entries with their full text |
+
+Every result ends with the commit it was served from, the package license, and the
+content policy, so the terms travel with the code into the agent's context. The
+server reads only the files `index.json` lists. The hosted endpoint reads the
+repository at the commit it was deployed from.
+
+To run it over stdio, offline against a clone or pinned to a commit:
+
+```bash
+node --import tsx packages/mcp/src/stdio.ts --root .        # this clone, no network
+node --import tsx packages/mcp/src/stdio.ts --ref <sha>     # GitHub at a fixed commit
+```
 
 ## Using a measure in CQL Studio or another FHIR tool
 
@@ -301,4 +340,5 @@ package.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+The tooling is MIT. See [LICENSE](LICENSE). Measure content keeps the license
+its manifest declares; the imported CMS eCQMs are CC0-1.0.

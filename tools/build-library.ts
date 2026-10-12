@@ -941,6 +941,7 @@ function renderSitemap(entries: Entry[]): string {
   const urls = [
     { loc: `${SITE}/`, changefreq: 'weekly', priority: '1.0' },
     { loc: `${SITE}/library`, changefreq: 'weekly', priority: '0.9' },
+    { loc: `${SITE}/mcp-setup`, changefreq: 'monthly', priority: '0.8' },
     // Entries change rarely once written; a resolution or a status change is the
     // usual reason, and neither is weekly.
     ...entries.map((e) => ({ loc: `${SITE}${entryUrl(e)}`, changefreq: 'monthly', priority: '0.7' })),
