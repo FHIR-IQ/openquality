@@ -126,3 +126,17 @@ describe('stdio', () => {
     expect(names).toEqual(TOOLS)
   }, 20_000)
 })
+
+describe('release metadata', () => {
+  it('keeps the server, npm and registry versions and names in step', async () => {
+    const { readFile } = await import('node:fs/promises')
+    const { SERVER_VERSION } = await import('../src/server.js')
+    const pkg = JSON.parse(await readFile(join(import.meta.dirname, '../package.json'), 'utf8'))
+    const registry = JSON.parse(await readFile(join(import.meta.dirname, '../server.json'), 'utf8'))
+    expect(SERVER_VERSION).toBe(pkg.version)
+    expect(registry.version).toBe(pkg.version)
+    expect(registry.packages[0].version).toBe(pkg.version)
+    expect(registry.packages[0].identifier).toBe(pkg.name)
+    expect(registry.name).toBe(pkg.mcpName)
+  })
+})
