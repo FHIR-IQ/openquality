@@ -2,7 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "installCommand": "cd .. && npx --yes pnpm@10.28.2 install --frozen-lockfile",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./ ../packages/mcp ../packages/core ../pnpm-lock.yaml",
+  "rewrites": [
+    {
+      "source": "/mcp",
+      "destination": "/api/mcp"
+    }
+  ],
   "redirects": [
     {
       "source": "/github",
