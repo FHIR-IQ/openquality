@@ -49,8 +49,15 @@ jobs:
         working-directory: packages/mcp
         run: npm publish --access public
 
+      # A step's own env is not visible to its `if`, and putting the key in the
+      # job's env would hand it to every step, including dependency code run by
+      # the tests. So only whether the secret exists is passed along.
+      - name: Check for the registry key
+        id: key
+        run: echo "present=${{ secrets.MCP_REGISTRY_KEY != '' }}" >> "$GITHUB_OUTPUT"
+
       - name: Publish to the MCP Registry
-        if: env.MCP_REGISTRY_KEY != ''
+        if: steps.key.outputs.present == 'true'
         env:
           MCP_REGISTRY_KEY: ${{ secrets.MCP_REGISTRY_KEY }}
         working-directory: packages/mcp
