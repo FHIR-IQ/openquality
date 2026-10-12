@@ -184,7 +184,8 @@ Streamable HTTP, read-only, no account or key. In Claude Code:
 claude mcp add --transport http openquality https://openquality.us/mcp
 ```
 
-Configs for Cursor, VS Code and the MCP Inspector are at
+It is listed in the official [MCP Registry](https://registry.modelcontextprotocol.io)
+as `us.openquality/mcp`. Configs for Cursor, VS Code and the MCP Inspector are at
 [openquality.us/mcp-setup](https://openquality.us/mcp-setup).
 
 | Tool | Returns |
