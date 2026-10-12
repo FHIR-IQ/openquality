@@ -147,7 +147,8 @@ A read-only MCP server with five tools (`search_measures`, `get_measure`,
   answers GET itself with 405: in stateless mode the SDK transport would open an
   SSE stream that never closes. Vercel's root directory is `site/`, so
   `site/vercel.json` installs from the workspace root, and its `ignoreCommand`
-  also watches `packages/mcp` and `packages/core`. Vercel type-checks files
+  also watches `packages/mcp`, `packages/core`, `measures/` and `knowledge/`:
+  a skipped deploy keeps serving the previous commit. Vercel type-checks files
   outside `site/` without strict mode, so narrow unions in a way that compiles
   both ways (see `readManifest`).
 

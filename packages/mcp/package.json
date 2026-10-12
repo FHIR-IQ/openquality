@@ -10,12 +10,21 @@
     "directory": "packages/mcp"
   },
   "homepage": "https://openquality.us/mcp-setup",
-  "exports": { ".": "./src/index.ts" },
-  "bin": { "openquality-mcp": "dist/stdio.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=22" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "openquality-mcp": "dist/stdio.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "build": "esbuild src/stdio.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/stdio.js --packages=external --banner:js=\"#!/usr/bin/env node\""
+    "build": "esbuild src/stdio.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/stdio.js --packages=external --banner:js=\"#!/usr/bin/env node\"",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.31.0",
