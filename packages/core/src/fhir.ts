@@ -228,26 +228,51 @@ export interface FhirPackageFile {
  * package and the CRMI bundle so the two forms can never disagree about what
  * the package contains: they are two containers for one list.
  */
+/**
+ * Another package this one depends on, already resolved, with its CQL read.
+ * Shared libraries arrive this way: published once as their own package, and
+ * pulled into every output of a package that uses them, as CRMI `$package` does.
+ */
+export interface PackageDependency {
+  manifest: Manifest
+  files: CqlFile[]
+}
+
+interface Member extends IndexedFile {
+  /** True for the package's own artifacts, false for one pulled in as a dependency. */
+  own: boolean
+}
+
 function packageMembers(
   manifest: Manifest,
   files: CqlFile[],
   resources: FhirResourceFile[],
   opts: FhirPackageOptions,
-): IndexedFile[] {
-  const fromCql: IndexedFile[] = files.map((file) => {
+  dependencies: PackageDependency[] = [],
+): Member[] {
+  const fromCql: Member[] = files.map((file) => {
     const resource = buildLibrary(file, manifest, opts)
-    return { filename: `Library-${String(resource.id)}.json`, resource }
+    return { filename: `Library-${String(resource.id)}.json`, resource, own: true }
   })
+
+  // Each dependency's Library is built against its own manifest, so it says
+  // which package it came from rather than claiming to be part of this one.
+  const fromDependencies: Member[] = dependencies.flatMap((dep) =>
+    dep.files.map((file) => {
+      const resource = buildLibrary(file, dep.manifest, opts)
+      return { filename: `Library-${String(resource.id)}.json`, resource, own: false }
+    }),
+  )
 
   // Resources the package already holds go in as they are. A ViewDefinition is
   // a FHIR resource, so a SQL-on-FHIR package needs no conversion to become a
   // FHIR package: it only needed someone to put it in the format.
-  const fromJson: IndexedFile[] = resources.map((file) => {
+  const fromJson: Member[] = resources.map((file) => {
     const resource = packagedResource(file)
-    return { filename: `${String(resource.resourceType)}-${String(resource.id)}.json`, resource }
+    return { filename: `${String(resource.resourceType)}-${String(resource.id)}.json`, resource, own: true }
   })
 
-  return [...fromCql, ...fromJson].sort((a, b) => byCodeUnit(a.filename, b.filename))
+  return [...fromCql, ...fromDependencies, ...fromJson].sort((a, b) => byCodeUnit(a.filename, b.filename))
 }
 
 /**
@@ -269,8 +294,9 @@ export function buildPackageBundle(
   files: CqlFile[],
   resources: FhirResourceFile[] = [],
   opts: FhirPackageOptions = {},
+  dependencies: PackageDependency[] = [],
 ): Record<string, unknown> {
-  const members = packageMembers(manifest, files, resources, opts)
+  const members = packageMembers(manifest, files, resources, opts, dependencies)
   const id = fhirId(manifest.id.split('/').join('-'))
 
   const collection: Record<string, unknown> = {
@@ -292,7 +318,7 @@ export function buildPackageBundle(
       `Contents of the Open Quality package ${manifest.id} version ${manifest.version}. ` +
       `Not an authoritative publication of this logic.`,
     relatedArtifact: members.map((m) => ({
-      type: 'composed-of',
+      type: m.own ? 'composed-of' : 'depends-on',
       resource: `${CANONICAL_BASE}/${String(m.resource.resourceType)}/${String(m.resource.id)}`,
     })),
   }
@@ -313,11 +339,15 @@ export function buildFhirPackage(
   files: CqlFile[],
   resources: FhirResourceFile[] = [],
   opts: FhirPackageOptions = {},
+  dependencies: PackageDependency[] = [],
 ): FhirPackageFile[] {
-  const indexed = packageMembers(manifest, files, resources, opts)
+  const indexed = packageMembers(manifest, files, resources, opts, dependencies)
+  // The FHIR version and QI-Core dependency come from every CQL file that ships,
+  // including the ones pulled in from dependencies.
+  const allCql = [...files, ...dependencies.flatMap((d) => d.files)]
 
   const out: FhirPackageFile[] = [
-    { path: 'package/package.json', content: `${JSON.stringify(buildPackageJson(manifest, files, opts), null, 2)}\n` },
+    { path: 'package/package.json', content: `${JSON.stringify(buildPackageJson(manifest, allCql, opts), null, 2)}\n` },
     { path: 'package/.index.json', content: `${JSON.stringify(buildPackageIndex(indexed), null, 2)}\n` },
     ...indexed.map((entry) => ({
       path: `package/${entry.filename}`,

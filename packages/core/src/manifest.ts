@@ -58,6 +58,15 @@ const ProvenanceSchema = z.object({
   modifications: z.array(z.string()).optional(),
 })
 
+// A shared CQL library's identity, used instead of `measure` by a package that
+// publishes one library for measures to depend on. Both fields optional, and the
+// rule that a package is a measure or a library and not both lives in
+// library.ts, for the same reason as ValueSetSchema above.
+const LibraryIdentitySchema = z.object({
+  name: z.string().optional(),
+  version: z.string().optional(),
+})
+
 const MeasureSchema = z.object({
   title: z.string().min(1),
   steward: z.string().optional(),
@@ -81,6 +90,7 @@ export const ManifestSchema = z.object({
   license: z.string().min(1),
   measurementPeriod: z.number().int().min(1990).max(2100).optional(),
   measure: MeasureSchema.optional(),
+  library: LibraryIdentitySchema.optional(),
   dataModel: z.enum(DATA_MODELS).optional(),
   artifacts: z.array(ArtifactSchema),
   valueSets: z.array(ValueSetSchema).optional(),

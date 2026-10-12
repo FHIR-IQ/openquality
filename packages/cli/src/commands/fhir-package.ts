@@ -1,6 +1,9 @@
-import { readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { dirname, join, resolve } from 'node:path'
 import {
+  readCorpus,
+  resolveDependencies,
+  type PackageDependency,
   buildFhirPackage,
   fhirPackageName,
   listPackageFiles,
@@ -24,7 +27,47 @@ import type { Writer } from './validate.js'
  * deterministic tarball with packPackage. Two packers with their own tar
  * options is how a digest stops addressing content.
  */
-export async function runFhirPackage(dir: string, outPath: string | undefined, write: Writer): Promise<number> {
+/**
+ * The collection roots to resolve dependencies against: every directory under
+ * the nearest `measures/` above the package, unless `corpus` names one.
+ */
+async function corpusRoots(dir: string, corpus?: string): Promise<string[]> {
+  let measures = corpus ? resolve(corpus) : undefined
+  for (let at = resolve(dir); !measures; at = dirname(at)) {
+    const candidate = join(at, 'measures')
+    if (await stat(candidate).then((s) => s.isDirectory(), () => false)) measures = candidate
+    else if (dirname(at) === at) return []
+  }
+  const entries = await readdir(measures, { withFileTypes: true }).catch(() => [])
+  return entries.filter((e) => e.isDirectory()).map((e) => join(measures!, e.name)).sort()
+}
+
+/**
+ * Every package this one depends on, transitively, with its CQL read, or the
+ * list of what could not be found. Shared by the npm package and the CRMI
+ * bundle commands, so both carry the same dependencies.
+ */
+export async function collectDependencies(
+  dir: string,
+  manifest: Manifest,
+  corpus?: string,
+): Promise<{ dependencies: PackageDependency[]; missing: string[] }> {
+  if (!manifest.dependencies?.length) return { dependencies: [], missing: [] }
+  const index = await readCorpus(await corpusRoots(dir, corpus))
+  const { resolved, missing } = resolveDependencies(manifest, (id, version) => index.get(`${id}@${version}`))
+  const dependencies: PackageDependency[] = []
+  for (const pkg of resolved) {
+    dependencies.push({ manifest: pkg.manifest, files: (await collectPackageResources(pkg.dir)).cql })
+  }
+  return { dependencies, missing: missing.map((m) => `${m.id}@${m.version} (required by ${m.requiredBy})`) }
+}
+
+export async function runFhirPackage(
+  dir: string,
+  outPath: string | undefined,
+  write: Writer,
+  corpus?: string,
+): Promise<number> {
   let manifestSource: string
   try {
     manifestSource = await readFile(join(dir, 'openquality.yaml'), 'utf8')
@@ -49,7 +92,13 @@ export async function runFhirPackage(dir: string, outPath: string | undefined, w
     return 1
   }
 
-  const files = buildFhirPackage(manifest, cql, resources, { license: manifest.license })
+  const { dependencies, missing } = await collectDependencies(dir, manifest, corpus)
+  if (missing.length > 0) {
+    for (const m of missing) write(`error  dependency not found: ${m}`)
+    return 1
+  }
+
+  const files = buildFhirPackage(manifest, cql, resources, { license: manifest.license }, dependencies)
   const { tarball, digest } = await packFiles(files)
 
   const name = fhirPackageName(manifest.id)

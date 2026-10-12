@@ -42,8 +42,9 @@ program
   .description('Emit a FHIR NPM package (.tgz) carrying the package CQL as Library resources')
   .argument('[dir]', 'package directory', '.')
   .option('-o, --out <path>', 'output path')
-  .action(async (dir: string, opts: { out?: string }) => {
-    process.exitCode = await runFhirPackage(dir, opts.out, write)
+  .option('--corpus <dir>', 'measures directory to resolve dependencies against (default: the nearest measures/)')
+  .action(async (dir: string, opts: { out?: string; corpus?: string }) => {
+    process.exitCode = await runFhirPackage(dir, opts.out, write, opts.corpus)
   })
 
 program
@@ -51,8 +52,9 @@ program
   .description("Emit the package as a CRMI artifact Bundle, the shape CRMI's $package returns")
   .argument('[dir]', 'package directory', '.')
   .option('-o, --out <path>', 'output path')
-  .action(async (dir: string, opts: { out?: string }) => {
-    process.exitCode = await runFhirBundle(dir, opts.out, write)
+  .option('--corpus <dir>', 'measures directory to resolve dependencies against (default: the nearest measures/)')
+  .action(async (dir: string, opts: { out?: string; corpus?: string }) => {
+    process.exitCode = await runFhirBundle(dir, opts.out, write, opts.corpus)
   })
 
 await program.parseAsync()

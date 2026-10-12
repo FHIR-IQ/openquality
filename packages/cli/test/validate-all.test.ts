@@ -64,3 +64,33 @@ describe('runValidateAll', () => {
     expect(await runValidateAll([root], 1, write)).toBe(0)
   })
 })
+
+describe('dependencies across the validated packages', () => {
+  const withDependency = (dep: string) =>
+    GOOD_MANIFEST.replace('id: cms/good', 'id: cms/measure') + `dependencies:\n  - id: ${dep}\n    version: 1.0.0\n`
+  const LIBRARY_MANIFEST = [
+    'id: cms/lib-a',
+    'version: 1.0.0',
+    'license: CC0-1.0',
+    'dataModel: qi-core',
+    'library:',
+    '  name: A',
+    "  version: '1.0.000'",
+    'artifacts:',
+    '  - path: cql/A.cql',
+    '    type: cql',
+    '',
+  ].join('\n')
+
+  it('passes when every dependency is a package in the set', async () => {
+    await writePackage('lib-a', LIBRARY_MANIFEST, GOOD_README)
+    await writePackage('measure', withDependency('cms/lib-a'), GOOD_README)
+    expect(await runValidateAll([root], 1, write)).toBe(0)
+  })
+
+  it('fails and names a dependency that is not in the set', async () => {
+    await writePackage('measure', withDependency('cms/lib-gone'), GOOD_README)
+    expect(await runValidateAll([root], 1, write)).toBe(1)
+    expect(lines.join('\n')).toMatch(/dependencies\.resolve.*cms\/lib-gone@1\.0\.0/)
+  })
+})
