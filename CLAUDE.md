@@ -155,8 +155,12 @@ A read-only MCP server with five tools (`search_measures`, `get_measure`,
   in `server.ts`, and both versions in `server.json` (a test holds all four
   equal), then `npm publish --access public` in `packages/mcp` (2FA, so the
   maintainer runs it), then `mcp-publisher publish` there. The registry name
-  `us.openquality/mcp` is proven by a DNS TXT record on openquality.us; the
-  signing key lives outside the repo with the maintainer.
+  `us.openquality/mcp` is proven by `site/.well-known/mcp-registry-auth` (and
+  a matching DNS TXT record); the Ed25519 signing key lives outside the repo
+  with the maintainer. Log in with `mcp-publisher login http --domain
+  openquality.us --private-key "$(openssl pkey -in KEY.pem -outform DER | tail -c
+  32 | xxd -p -c 64)"`. The registry docs' `-text | grep priv:` form breaks
+  under OpenSSL 4. Do not delete the `.well-known` file.
 
 ### Content policy
 
