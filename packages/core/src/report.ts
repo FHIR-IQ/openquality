@@ -10,6 +10,7 @@ export type CheckId =
   | 'manifest.license'
   | 'manifest.dataModel'
   | 'manifest.measure'
+  | 'manifest.library'
   | 'manifest.provenance'
   | 'artifacts.present'
   | 'artifacts.typed'

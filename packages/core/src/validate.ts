@@ -7,6 +7,7 @@ import { checkProvenance } from './provenance.js'
 import { checkReadmeSections } from './readme.js'
 import { scanContent } from './scanner.js'
 import { computeLevel } from './level.js'
+import { checkLibraryIdentity } from './library.js'
 import { listPackageFiles, listPackageSymlinks } from './pack.js'
 import type { CheckId, ConformanceLevel, Finding, ValidationReport } from './report.js'
 
@@ -107,16 +108,30 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
 
   // Spec 4.2 lists machine readable measure identity as a Level 1 requirement
   // alongside dataModel. Nothing enforced it, so a package could be Described
-  // without saying which measure it implements.
+  // without saying which measure it implements. A shared library package has
+  // library identity instead, which manifest.library checks below.
   checksRun.push('manifest.measure')
-  if (!manifest.measure?.title) {
+  if (!manifest.measure?.title && !manifest.library) {
     findings.push({
       check: 'manifest.measure',
       severity: 'error',
-      message: 'manifest does not declare measure.title, so the package does not say which measure it implements',
+      message:
+        'manifest declares neither measure.title nor library, so the package does not say ' +
+        'which measure or shared library it is',
       path: 'openquality.yaml',
     })
   }
+
+  checksRun.push('manifest.library')
+  const librarySources = new Map<string, string>()
+  if (manifest.library) {
+    for (const artifact of manifest.artifacts.filter((a) => a.type === 'cql')) {
+      const full = await resolveInside(dir, artifact.path)
+      const source = full === undefined ? undefined : await readIfPresent(full)
+      if (source !== undefined) librarySources.set(artifact.path, source)
+    }
+  }
+  findings.push(...checkLibraryIdentity(manifest, (path) => librarySources.get(path)))
 
   checksRun.push('manifest.provenance')
   findings.push(...checkProvenance(manifest.provenance))

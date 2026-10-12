@@ -1,30 +1,5 @@
-import { readdir, stat } from 'node:fs/promises'
-import { join } from 'node:path'
-import { validatePackage } from '@openquality/core'
+import { findPackages, readCorpus, resolveDependencies, validatePackage } from '@openquality/core'
 import type { Writer } from './validate.js'
-
-/** Immediate subdirectories of `root` that contain an openquality.yaml. */
-async function findPackages(root: string): Promise<string[]> {
-  let entries
-  try {
-    entries = await readdir(root, { withFileTypes: true })
-  } catch {
-    return []
-  }
-
-  const found: string[] = []
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue
-    const dir = join(root, entry.name)
-    try {
-      await stat(join(dir, 'openquality.yaml'))
-      found.push(dir)
-    } catch {
-      // Not a package. Collections nest one level, so this is expected.
-    }
-  }
-  return found.sort()
-}
 
 /**
  * Validates every package under the given roots and fails if any falls below
@@ -44,7 +19,21 @@ export async function runValidateAll(roots: string[], floor: number, write: Writ
     for (const blocker of blockers) write(`        ${blocker}`)
   }
 
+  // Whether a dependency resolves is a property of the set of packages, not of
+  // one package, so it is checked here rather than in validatePackage. CI runs
+  // this over the whole corpus, which is what keeps the committed tree whole.
+  const corpus = await readCorpus(roots)
+  let unresolved = 0
+  for (const pkg of corpus.values()) {
+    const { missing } = resolveDependencies(pkg.manifest, (id, version) => corpus.get(`${id}@${version}`))
+    for (const dep of missing) {
+      unresolved++
+      write(`FAIL  ${pkg.dir}  dependencies.resolve: ${dep.requiredBy} depends on ${dep.id}@${dep.version}, which is not a package here`)
+    }
+  }
+
   write('')
   write(`Checked ${dirs.length} package${dirs.length === 1 ? '' : 's'}, ${failures.length} below Level ${floor}`)
-  return failures.length > 0 ? 1 : 0
+  if (unresolved > 0) write(`${unresolved} unresolved dependenc${unresolved === 1 ? 'y' : 'ies'}`)
+  return failures.length > 0 || unresolved > 0 ? 1 : 0
 }

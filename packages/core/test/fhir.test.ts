@@ -276,3 +276,40 @@ describe('buildPackageBundle', () => {
     expect(JSON.stringify(bundle())).toBe(JSON.stringify(bundle()))
   })
 })
+
+describe('packages with dependencies', () => {
+  const LIB_MANIFEST = {
+    id: 'cms/lib-fhirhelpers',
+    version: '4.4.0',
+    license: 'CC0-1.0',
+    dataModel: 'fhir-r4',
+    library: { name: 'FHIRHelpers', version: '4.4.000' },
+    artifacts: [{ path: 'cql/FHIRHelpers.cql', type: 'cql' }],
+  } as Manifest
+  const LIB: CqlFile = { path: 'cql/FHIRHelpers.cql', source: `library FHIRHelpers version '4.4.000'\n\nusing FHIR version '4.0.1'\n` }
+  const deps = [{ manifest: LIB_MANIFEST, files: [LIB] }]
+
+  it('includes each dependency Library in the bundle, built against its own package', () => {
+    const bundle = buildPackageBundle(MANIFEST, [MAIN], [], {}, deps) as any
+    const helpers = bundle.entry.map((e: any) => e.resource).find((r: any) => r.id === 'FHIRHelpers')
+    expect(helpers.version).toBe('4.4.000')
+    expect(helpers.description).toMatch(/cms\/lib-fhirhelpers/)
+  })
+
+  it('lists own artifacts as composed-of and dependencies as depends-on', () => {
+    const bundle = buildPackageBundle(MANIFEST, [MAIN], [], {}, deps) as any
+    const related = bundle.entry[0].resource.relatedArtifact
+    expect(related).toContainEqual({ type: 'composed-of', resource: `${CANONICAL_BASE}/Library/CMS122FHIRDiabetesAssess` })
+    expect(related).toContainEqual({ type: 'depends-on', resource: `${CANONICAL_BASE}/Library/FHIRHelpers` })
+  })
+
+  it('keeps the npm package and the bundle holding the same resources', () => {
+    const bundle = buildPackageBundle(MANIFEST, [MAIN], [], {}, deps) as any
+    const inBundle = bundle.entry.slice(1).map((e: any) => `${e.resource.resourceType}/${e.resource.id}`).sort()
+    const inPackage = buildFhirPackage(MANIFEST, [MAIN], [], {}, deps)
+      .filter((f) => !f.path.endsWith('package.json') && !f.path.endsWith('.index.json'))
+      .map((f) => { const r = JSON.parse(f.content); return `${r.resourceType}/${r.id}` })
+      .sort()
+    expect(inPackage).toEqual(inBundle)
+  })
+})
