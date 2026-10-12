@@ -3,7 +3,7 @@ id: corpus-2026-002
 scope: corpus
 type: implementation-note
 measurementPeriod: 2026
-status: open
+status: resolved
 categories: [packaging, cql]
 reporter: aks129
 ---
@@ -72,8 +72,25 @@ corpus would tell an author that copy 12 of 52 was missed.
 
 ## Resolution
 
-Open. The likely answer is a report rather than a rule: a check that hashes
-every file with a shared library name and flags any name whose copies are not
-byte-identical, the way `import-report.md` lists skips. That would catch both
-failure modes above without requiring the packages to stop vendoring their
-dependencies. Nothing is decided.
+Resolved 2026-10-12 by removing the copies rather than reporting on them.
+
+Each of the 17 shared libraries the CMS measures include is now a package of its own,
+`cms/lib-<name>` (for example `cms/lib-fhirhelpers`). A package can declare `library`
+identity (the CQL library name and header version) in place of `measure`, which is what
+was missing: Level 1 used to require `measure.title`, so a library-only package had no
+valid shape.
+
+Each measure lists the libraries its CQL includes directly under `dependencies`, and each
+library lists its own. `oq validate-all` fails if any dependency is not a package in the
+corpus. The CQL files in `cms-fhir-2026` went from 301 to 69: 52 measure libraries and
+17 shared ones, each stored once.
+
+A measure still loads on its own. `oq fhir-bundle`, `oq fhir-package` and the MCP
+server's `get_bundle` resolve dependencies transitively and include them. A test
+(`tools/test/library-sets.test.ts`) holds every measure's bundle to the exact set of
+Library resources it carried before the change, compared by id, version, CQL bytes and
+dependency edges.
+
+Both failure modes listed above are closed. There is one copy of each library, so copies
+cannot diverge. A hand-authored package can still carry its own copy of a library, which
+stays valid but is no longer how the imported corpus works.

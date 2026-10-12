@@ -13,14 +13,15 @@ artifacts:
     type: fhir/Measure
   - path: cql/CMS1218FHIRHHRF.cql
     type: cql
-  - path: cql/CQMCommon.cql
-    type: cql
-  - path: cql/FHIRHelpers.cql
-    type: cql
-  - path: cql/QICoreCommon.cql
-    type: cql
-  - path: cql/SupplementalDataElements.cql
-    type: cql
+dependencies:
+  - id: cms/lib-cqmcommon
+    version: 4.1.0
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
+  - id: cms/lib-supplementaldataelements
+    version: 5.1.0
 valueSets:
   - oid: 2.16.840.1.113762.1.4.1248.88
     url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1248.88

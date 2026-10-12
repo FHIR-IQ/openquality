@@ -1,0 +1,31 @@
+id: cms/lib-supplementaldataelements
+version: 5.1.0
+license: CC0-1.0
+library:
+  name: SupplementalDataElements
+  version: 5.1.000
+dataModel: qi-core
+artifacts:
+  - path: cql/SupplementalDataElements.cql
+    type: cql
+dependencies:
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+valueSets:
+  - oid: 2.16.840.1.114222.4.11.837
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.837
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1021.121
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1021.121
+    source: vsac
+  - oid: 2.16.840.1.114222.4.11.3591
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.3591
+    source: vsac
+  - oid: 2.16.840.1.114222.4.11.836
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.836
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

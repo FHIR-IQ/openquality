@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
 import { checkReadmeSections, parseManifest } from '@openquality/core'
-import { emitManifest, emitReadme, type PackagePlan } from '../src/emit.js'
+import { emitLibraryManifest, emitLibraryReadme, emitManifest, emitReadme, type LibraryPlan, type PackagePlan } from '../src/emit.js'
 
 const PLAN: PackagePlan = {
   id: 'cms/diabetes-glycemic-status-assessment-greater-than-9',
@@ -22,7 +22,10 @@ const PLAN: PackagePlan = {
       oid: '2.16.840.1.113883.3.464.1003.103.12.1001',
     },
   ],
-  libraryFileNames: ['FHIRHelpers.cql', 'QICoreCommon.cql'],
+  dependencies: [
+    { id: 'cms/lib-fhirhelpers', version: '4.4.0' },
+    { id: 'cms/lib-qicorecommon', version: '4.0.0' },
+  ],
   provenance: {
     upstream: 'https://github.com/cqframework/ecqm-content-qicore-2025',
     ref: 'd4e0edd01b7da2a3b43d5360156b43761438190a',
@@ -51,19 +54,24 @@ describe('emitManifest', () => {
     expect(manifest.measure.steward).toBe('National Committee for Quality Assurance')
   })
 
-  it('declares the measure CQL and every vendored library as artifacts', () => {
+  it('declares only the measure and its own CQL as artifacts, not shared libraries', () => {
     const manifest = parse(emitManifest(PLAN))
     expect(manifest.artifacts).toEqual([
       { path: 'fhir/Measure-Example.json', type: 'fhir/Measure' },
       { path: 'cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql', type: 'cql' },
-      { path: 'cql/FHIRHelpers.cql', type: 'cql' },
-      { path: 'cql/QICoreCommon.cql', type: 'cql' },
     ])
   })
 
-  it('emits no dependencies, because libraries are vendored not referenced', () => {
+  it('names the shared libraries it includes as dependencies', () => {
     const manifest = parse(emitManifest(PLAN))
-    expect(manifest.dependencies).toBeUndefined()
+    expect(manifest.dependencies).toEqual([
+      { id: 'cms/lib-fhirhelpers', version: '4.4.0' },
+      { id: 'cms/lib-qicorecommon', version: '4.0.0' },
+    ])
+  })
+
+  it('omits dependencies when there are none', () => {
+    expect(parse(emitManifest({ ...PLAN, dependencies: [] })).dependencies).toBeUndefined()
   })
 
   it('references value sets by oid and url, never embedding them', () => {
@@ -163,5 +171,43 @@ describe('emitReadme', () => {
       },
     }
     expect(emitReadme(derived)).toContain('removed CPT display text from 3 code declarations')
+  })
+})
+
+const LIBRARY: LibraryPlan = {
+  id: 'cms/lib-qicorecommon',
+  version: '4.0.0',
+  slug: 'lib-qicorecommon',
+  name: 'QICoreCommon',
+  cqlVersion: '4.0.000',
+  dataModel: 'qi-core',
+  cqlFileName: 'QICoreCommon.cql',
+  valueSets: [],
+  dependencies: [{ id: 'cms/lib-fhirhelpers', version: '4.4.0' }],
+  includedBy: ['cms/b-measure', 'cms/a-measure'],
+  provenance: {
+    upstream: 'https://github.com/cqframework/ecqm-content-qicore-2025',
+    ref: 'd4e0edd01b7da2a3b43d5360156b43761438190a',
+    retrieved: '2026-08-01',
+    relationship: 'unmodified',
+  },
+}
+
+describe('library packages', () => {
+  it('produce a manifest the core parser accepts, with library identity and no measure', () => {
+    const result = parseManifest(emitLibraryManifest(LIBRARY))
+    expect(result.ok).toBe(true)
+    const manifest = parse(emitLibraryManifest(LIBRARY))
+    expect(manifest.library).toEqual({ name: 'QICoreCommon', version: '4.0.000' })
+    expect(manifest.measure).toBeUndefined()
+    expect(manifest.artifacts).toEqual([{ path: 'cql/QICoreCommon.cql', type: 'cql' }])
+    expect(manifest.dependencies).toEqual([{ id: 'cms/lib-fhirhelpers', version: '4.4.0' }])
+  })
+
+  it('produce a README with every required section, listing the measures that include it, sorted', () => {
+    const readme = emitLibraryReadme(LIBRARY)
+    expect(checkReadmeSections(readme)).toEqual([])
+    expect(readme.indexOf('cms/a-measure')).toBeLessThan(readme.indexOf('cms/b-measure'))
+    expect(readme).toContain("QICoreCommon version '4.0.000'")
   })
 })

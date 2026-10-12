@@ -1,10 +1,10 @@
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { parseHeader } from './cql.js'
-import { emitManifest, emitReadme, type PackagePlan } from './emit.js'
+import { emitLibraryManifest, emitLibraryReadme, emitManifest, emitReadme, type LibraryPlan, type PackagePlan } from './emit.js'
 import { readMeasure } from './measure.js'
 import { normalizeVersion, packageId, slugFor } from './naming.js'
-import { planPackage, resolveLibraries, type ImportContext, type Skip } from './plan.js'
+import { directDependencies, planLibrary, planPackage, resolveLibraries, type ImportContext, type Skip } from './plan.js'
 import { UPSTREAM, fetchUpstream, listCqlFiles, listMeasureFiles, readText } from './upstream.js'
 
 export const MEASURES_DIR = 'measures/cms-fhir-2026'
@@ -15,6 +15,8 @@ export interface ImportSummary {
   ref: string
   retrieved: string
   imported: string[]
+  /** Shared library packages written, by id. */
+  libraries: string[]
   skipped: Skip[]
 }
 
@@ -32,6 +34,7 @@ export function renderImportReport(summary: ImportSummary): string {
     '## Result',
     '',
     `- ${summary.imported.length} measures imported`,
+    `- ${summary.libraries.length} shared libraries published as their own packages`,
     `- ${summary.skipped.length} skipped`,
     '',
   ]
@@ -72,29 +75,26 @@ function toLf(text: string): string {
 }
 
 /**
- * Writes one self-contained package: the manifest, the README, the measure CQL,
- * and every library the measure includes. Vendoring the libraries is what makes
- * the package readable and evaluable on its own, which is the whole point of a
- * package. The alternative, publishing each shared library as its own package,
- * would require inventing a `measure.title` for something that is not a measure.
+ * Writes one measure package: the manifest, the README, the Measure resource
+ * and the measure's own CQL. The shared libraries it includes are not copied in;
+ * the manifest names them as dependencies, and each is written once by
+ * writeLibraryPackage.
  */
-async function writePackage(
-  dir: string,
-  plan: PackagePlan,
-  cql: string,
-  libraries: Map<string, string>,
-  measureJson: string,
-): Promise<void> {
+async function writePackage(dir: string, plan: PackagePlan, cql: string, measureJson: string): Promise<void> {
   await mkdir(join(dir, 'cql'), { recursive: true })
   await mkdir(join(dir, 'fhir'), { recursive: true })
   await writeFile(join(dir, 'fhir', plan.measureFileName), toLf(measureJson))
   await writeFile(join(dir, 'openquality.yaml'), emitManifest(plan))
   await writeFile(join(dir, 'README.md'), emitReadme(plan))
   await writeFile(join(dir, 'cql', plan.cqlFileName), toLf(cql))
-  for (const name of plan.libraryFileNames) {
-    const source = libraries.get(name.replace(/\.cql$/, ''))
-    if (source !== undefined) await writeFile(join(dir, 'cql', name), toLf(source))
-  }
+}
+
+/** Writes one shared library package: manifest, README and the library's CQL. */
+async function writeLibraryPackage(dir: string, plan: LibraryPlan, cql: string): Promise<void> {
+  await mkdir(join(dir, 'cql'), { recursive: true })
+  await writeFile(join(dir, 'openquality.yaml'), emitLibraryManifest(plan))
+  await writeFile(join(dir, 'README.md'), emitLibraryReadme(plan))
+  await writeFile(join(dir, 'cql', plan.cqlFileName), toLf(cql))
 }
 
 /**
@@ -128,8 +128,14 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
 
   await clearGeneratedPackages(MEASURES_DIR)
 
-  const imported: string[] = []
   const skipped: Skip[] = []
+  const planned: {
+    plan: PackagePlan
+    cql: string
+    resource: string
+    source: string
+    libraries: string[]
+  }[] = []
 
   for (const path of await listMeasureFiles(root)) {
     const measureJson = await readText(path)
@@ -156,8 +162,8 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
       continue
     }
 
-    // Libraries are vendored, so a missing one means the package would be
-    // incomplete. Skip rather than ship something that cannot be evaluated.
+    // A missing library means the measure could not be evaluated. Skip rather
+    // than ship a package whose dependencies do not exist.
     const { resolved, missing } = resolveLibraries(source, cqlByLibrary)
     if (missing.length > 0) {
       skipped.push({
@@ -166,10 +172,48 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
       })
       continue
     }
-    plan.libraryFileNames = resolved.map((name) => `${name}.cql`)
+    planned.push({ plan, cql, resource: resource ?? '', source, libraries: resolved })
+  }
 
-    await writePackage(join(MEASURES_DIR, plan.slug), plan, cql, cqlByLibrary, resource ?? '')
-    imported.push(plan.id)
+  // Each shared library any measure reaches, planned once. A library that
+  // cannot be planned takes every measure that reaches it out with it.
+  const usedBy = new Map<string, string[]>()
+  for (const p of planned) {
+    for (const name of p.libraries) usedBy.set(name, [...(usedBy.get(name) ?? []), p.plan.id])
+  }
+  const libraryPlans = new Map<string, { plan: LibraryPlan; cql: string }>()
+  const brokenLibraries = new Map<string, string>()
+  for (const name of [...usedBy.keys()].sort()) {
+    const result = planLibrary(name, cqlByLibrary, context, usedBy.get(name) ?? [])
+    if (result.plan && result.cql !== undefined) libraryPlans.set(name, { plan: result.plan, cql: result.cql })
+    else brokenLibraries.set(name, result.skipped?.reason ?? 'could not be planned')
+  }
+
+  const imported: string[] = []
+  const writtenLibraries = new Set<string>()
+  for (const p of planned) {
+    const broken = p.libraries.filter((name) => brokenLibraries.has(name))
+    if (broken.length > 0) {
+      skipped.push({
+        measure: p.plan.id,
+        reason: `includes libraries that could not be published: ${broken.map((n) => `${n} (${brokenLibraries.get(n)})`).join(', ')}`,
+      })
+      continue
+    }
+    p.plan.dependencies = directDependencies(p.source, cqlByLibrary)
+    await writePackage(join(MEASURES_DIR, p.plan.slug), p.plan, p.cql, p.resource)
+    imported.push(p.plan.id)
+    for (const name of p.libraries) writtenLibraries.add(name)
+  }
+
+  const libraries: string[] = []
+  for (const name of [...writtenLibraries].sort()) {
+    const { plan, cql } = libraryPlans.get(name)!
+    // includedBy is recomputed from the measures actually written, so a library
+    // README never names a measure that was skipped.
+    plan.includedBy = (usedBy.get(name) ?? []).filter((id) => imported.includes(id)).sort()
+    await writeLibraryPackage(join(MEASURES_DIR, plan.slug), plan, cql)
+    libraries.push(plan.id)
   }
 
   const summary: ImportSummary = {
@@ -177,6 +221,7 @@ export async function runImport(retrieved: string, ref: string = UPSTREAM.ref): 
     ref,
     retrieved,
     imported: imported.sort(),
+    libraries,
     skipped,
   }
   await writeFile(REPORT_PATH, renderImportReport(summary))

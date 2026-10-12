@@ -108,7 +108,7 @@ Pre-launch.
 | Package format | shipped | Manifest schema, conformance levels, license policy, content scanning, provenance |
 | Validation core | shipped | Validates a package directory and computes its level |
 | `oq` CLI | shipped | `oq validate`, `oq validate-all`, `oq pack`, `oq fhir-package`, `oq fhir-bundle` |
-| Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, with a CI drift check |
+| Seed corpus | shipped | 52 CC0 eCQM packages imported from cqframework, plus the 17 shared CQL libraries they depend on as packages of their own, with a CI drift check |
 | MCP server | shipped | Read-only, five tools, at `https://openquality.us/mcp`; see [below](#connecting-an-agent-or-ide-mcp) |
 | Deep validators | next | CQL to ELM, FHIR profile validation, SQL parsing, VSAC resolution |
 | Registry | planned | Publish, search, install |
@@ -145,8 +145,10 @@ pnpm oq validate-all measures/cms-fhir-2026
 Expected output:
 
 ```text
-Checked 52 packages, 0 below Level 1
+Checked 69 packages, 0 below Level 1
 ```
+
+That is 52 measures and the 17 shared CQL libraries they depend on, each published once.
 
 ## Reading the corpus from a tool
 

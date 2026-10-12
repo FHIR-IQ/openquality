@@ -1,0 +1,18 @@
+id: cms/lib-alaracommonfunctions
+version: 1.10.0
+license: CC0-1.0
+library:
+  name: AlaraCommonFunctions
+  version: 1.10.000
+dataModel: qi-core
+artifacts:
+  - path: cql/AlaraCommonFunctions.cql
+    type: cql
+dependencies:
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

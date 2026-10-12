@@ -7,13 +7,16 @@
   "pinning": "`ref` is a moving branch. Pin a commit or tag and substitute it into `raw` if you need the same bytes twice.",
   "levels": {
     "0": "Shared: valid manifest, open licence, at least one artifact.",
-    "1": "Described: adds data model, measure identity, typed artifacts, value set references, and a README stating intent, known limitations and provenance.",
+    "1": "Described: adds data model, measure or shared library identity, typed artifacts, value set references, and a README stating intent, known limitations and provenance.",
     "2": "Verified: not reachable today. CQL translation, FHIR profile validation and SQL parsing are unimplemented, so every package tops out at Level 1."
   },
   "counts": {
-    "packages": 54,
+    "packages": 71,
+    "measures": 54,
+    "libraries": 17,
     "knowledgeEntries": 13
   },
+  "dependencies": "A package lists its direct dependencies as id and version. Resolve them transitively against `packages` to get everything a measure needs.",
   "packages": [
     {
       "id": "cms/anticoagulation-therapy-for-atrial-fibrillation-flutter",
@@ -31,15 +34,33 @@
       "manifest": "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/CMS71FHIRSTKAnticoagAFFlutter.cql",
-        "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/SupplementalDataElements.cql",
-        "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/cql/TJCOverall.cql",
         "measures/cms-fhir-2026/anticoagulation-therapy-for-atrial-fibrillation-flutter/fhir/Measure-CMS71FHIRSTKAnticoagAFFlutter.json"
       ],
       "valueSets": 11,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        },
+        {
+          "id": "cms/lib-tjcoverall",
+          "version": "8.24.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -58,17 +79,41 @@
       "manifest": "measures/cms-fhir-2026/antidepressant-medication-management/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/antidepressant-medication-management/cql/CMS128FHIRAntidepressantMedManagement.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/Hospice.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/Status.cql",
-        "measures/cms-fhir-2026/antidepressant-medication-management/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/antidepressant-medication-management/fhir/Measure-CMS128FHIRAntidepressantMedManagement.json"
       ],
       "valueSets": 12,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -87,15 +132,33 @@
       "manifest": "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/CMS72FHIRSTKAntithromboticDay2.cql",
-        "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/SupplementalDataElements.cql",
-        "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/cql/TJCOverall.cql",
         "measures/cms-fhir-2026/antithrombotic-therapy-by-end-of-hospital-day-2/fhir/Measure-CMS72FHIRSTKAntithromboticDay2.json"
       ],
       "valueSets": 8,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        },
+        {
+          "id": "cms/lib-tjcoverall",
+          "version": "8.24.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -113,18 +176,38 @@
       "path": "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis",
       "manifest": "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/Antibiotic.cql",
         "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/CMS146FHIRAppropriateTestingforPharyngitis.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/Hospice.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/Status.cql",
-        "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/fhir/Measure-CMS146FHIRAppropriateTestingforPharyngitis.json"
       ],
       "valueSets": 19,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-antibiotic",
+          "version": "1.9.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -143,15 +226,33 @@
       "manifest": "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/CMS996FHIRAptTxforSTEMI.cql",
-        "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/Status.cql",
-        "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/appropriate-treatment-for-st-segment-elevation-myocardial-infarction-stemi-patients-in-the-emergency-department/fhir/Measure-CMS996FHIRAptTxforSTEMI.json"
       ],
       "valueSets": 34,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -170,13 +271,25 @@
       "manifest": "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/cql/CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy.cql",
-        "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/bone-density-evaluation-for-patients-with-prostate-cancer-and-receiving-androgen-deprivation-therapy/fhir/Measure-CMS645FHIRBoneDensityProstateCancerAndrogenDeprivationTherapy.json"
       ],
       "valueSets": 5,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -194,20 +307,46 @@
       "path": "measures/cms-fhir-2026/breast-cancer-screening",
       "manifest": "measures/cms-fhir-2026/breast-cancer-screening/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/AdultOutpatientEncounters.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/AdvancedIllnessandFrailty.cql",
         "measures/cms-fhir-2026/breast-cancer-screening/cql/CMS125FHIRBreastCancerScreening.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/Hospice.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/Status.cql",
-        "measures/cms-fhir-2026/breast-cancer-screening/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/breast-cancer-screening/fhir/Measure-CMS125FHIRBreastCancerScreening.json"
       ],
       "valueSets": 8,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-adultoutpatientencounters",
+          "version": "4.19.0"
+        },
+        {
+          "id": "cms/lib-advancedillnessandfrailty",
+          "version": "1.27.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -226,13 +365,25 @@
       "manifest": "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/cql/CMS133FHIRCataracts2040BCVAwithin90Days.cql",
-        "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery/fhir/Measure-CMS133FHIRCataracts2040BCVAwithin90Days.json"
       ],
       "valueSets": 58,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -251,16 +402,37 @@
       "manifest": "measures/cms-fhir-2026/cervical-cancer-screening/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/cervical-cancer-screening/cql/CMS124FHIRCervicalCancerScreening.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/Hospice.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/Status.cql",
-        "measures/cms-fhir-2026/cervical-cancer-screening/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/cervical-cancer-screening/fhir/Measure-CMS124FHIRCervicalCancerScreening.json"
       ],
       "valueSets": 10,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -279,15 +451,33 @@
       "manifest": "measures/cms-fhir-2026/cesarean-birth/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/cesarean-birth/cql/CMS0334FHIRPCCesareanBirth.cql",
-        "measures/cms-fhir-2026/cesarean-birth/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/cesarean-birth/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/cesarean-birth/cql/PCMaternal.cql",
-        "measures/cms-fhir-2026/cesarean-birth/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/cesarean-birth/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/cesarean-birth/fhir/Measure-CMS0334FHIRPCCesareanBirth.json"
       ],
       "valueSets": 8,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-pcmaternal",
+          "version": "5.25.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -306,15 +496,33 @@
       "manifest": "measures/cms-fhir-2026/childhood-immunization-status/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/childhood-immunization-status/cql/CMS117FHIRChildhoodImmunizationStatus.cql",
-        "measures/cms-fhir-2026/childhood-immunization-status/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/childhood-immunization-status/cql/Hospice.cql",
-        "measures/cms-fhir-2026/childhood-immunization-status/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/childhood-immunization-status/cql/Status.cql",
-        "measures/cms-fhir-2026/childhood-immunization-status/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/childhood-immunization-status/fhir/Measure-CMS117FHIRChildhoodImmunizationStatus.json"
       ],
       "valueSets": 46,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -333,15 +541,33 @@
       "manifest": "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/CMS75FHIRChildrenWhoHaveDentalDecayOrCavities.cql",
-        "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/Hospice.cql",
-        "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/Status.cql",
-        "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/children-who-have-dental-decay-or-cavities/fhir/Measure-CMS75FHIRChildrenWhoHaveDentalDecayOrCavities.json"
       ],
       "valueSets": 5,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -360,14 +586,29 @@
       "manifest": "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/cql/CMS50FHIRCRLReceiptofSpecialistReport.cql",
-        "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/cql/Status.cql",
-        "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/closing-the-referral-loop-receipt-of-specialist-report/fhir/Measure-CMS50FHIRCRLReceiptofSpecialistReport.json"
       ],
       "valueSets": 10,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -385,20 +626,46 @@
       "path": "measures/cms-fhir-2026/colorectal-cancer-screening",
       "manifest": "measures/cms-fhir-2026/colorectal-cancer-screening/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/AdultOutpatientEncounters.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/AdvancedIllnessandFrailty.cql",
         "measures/cms-fhir-2026/colorectal-cancer-screening/cql/CMS130FHIRColorectalCancerScreening.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/Hospice.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/Status.cql",
-        "measures/cms-fhir-2026/colorectal-cancer-screening/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/colorectal-cancer-screening/fhir/Measure-CMS130FHIRColorectalCancerScreening.json"
       ],
       "valueSets": 7,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-adultoutpatientencounters",
+          "version": "4.19.0"
+        },
+        {
+          "id": "cms/lib-advancedillnessandfrailty",
+          "version": "1.27.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -416,20 +683,46 @@
       "path": "measures/cms-fhir-2026/controlling-high-blood-pressure",
       "manifest": "measures/cms-fhir-2026/controlling-high-blood-pressure/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/AdultOutpatientEncounters.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/AdvancedIllnessandFrailty.cql",
         "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/CMS165FHIRControllingHighBloodPressure.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/Hospice.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/Status.cql",
-        "measures/cms-fhir-2026/controlling-high-blood-pressure/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/controlling-high-blood-pressure/fhir/Measure-CMS165FHIRControllingHighBloodPressure.json"
       ],
       "valueSets": 10,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-adultoutpatientencounters",
+          "version": "4.19.0"
+        },
+        {
+          "id": "cms/lib-advancedillnessandfrailty",
+          "version": "1.27.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -447,15 +740,30 @@
       "path": "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40",
       "manifest": "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/cql/AHAOverall.cql",
         "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/cql/CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD.cql",
-        "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40/fhir/Measure-CMS145FHIRCADBetaBlockerTherapyPriorMIorLVSD.json"
       ],
       "valueSets": 28,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-ahaoverall",
+          "version": "3.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -474,13 +782,25 @@
       "manifest": "measures/cms-fhir-2026/dementia-cognitive-assessment/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/dementia-cognitive-assessment/cql/CMS149FHIRDementiaCognitiveAssessment.cql",
-        "measures/cms-fhir-2026/dementia-cognitive-assessment/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/dementia-cognitive-assessment/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/dementia-cognitive-assessment/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/dementia-cognitive-assessment/fhir/Measure-CMS149FHIRDementiaCognitiveAssessment.json"
       ],
       "valueSets": 15,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -499,13 +819,25 @@
       "manifest": "measures/cms-fhir-2026/depression-remission-at-twelve-months/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/depression-remission-at-twelve-months/cql/CMS159FHIRDepressionRemissionatTwelveMonths.cql",
-        "measures/cms-fhir-2026/depression-remission-at-twelve-months/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/depression-remission-at-twelve-months/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/depression-remission-at-twelve-months/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/depression-remission-at-twelve-months/fhir/Measure-CMS159FHIRDepressionRemissionatTwelveMonths.json"
       ],
       "valueSets": 16,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -523,19 +855,42 @@
       "path": "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9",
       "manifest": "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/AdvancedIllnessandFrailty.cql",
         "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/Hospice.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/Status.cql",
-        "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/fhir/Measure-CMS122FHIRDiabetesAssessGreaterThan9Percent.json"
       ],
       "valueSets": 9,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-advancedillnessandfrailty",
+          "version": "1.27.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": [
         "cms122-2026-001",
         "cms122-2026-002",
@@ -560,13 +915,25 @@
       "manifest": "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/cql/CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes.cql",
-        "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/diabetic-retinopathy-communication-with-the-physician-managing-ongoing-diabetes-care/fhir/Measure-CMS142FHIRDRCommunicationWithPhysicianManagingDiabetes.json"
       ],
       "valueSets": 12,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -585,15 +952,33 @@
       "manifest": "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/CMS104FHIRSTKDCAntithrombotic.cql",
-        "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/SupplementalDataElements.cql",
-        "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/cql/TJCOverall.cql",
         "measures/cms-fhir-2026/discharged-on-antithrombotic-therapy/fhir/Measure-CMS104FHIRSTKDCAntithrombotic.json"
       ],
       "valueSets": 4,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        },
+        {
+          "id": "cms/lib-tjcoverall",
+          "version": "8.24.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -612,13 +997,25 @@
       "manifest": "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/cql/CMS68FHIRDocumentationofCurrentMedications.cql",
-        "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/documentation-of-current-medications-in-the-medical-record/fhir/Measure-CMS68FHIRDocumentationofCurrentMedications.json"
       ],
       "valueSets": 1,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -637,14 +1034,29 @@
       "manifest": "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/cql/CMS1244FHIRECATHOQR.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/emergency-care-access-timeliness-hoqr/fhir/Measure-CMS1244FHIRECATHOQR.json"
       ],
       "valueSets": 10,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -663,14 +1075,29 @@
       "manifest": "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/cql/CMS1264FHIRECATREHQR.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/emergency-care-access-timeliness-rehqr/fhir/Measure-CMS1264FHIRECATREHQR.json"
       ],
       "valueSets": 7,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -688,16 +1115,34 @@
       "path": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician",
       "manifest": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/AlaraCommonFunctions.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/CMS1056CTClinicalFHIR.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-clinician/fhir/Measure-CMS1056CTClinicalFHIR.json"
       ],
       "valueSets": 0,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-alaracommonfunctions",
+          "version": "1.10.0"
+        },
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -715,16 +1160,34 @@
       "path": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr",
       "manifest": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/AlaraCommonFunctions.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/CMS1074FHIRCTIQR.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-iqr/fhir/Measure-CMS1074FHIRCTIQR.json"
       ],
       "valueSets": 1,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-alaracommonfunctions",
+          "version": "1.10.0"
+        },
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -742,16 +1205,34 @@
       "path": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr",
       "manifest": "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/AlaraCommonFunctions.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/CMS1206FHIRCTOQR.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/excessive-radiation-dose-or-inadequate-image-quality-for-diagnostic-computed-tomography-in-adults-facility-oqr/fhir/Measure-CMS1206FHIRCTOQR.json"
       ],
       "valueSets": 1,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-alaracommonfunctions",
+          "version": "1.10.0"
+        },
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -770,15 +1251,33 @@
       "manifest": "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement.cql",
-        "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/Hospice.cql",
-        "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/Status.cql",
-        "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/functional-status-assessment-for-total-hip-replacement/fhir/Measure-CMS56FHIRFunctionalStatusAssessmentforTotalHipReplacement.json"
       ],
       "valueSets": 10,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -796,15 +1295,30 @@
       "path": "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd",
       "manifest": "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/AHAOverall.cql",
         "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/CMS135FHIRHFACEIorARBorARNIforLVSD.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd/fhir/Measure-CMS135FHIRHFACEIorARBorARNIforLVSD.json"
       ],
       "valueSets": 9,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-ahaoverall",
+          "version": "3.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -822,15 +1336,30 @@
       "path": "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd",
       "manifest": "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/AHAOverall.cql",
         "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/CMS144FHIRHFBetaBlockerTherapyforLVSD.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd/fhir/Measure-CMS144FHIRHFBetaBlockerTherapyforLVSD.json"
       ],
       "valueSets": 13,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-ahaoverall",
+          "version": "3.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -849,14 +1378,29 @@
       "manifest": "measures/cms-fhir-2026/hiv-screening/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hiv-screening/cql/CMS349FHIRHIVScreening.cql",
-        "measures/cms-fhir-2026/hiv-screening/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hiv-screening/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hiv-screening/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hiv-screening/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hiv-screening/fhir/Measure-CMS349FHIRHIVScreening.json"
       ],
       "valueSets": 7,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -875,16 +1419,37 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/CMS832HHAKIFHIR.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/HospitalHarm.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-acute-kidney-injury/fhir/Measure-CMS832HHAKIFHIR.json"
       ],
       "valueSets": 11,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospitalharm",
+          "version": "2.5.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -903,15 +1468,33 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-falls-with-injury/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/CMS1017FHIRHHFI.cql",
-        "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-falls-with-injury/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-falls-with-injury/fhir/Measure-CMS1017FHIRHHFI.json"
       ],
       "valueSets": 26,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -930,14 +1513,29 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/cql/CMS819FHIRHHORAE.cql",
-        "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-opioid-related-adverse-events/fhir/Measure-CMS819FHIRHHORAE.json"
       ],
       "valueSets": 5,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -956,14 +1554,29 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/cql/CMS1218FHIRHHRF.cql",
-        "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-postoperative-respiratory-failure/fhir/Measure-CMS1218FHIRHHRF.json"
       ],
       "valueSets": 35,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -982,14 +1595,29 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-pressure-injury/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-pressure-injury/cql/CMS826FHIRHHPI.cql",
-        "measures/cms-fhir-2026/hospital-harm-pressure-injury/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-pressure-injury/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-pressure-injury/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-pressure-injury/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-pressure-injury/fhir/Measure-CMS826FHIRHHPI.json"
       ],
       "valueSets": 7,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1008,15 +1636,33 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/CMS871HHHyperFHIR.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-severe-hyperglycemia/fhir/Measure-CMS871HHHyperFHIR.json"
       ],
       "valueSets": 8,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1035,14 +1681,29 @@
       "manifest": "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/cql/CMS816FHIRHHHypo.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/hospital-harm-severe-hypoglycemia/fhir/Measure-CMS816FHIRHHHypo.json"
       ],
       "valueSets": 3,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1061,16 +1722,37 @@
       "manifest": "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/CMS190VTEProphylaxisICUFHIR.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/SupplementalDataElements.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/TJCOverall.cql",
-        "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/cql/VTE.cql",
         "measures/cms-fhir-2026/intensive-care-unit-venous-thromboembolism-prophylaxis/fhir/Measure-CMS190VTEProphylaxisICUFHIR.json"
       ],
       "valueSets": 33,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        },
+        {
+          "id": "cms/lib-tjcoverall",
+          "version": "8.24.0"
+        },
+        {
+          "id": "cms/lib-vte",
+          "version": "8.18.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1089,13 +1771,554 @@
       "manifest": "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/cql/CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer.cql",
-        "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/intravesical-bacillus-calmette-guerin-for-non-muscle-invasive-bladder-cancer/fhir/Measure-CMS646FHIRIntravesicalBacillusCalmetteGuerinForBladderCancer.json"
       ],
       "valueSets": 11,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-adultoutpatientencounters",
+      "version": "4.19.0",
+      "title": "AdultOutpatientEncounters",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-adultoutpatientencounters",
+      "manifest": "measures/cms-fhir-2026/lib-adultoutpatientencounters/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-adultoutpatientencounters/cql/AdultOutpatientEncounters.cql"
+      ],
+      "valueSets": 7,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-advancedillnessandfrailty",
+      "version": "1.27.0",
+      "title": "AdvancedIllnessandFrailty",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-advancedillnessandfrailty",
+      "manifest": "measures/cms-fhir-2026/lib-advancedillnessandfrailty/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-advancedillnessandfrailty/cql/AdvancedIllnessandFrailty.cql"
+      ],
+      "valueSets": 6,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-ahaoverall",
+      "version": "3.0.0",
+      "title": "AHAOverall",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-ahaoverall",
+      "manifest": "measures/cms-fhir-2026/lib-ahaoverall/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-ahaoverall/cql/AHAOverall.cql"
+      ],
+      "valueSets": 14,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-alaracommonfunctions",
+      "version": "1.10.0",
+      "title": "AlaraCommonFunctions",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-alaracommonfunctions",
+      "manifest": "measures/cms-fhir-2026/lib-alaracommonfunctions/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-alaracommonfunctions/cql/AlaraCommonFunctions.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-antibiotic",
+      "version": "1.9.0",
+      "title": "Antibiotic",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-antibiotic",
+      "manifest": "measures/cms-fhir-2026/lib-antibiotic/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-antibiotic/cql/Antibiotic.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-cqmcommon",
+      "version": "4.1.0",
+      "title": "CQMCommon",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-cqmcommon",
+      "manifest": "measures/cms-fhir-2026/lib-cqmcommon/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-cqmcommon/cql/CQMCommon.cql"
+      ],
+      "valueSets": 6,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-cumulativemedicationduration",
+      "version": "6.0.0",
+      "title": "CumulativeMedicationDuration",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-cumulativemedicationduration",
+      "manifest": "measures/cms-fhir-2026/lib-cumulativemedicationduration/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-cumulativemedicationduration/cql/CumulativeMedicationDuration.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-fhirhelpers",
+      "version": "4.4.0",
+      "title": "FHIRHelpers",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "fhir-r4",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-fhirhelpers",
+      "manifest": "measures/cms-fhir-2026/lib-fhirhelpers/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-fhirhelpers/cql/FHIRHelpers.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-hospice",
+      "version": "6.18.0",
+      "title": "Hospice",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-hospice",
+      "manifest": "measures/cms-fhir-2026/lib-hospice/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-hospice/cql/Hospice.cql"
+      ],
+      "valueSets": 4,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-hospitalharm",
+      "version": "2.5.0",
+      "title": "HospitalHarm",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-hospitalharm",
+      "manifest": "measures/cms-fhir-2026/lib-hospitalharm/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-hospitalharm/cql/HospitalHarm.cql"
+      ],
+      "valueSets": 2,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-palliativecare",
+      "version": "1.18.0",
+      "title": "PalliativeCare",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-palliativecare",
+      "manifest": "measures/cms-fhir-2026/lib-palliativecare/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-palliativecare/cql/PalliativeCare.cql"
+      ],
+      "valueSets": 3,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-pcmaternal",
+      "version": "5.25.0",
+      "title": "PCMaternal",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-pcmaternal",
+      "manifest": "measures/cms-fhir-2026/lib-pcmaternal/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-pcmaternal/cql/PCMaternal.cql"
+      ],
+      "valueSets": 5,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-qicorecommon",
+      "version": "4.0.0",
+      "title": "QICoreCommon",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-qicorecommon",
+      "manifest": "measures/cms-fhir-2026/lib-qicorecommon/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-qicorecommon/cql/QICoreCommon.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-status",
+      "version": "1.15.0",
+      "title": "Status",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-status",
+      "manifest": "measures/cms-fhir-2026/lib-status/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-status/cql/Status.cql"
+      ],
+      "valueSets": 0,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-supplementaldataelements",
+      "version": "5.1.0",
+      "title": "SupplementalDataElements",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-supplementaldataelements",
+      "manifest": "measures/cms-fhir-2026/lib-supplementaldataelements/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-supplementaldataelements/cql/SupplementalDataElements.cql"
+      ],
+      "valueSets": 4,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-tjcoverall",
+      "version": "8.24.0",
+      "title": "TJCOverall",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-tjcoverall",
+      "manifest": "measures/cms-fhir-2026/lib-tjcoverall/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-tjcoverall/cql/TJCOverall.cql"
+      ],
+      "valueSets": 8,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
+      "knowledge": []
+    },
+    {
+      "id": "cms/lib-vte",
+      "version": "8.18.0",
+      "title": "VTE",
+      "steward": "Not stated",
+      "identifiers": [],
+      "dataModel": "qi-core",
+      "license": "CC0-1.0",
+      "level": 1,
+      "collection": "cms-fhir-2026",
+      "path": "measures/cms-fhir-2026/lib-vte",
+      "manifest": "measures/cms-fhir-2026/lib-vte/openquality.yaml",
+      "artifacts": [
+        "measures/cms-fhir-2026/lib-vte/cql/VTE.cql"
+      ],
+      "valueSets": 3,
+      "relationship": "unmodified",
+      "kind": "library",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1114,14 +2337,29 @@
       "manifest": "measures/cms-fhir-2026/malnutrition-care-score/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/malnutrition-care-score/cql/CMS986FHIRMalnutritionScore.cql",
-        "measures/cms-fhir-2026/malnutrition-care-score/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/malnutrition-care-score/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/malnutrition-care-score/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/malnutrition-care-score/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/malnutrition-care-score/fhir/Measure-CMS986FHIRMalnutritionScore.json"
       ],
       "valueSets": 15,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1139,15 +2377,30 @@
       "path": "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified",
       "manifest": "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/openquality.yaml",
       "artifacts": [
-        "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/cql/FHIRHelpers.cql",
         "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/cql/OncologyPainIntensityQuantifiedFHIR.cql",
-        "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/oncology-medical-and-radiation-pain-intensity-quantified/fhir/Measure-OncologyPainIntensityQuantifiedFHIR.json"
       ],
       "valueSets": 6,
       "relationship": "derived",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1166,16 +2419,33 @@
       "manifest": "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/CMS69FHIRPCSBMIScreenAndFollowUp.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/Hospice.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/PalliativeCare.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/Status.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/preventive-care-and-screening-body-mass-index-bmi-screening-and-follow-up-plan/fhir/Measure-CMS69FHIRPCSBMIScreenAndFollowUp.json"
       ],
       "valueSets": 11,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-palliativecare",
+          "version": "1.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1194,14 +2464,29 @@
       "manifest": "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/cql/CMS2FHIRPCSDepressionScreenAndFollowUp.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/cql/CumulativeMedicationDuration.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-depression-and-follow-up-plan/fhir/Measure-CMS2FHIRPCSDepressionScreenAndFollowUp.json"
       ],
       "valueSets": 11,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cumulativemedicationduration",
+          "version": "6.0.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1220,13 +2505,25 @@
       "manifest": "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/cql/CMS22FHIRPCSBPScreeningFollowUp.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/preventive-care-and-screening-screening-for-high-blood-pressure-and-follow-up-documented/fhir/Measure-CMS22FHIRPCSBPScreeningFollowUp.json"
       ],
       "valueSets": 15,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1245,15 +2542,33 @@
       "manifest": "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/CMS74FHIRPrimaryCariesPreventionasOfferedbyDentists.cql",
-        "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/Hospice.cql",
-        "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/Status.cql",
-        "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/primary-caries-prevention-intervention-as-offered-by-dentists/fhir/Measure-CMS74FHIRPrimaryCariesPreventionasOfferedbyDentists.json"
       ],
       "valueSets": 5,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1272,13 +2587,25 @@
       "manifest": "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/cql/CMS143FHIRPOAGOpticNerveEvaluation.cql",
-        "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/primary-open-angle-glaucoma-poag-optic-nerve-evaluation/fhir/Measure-CMS143FHIRPOAGOpticNerveEvaluation.json"
       ],
       "valueSets": 10,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1297,14 +2624,29 @@
       "manifest": "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/cql/CMS506FHIRSafeUseofOpioids.cql",
-        "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/safe-use-of-opioids-concurrent-prescribing/fhir/Measure-CMS506FHIRSafeUseofOpioids.json"
       ],
       "valueSets": 12,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1323,15 +2665,33 @@
       "manifest": "measures/cms-fhir-2026/severe-obstetric-complications/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/severe-obstetric-complications/cql/CMS1028FHIRPCSevereOBComps.cql",
-        "measures/cms-fhir-2026/severe-obstetric-complications/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/severe-obstetric-complications/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/severe-obstetric-complications/cql/PCMaternal.cql",
-        "measures/cms-fhir-2026/severe-obstetric-complications/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/severe-obstetric-complications/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/severe-obstetric-complications/fhir/Measure-CMS1028FHIRPCSevereOBComps.json"
       ],
       "valueSets": 69,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-pcmaternal",
+          "version": "5.25.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1350,13 +2710,25 @@
       "manifest": "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/cql/CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia.cql",
-        "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/urinary-symptom-score-change-6-12-months-after-diagnosis-of-benign-prostatic-hyperplasia/fhir/Measure-CMS771FHIRUrinarySymptomScoreChangeBenignProstaticHyperplasia.json"
       ],
       "valueSets": 4,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1375,16 +2747,37 @@
       "manifest": "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/CMS108FHIRVTEProphylaxis.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/CQMCommon.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/SupplementalDataElements.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/TJCOverall.cql",
-        "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/cql/VTE.cql",
         "measures/cms-fhir-2026/venous-thromboembolism-prophylaxis/fhir/Measure-CMS108FHIRVTEProphylaxis.json"
       ],
       "valueSets": 36,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-cqmcommon",
+          "version": "4.1.0"
+        },
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        },
+        {
+          "id": "cms/lib-tjcoverall",
+          "version": "8.24.0"
+        },
+        {
+          "id": "cms/lib-vte",
+          "version": "8.18.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1403,15 +2796,33 @@
       "manifest": "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/openquality.yaml",
       "artifacts": [
         "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/CMS155FHIRWeightAssessandCounselforKids.cql",
-        "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/FHIRHelpers.cql",
-        "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/Hospice.cql",
-        "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/QICoreCommon.cql",
-        "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/Status.cql",
-        "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/cql/SupplementalDataElements.cql",
         "measures/cms-fhir-2026/weight-assessment-and-counseling-for-nutrition-and-physical-activity-for-children-adolescents/fhir/Measure-CMS155FHIRWeightAssessandCounselforKids.json"
       ],
       "valueSets": 10,
       "relationship": "unmodified",
+      "kind": "measure",
+      "dependencies": [
+        {
+          "id": "cms/lib-fhirhelpers",
+          "version": "4.4.0"
+        },
+        {
+          "id": "cms/lib-hospice",
+          "version": "6.18.0"
+        },
+        {
+          "id": "cms/lib-qicorecommon",
+          "version": "4.0.0"
+        },
+        {
+          "id": "cms/lib-status",
+          "version": "1.15.0"
+        },
+        {
+          "id": "cms/lib-supplementaldataelements",
+          "version": "5.1.0"
+        }
+      ],
       "knowledge": []
     },
     {
@@ -1433,6 +2844,8 @@
       ],
       "valueSets": 2,
       "relationship": "",
+      "kind": "measure",
+      "dependencies": [],
       "knowledge": []
     },
     {
@@ -1452,6 +2865,8 @@
       ],
       "valueSets": 27,
       "relationship": "",
+      "kind": "measure",
+      "dependencies": [],
       "knowledge": []
     }
   ],
@@ -1554,7 +2969,7 @@
       "id": "corpus-2026-002",
       "title": "Vendored library duplication",
       "type": "implementation-note",
-      "status": "open",
+      "status": "resolved",
       "scope": "corpus",
       "categories": [
         "packaging",

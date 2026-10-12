@@ -239,6 +239,12 @@ For each measure it emits `measures/cms-fhir-2026/<slug>/` containing:
 - `cql/<Library>.cql`, vendored and rewritten per section 4
 - `README.md`, generated
 
+> **Superseded 2026-10-12** by
+> [`2026-10-12-shared-library-packages-design.md`](2026-10-12-shared-library-packages-design.md):
+> shared libraries are now packages of their own and measures depend on them. The
+> objection below was answered by adding library identity to the manifest, so a library
+> package no longer has to invent a measure title.
+
 **Included libraries are vendored into the package that needs them**, not
 published as packages of their own. A measure that includes `FHIRHelpers`,
 `QICoreCommon`, and five others gets all of them under its own `cql/`, resolved

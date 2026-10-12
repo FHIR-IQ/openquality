@@ -4,7 +4,7 @@ import type { CorpusSource } from './source.js'
 import { getArtifact, getBundle, getMeasure, knownIssues, searchMeasures } from './tools.js'
 
 export const SERVER_NAME = 'openquality'
-export const SERVER_VERSION = '0.1.1'
+export const SERVER_VERSION = '0.2.0'
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false } as const
 const id = z.string().min(1).max(200).describe('Package id, for example cms/diabetes-glycemic-status-assessment-greater-than-9')
@@ -24,11 +24,17 @@ export function createServer(source: CorpusSource): McpServer {
     'search_measures',
     {
       title: 'Search measures',
-      description: 'Find measure packages by CMS id, title words, steward or package id. Every word must match.',
+      description:
+        'Find measure packages by CMS id, title words, steward or package id. Every word must match. ' +
+        'Shared CQL libraries are packages too; pass kind "library" to search them.',
       inputSchema: {
         query: z.string().min(1).max(200).describe('Words to match, for example "CMS122" or "diabetes glycemic"'),
         collection: z.string().max(100).optional().describe('Limit to a collection, for example cms-fhir-2026 or community'),
         dataModel: z.string().max(50).optional().describe('Limit to a data model, for example qi-core or sql-on-fhir'),
+        kind: z
+          .enum(['measure', 'library', 'any'])
+          .optional()
+          .describe('measure (default), library for shared CQL libraries such as FHIRHelpers, or any'),
         limit,
       },
       annotations: READ_ONLY,
@@ -64,7 +70,7 @@ export function createServer(source: CorpusSource): McpServer {
     {
       title: 'Get CRMI Bundle',
       description:
-        "The package as a CRMI artifact Bundle, the shape CRMI's $package returns: an asset-collection Library, then the Measure and every Library.",
+        "The package as a CRMI artifact Bundle, the shape CRMI's $package returns: an asset-collection Library, then the Measure, its Library and every shared library it depends on.",
       inputSchema: { id },
       annotations: READ_ONLY,
     },

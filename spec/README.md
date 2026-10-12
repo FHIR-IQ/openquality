@@ -25,11 +25,16 @@ measure:
   steward: National Committee for Quality Assurance   # the measure steward, not the publisher
   identifiers: [CMS122FHIR]
 dataModel: qi-core                         # fhir-r4 | qi-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
-artifacts:                                 # the measure logic, plus every library it includes
+artifacts:                                 # the measure's own files
+  - path: fhir/Measure-CMS122FHIRDiabetesAssessGreaterThan9Percent.json
+    type: fhir/Measure
   - path: cql/CMS122FHIRDiabetesAssessGreaterThan9Percent.cql
     type: cql
-  - path: cql/FHIRHelpers.cql
-    type: cql
+dependencies:                              # shared libraries it includes directly, by package
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
 valueSets:                                 # referenced, never embedded
   - oid: 2.16.840.1.113883.3.464.1003.103.12.1001
     url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001
@@ -45,11 +50,27 @@ provenance:                                # required for redistributed content
 
 This is a real package, trimmed. The full manifest is at
 [`measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/`](../measures/cms-fhir-2026/diabetes-glycemic-status-assessment-greater-than-9/),
-where it declares nine CQL artifacts and nine value sets.
+where it declares its Measure, its own CQL, seven direct dependencies and nine value sets.
 
-Note what the example does **not** have: a `dependencies` entry pointing at a separate
-`FHIRHelpers` package. A package vendors the libraries its logic includes and declares them as
-its own artifacts, so it can be read and evaluated on its own. See
+Shared CQL libraries such as `FHIRHelpers` are packages of their own. A library package
+declares `library` (its CQL `name` and header `version`) in place of `measure`:
+
+```yaml
+id: cms/lib-fhirhelpers
+version: 4.4.0
+library:
+  name: FHIRHelpers      # must equal the CQL library header
+  version: 4.4.000       # the header string exactly, which include statements use
+artifacts:
+  - path: cql/FHIRHelpers.cql   # exactly one CQL file
+    type: cql
+```
+
+A package lists only its **direct** dependencies. Tools resolve them transitively, so
+every output built from a measure (`oq fhir-bundle`, `oq fhir-package`, the MCP server's
+`get_bundle`) carries every library it needs and still loads on its own. `oq validate-all`
+fails if any dependency does not resolve to a package in the corpus. A hand-authored
+package may still carry its own copy of a library as an artifact; that remains valid. See
 [`../measures/README.md`](../measures/README.md).
 
 Note also that `relationship` is `derived`, not `unmodified`, because licensed CPT display
@@ -90,11 +111,12 @@ follows.
 | `license` | `crmi-license` extension, SPDX code |
 | `measurementPeriod` | `effectivePeriod` |
 | `measure.title` / `steward` / `identifiers` | `Measure.title` / `publisher` / `identifier` |
+| `library.name` / `library.version` | `Library.name` / `Library.version`, from the CQL header |
 | `dataModel` | The declared model (QI-Core, US Core, OMOP, SQL-on-FHIR ViewDefinition) |
 | `artifacts[type: cql]` | A `Library` with `Library.content` |
 | `valueSets` (OID reference) | A `depends-on` dependency, resolved through the version manifest; expansions never embedded |
 | `provenance` | `RelatedArtifact` of type `derived-from`, plus `Provenance` on the bundle |
-| `dependencies` | `relatedArtifact` of type `depends-on` / `composed-of` |
+| `dependencies` | On the bundle's asset-collection Library, `relatedArtifact` of type `depends-on`; the package's own artifacts are `composed-of` |
 | the package as a whole | A CRMI artifact Bundle whose first entry is an `asset-collection` Library (`CRMIManifestLibrary`) |
 
 ### Levels

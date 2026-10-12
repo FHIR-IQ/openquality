@@ -52,16 +52,20 @@ terminology out of the repository.
 Where measures share logic, prefer reusing a published cqframework common library such as
 `FHIRHelpers` or `QICoreCommon` over writing a new one.
 
-A package **vendors** the libraries its logic includes, rather than referencing them as
-separate packages. A measure that includes `FHIRHelpers` carries `cql/FHIRHelpers.cql` inside
-its own directory and declares it as an artifact. The same library file therefore appears in
-many packages: `FHIRHelpers.cql` is currently in all 52 packages of `cms-fhir-2026`.
+Shared libraries are published once, as packages of their own. In `cms-fhir-2026` the 52
+measures depend on 17 library packages (`lib-fhirhelpers`, `lib-qicorecommon` and so on),
+and each measure's manifest lists the ones its CQL includes directly under `dependencies`.
+A library package declares `library` (its CQL name and header version) in place of
+`measure`.
 
-That duplication is deliberate. A package that cannot be read or evaluated without fetching
-six others is not a unit of exchange. The alternative, publishing each shared library as its
-own package, would require a `measure.title` for something that is not a measure, since
-Level 1 demands one. The trade-off and its open questions are recorded in
+A package still works on its own. `oq fhir-bundle` and `oq fhir-package` resolve
+dependencies transitively and include every library in what they emit, as CRMI `$package`
+does, and `oq validate-all` fails if a dependency is missing from the corpus.
+
+Until 2026-10-12 each measure carried its own copy of every library it included, 301 CQL
+files where 69 were distinct. That history, and why it changed, is in
 [`../knowledge/corpus/2026-002-vendored-library-duplication.md`](../knowledge/corpus/2026-002-vendored-library-duplication.md).
+A hand-authored package may still carry its own copy of a library; that remains valid.
 
 ## Contributing a measure
 

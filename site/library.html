@@ -157,7 +157,8 @@
       already found, or ask something nobody has answered yet.
     </p>
     <div class="counts">
-      <div><b>54</b> packages</div>
+      <div><b>54</b> measures</div>
+      <div><b>17</b> shared libraries</div>
       <div><b>13</b> knowledge entries</div>
       <div><b>15</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
@@ -185,7 +186,7 @@
       <div class="entry">
         <div class="eh"><span class="et">implementation note</span>
         <span class="es mono">corpus-2026-002</span>
-        <span class="es">open</span></div>
+        <span class="es">resolved</span></div>
         <p><a class="elink" href="/knowledge/corpus-2026-002">Vendored library duplication</a></p>
         <p>Every package vendors the CQL libraries its measure includes, so the same library file is copied into many packages. The corpus has no way to say that two copies of FHIRHelpers.cql are the same artifact, and a fix to a shared library has to be applied everywhere it was copied.</p>
       </div>
@@ -267,6 +268,34 @@
 
   <div id="list"></div>
   <div class="empty" id="empty" hidden>Nothing matches that. Try a measure name, a steward, or a CMS identifier.</div>
+
+  <section class="who">
+    <h2>Shared libraries</h2>
+    <p>
+      CQL libraries that measures include, published once as packages of their own.
+      A measure names the ones it includes as dependencies, and every bundle or FHIR
+      package built from it carries them, so a measure still loads on its own.
+    </p>
+    <div class="people">
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-adultoutpatientencounters"><b>AdultOutpatientEncounters</b> <span>4.19.0, used directly by 3 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-advancedillnessandfrailty"><b>AdvancedIllnessandFrailty</b> <span>1.27.0, used directly by 4 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-ahaoverall"><b>AHAOverall</b> <span>3.0.0, used directly by 3 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-alaracommonfunctions"><b>AlaraCommonFunctions</b> <span>1.10.0, used directly by 3 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-antibiotic"><b>Antibiotic</b> <span>1.9.0, used directly by 1 measure</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-cqmcommon"><b>CQMCommon</b> <span>4.1.0, used directly by 25 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-cumulativemedicationduration"><b>CumulativeMedicationDuration</b> <span>6.0.0, used directly by 5 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-fhirhelpers"><b>FHIRHelpers</b> <span>4.4.0, used directly by 52 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-hospice"><b>Hospice</b> <span>6.18.0, used directly by 13 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-hospitalharm"><b>HospitalHarm</b> <span>2.5.0, used directly by 1 measure</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-palliativecare"><b>PalliativeCare</b> <span>1.18.0, used directly by 6 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-pcmaternal"><b>PCMaternal</b> <span>5.25.0, used directly by 2 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-qicorecommon"><b>QICoreCommon</b> <span>4.0.0, used directly by 52 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-status"><b>Status</b> <span>1.15.0, used directly by 14 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-supplementaldataelements"><b>SupplementalDataElements</b> <span>5.1.0, used directly by 52 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-tjcoverall"><b>TJCOverall</b> <span>8.24.0, used directly by 5 measures</span></a>
+      <a class="person" href="https://github.com/FHIR-IQ/openquality/tree/main/measures/cms-fhir-2026/lib-vte"><b>VTE</b> <span>8.18.0, used directly by 2 measures</span></a>
+    </div>
+  </section>
 
   <section class="who">
     <h2>Who recorded this</h2>

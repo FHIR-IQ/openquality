@@ -76,6 +76,10 @@ interface Pkg {
   valueSets: number
   relationship: string
   modifications: string[]
+  /** A measure, or a shared CQL library published for measures to depend on. */
+  kind: 'measure' | 'library'
+  /** Direct dependencies, as the manifest states them. */
+  dependencies: { id: string; version: string }[]
 }
 
 interface Entry {
@@ -230,6 +234,7 @@ async function readPackages(): Promise<Pkg[]> {
       }
       const m = (parse(raw) ?? {}) as Record<string, any>
       const measure = (m.measure ?? {}) as Record<string, unknown>
+      const library = m.library as Record<string, unknown> | undefined
       const provenance = (m.provenance ?? {}) as Record<string, unknown>
       packages.push({
         slug,
@@ -238,7 +243,7 @@ async function readPackages(): Promise<Pkg[]> {
         id: str(m.id, slug),
         version: str(m.version),
         license: str(m.license),
-        title: str(measure.title, slug),
+        title: library ? str(library.name, slug) : str(measure.title, slug),
         steward: str(measure.steward, 'Not stated'),
         identifiers: strArray(measure.identifiers),
         dataModel: str(m.dataModel),
@@ -248,6 +253,10 @@ async function readPackages(): Promise<Pkg[]> {
         valueSets: Array.isArray(m.valueSets) ? m.valueSets.length : 0,
         relationship: str(provenance.relationship),
         modifications: strArray(provenance.modifications),
+        kind: library ? 'library' : 'measure',
+        dependencies: Array.isArray(m.dependencies)
+          ? m.dependencies.map((d: any) => ({ id: str(d?.id), version: str(d?.version) }))
+          : [],
       })
     }
   }
@@ -417,7 +426,10 @@ const STYLE = `  @font-face{font-family:"Inter Tight";font-style:normal;font-wei
   footer a{color:var(--ink)}
 `
 
-function render(packages: Pkg[], entries: Entry[]): string {
+function render(all: Pkg[], entries: Entry[]): string {
+  const packages = all.filter((p) => p.kind === 'measure')
+  const libraries = all.filter((p) => p.kind === 'library')
+  const usedBy = (id: string) => packages.filter((p) => p.dependencies.some((d) => d.id === id)).length
   const stewards = [...new Set(packages.map((p) => p.steward))].sort()
   const scoped = entries.filter((e) => e.scope)
   const measureScoped = entries.filter((e) => !e.scope)
@@ -449,7 +461,8 @@ function render(packages: Pkg[], entries: Entry[]): string {
       already found, or ask something nobody has answered yet.
     </p>
     <div class="counts">
-      <div><b>${packages.length}</b> packages</div>
+      <div><b>${packages.length}</b> measures</div>
+      <div><b>${libraries.length}</b> shared libraries</div>
       <div><b>${entries.length}</b> knowledge entries</div>
       <div><b>${stewards.length}</b> stewards</div>
       <div><b>${packages.filter((p) => p.relationship === 'unmodified').length}</b> verified unmodified</div>
@@ -506,6 +519,27 @@ function render(packages: Pkg[], entries: Entry[]): string {
 
   <div id="list"></div>
   <div class="empty" id="empty" hidden>Nothing matches that. Try a measure name, a steward, or a CMS identifier.</div>
+
+  ${
+    libraries.length === 0
+      ? ''
+      : `<section class="who">
+    <h2>Shared libraries</h2>
+    <p>
+      CQL libraries that measures include, published once as packages of their own.
+      A measure names the ones it includes as dependencies, and every bundle or FHIR
+      package built from it carries them, so a measure still loads on its own.
+    </p>
+    <div class="people">
+      ${libraries
+        .map((l) => {
+          const n = usedBy(l.id)
+          return `<a class="person" href="${REPO}/tree/main/${esc(l.dir)}"><b>${esc(l.title)}</b> <span>${esc(l.version)}, used directly by ${n} ${n === 1 ? 'measure' : 'measures'}</span></a>`
+        })
+        .join('\n      ')}
+    </div>
+  </section>`
+  }
 
   <section class="who">
     <h2>Who recorded this</h2>
@@ -891,6 +925,8 @@ async function renderIndex(packages: Pkg[], entries: Entry[]): Promise<string> {
       artifacts: p.artifacts.map((a) => `${p.dir}/${a}`),
       valueSets: p.valueSets,
       relationship: p.relationship,
+      kind: p.kind,
+      dependencies: p.dependencies,
       knowledge: byMeasure.get(p.id) ?? [],
     })
   }
@@ -910,10 +946,18 @@ async function renderIndex(packages: Pkg[], entries: Entry[]): Promise<string> {
         'you need the same bytes twice.',
       levels: {
         '0': 'Shared: valid manifest, open licence, at least one artifact.',
-        '1': 'Described: adds data model, measure identity, typed artifacts, value set references, and a README stating intent, known limitations and provenance.',
+        '1': 'Described: adds data model, measure or shared library identity, typed artifacts, value set references, and a README stating intent, known limitations and provenance.',
         '2': 'Verified: not reachable today. CQL translation, FHIR profile validation and SQL parsing are unimplemented, so every package tops out at Level 1.',
       },
-      counts: { packages: packages.length, knowledgeEntries: entries.length },
+      counts: {
+        packages: packages.length,
+        measures: packages.filter((p) => p.kind === 'measure').length,
+        libraries: packages.filter((p) => p.kind === 'library').length,
+        knowledgeEntries: entries.length,
+      },
+      dependencies:
+        'A package lists its direct dependencies as id and version. Resolve them ' +
+        'transitively against `packages` to get everything a measure needs.',
       packages: catalogue,
       knowledge: entries.map((e) => ({
         id: e.id,
@@ -966,7 +1010,8 @@ const entries = await readKnowledge()
 const md = makeMarkdown(entries)
 
 await writeFile(OUT, render(packages, entries).replace(/\r\n/g, '\n'))
-await writeFile(OUT_JS, renderScript(packages, entries).replace(/\r\n/g, '\n'))
+// The searchable list is of measures; shared libraries have their own section.
+await writeFile(OUT_JS, renderScript(packages.filter((p) => p.kind === 'measure'), entries).replace(/\r\n/g, '\n'))
 
 // Cleared and rewritten, so an entry that is renamed or deleted does not leave
 // a page behind claiming the corpus still holds it. `recursive` on both calls

@@ -1,7 +1,7 @@
 import { parseHeader, parseIncludes, parseValueSets, stripRestrictedDisplays } from './cql.js'
-import { normalizeVersion, packageId, slugFor } from './naming.js'
+import { librarySlug, normalizeVersion, packageId, slugFor } from './naming.js'
 import { stripMeasureDisplays, type UpstreamMeasure } from './measure.js'
-import type { PackagePlan } from './emit.js'
+import type { LibraryPlan, PackagePlan, PackageRef } from './emit.js'
 
 export interface ImportContext {
   upstream: string
@@ -125,7 +125,7 @@ export function planPackage(
     dataModel,
     cqlFileName: `${header.name}.cql`,
     measureFileName: `Measure-${measure.name}.json`,
-    libraryFileNames: [],
+    dependencies: [],
     valueSets: parseValueSets(cqlSource),
     provenance: {
       upstream: context.upstream,
@@ -141,4 +141,85 @@ export function planPackage(
   }
 
   return { plan, cql, measureJson: measureResource.json }
+}
+
+/**
+ * The library packages a piece of CQL includes directly, as manifest
+ * dependencies. The version is the included library's own header version,
+ * normalized the way package versions are. An include missing from `available`
+ * is left out; the caller has already turned that into a skip.
+ */
+export function directDependencies(cqlSource: string, available: Map<string, string>): PackageRef[] {
+  const refs = new Map<string, PackageRef>()
+  for (const include of parseIncludes(cqlSource)) {
+    const source = available.get(include.library)
+    const version = normalizeVersion(source ? parseHeader(source)?.version : undefined)
+    if (!version) continue
+    const id = packageId(MEASURE_NAMESPACE, librarySlug(include.library))
+    refs.set(id, { id, version })
+  }
+  return [...refs.values()].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+}
+
+export interface LibraryPlanResult {
+  plan?: LibraryPlan
+  /** The CQL to write, stripped of licensed display text. */
+  cql?: string
+  skipped?: Skip
+}
+
+/**
+ * Plans one shared library as its own package. Fail-closed like planPackage:
+ * a library whose identity or data model cannot be read is reported, and every
+ * measure that reaches it is then skipped too.
+ */
+export function planLibrary(
+  name: string,
+  available: Map<string, string>,
+  context: ImportContext,
+  includedBy: string[],
+): LibraryPlanResult {
+  const skip = (reason: string): LibraryPlanResult => ({ skipped: { measure: name, reason } })
+  const source = available.get(name)
+  if (source === undefined) return skip('library not present upstream')
+
+  const header = parseHeader(source)
+  if (!header?.version) return skip('the CQL declares no library header with a version')
+  const version = normalizeVersion(header.version)
+  if (!version) return skip(`library version "${header.version}" is not a dotted numeric version`)
+  const dataModel = dataModelFor(header.model)
+  if (!dataModel) return skip(`the CQL declares an unmapped data model, "${header.model ?? 'none'}"`)
+
+  const { cql, removed } = stripRestrictedDisplays(source)
+  const slug = librarySlug(name)
+  const modifications =
+    removed.length > 0
+      ? [
+          `removed licensed display text from ${removed.length} code ` +
+            `${removed.length === 1 ? 'declaration' : 'declarations'} in the CQL: ${removed.join(', ')}`,
+        ]
+      : undefined
+
+  return {
+    cql,
+    plan: {
+      id: packageId(MEASURE_NAMESPACE, slug),
+      version,
+      slug,
+      name,
+      cqlVersion: header.version,
+      dataModel,
+      cqlFileName: `${name}.cql`,
+      valueSets: parseValueSets(source),
+      dependencies: directDependencies(source, available),
+      includedBy: [...includedBy].sort(),
+      provenance: {
+        upstream: context.upstream,
+        ref: context.ref,
+        retrieved: context.retrieved,
+        relationship: modifications ? 'derived' : 'unmodified',
+        modifications,
+      },
+    },
+  }
 }

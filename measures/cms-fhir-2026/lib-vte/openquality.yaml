@@ -1,0 +1,32 @@
+id: cms/lib-vte
+version: 8.18.0
+license: CC0-1.0
+library:
+  name: VTE
+  version: 8.18.000
+dataModel: qi-core
+artifacts:
+  - path: cql/VTE.cql
+    type: cql
+dependencies:
+  - id: cms/lib-cqmcommon
+    version: 4.1.0
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
+valueSets:
+  - oid: 2.16.840.1.113883.3.117.1.7.1.263
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.263
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.264
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.264
+    source: vsac
+  - oid: 2.16.840.1.113883.3.117.1.7.1.279
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.279
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

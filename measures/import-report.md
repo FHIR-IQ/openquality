@@ -10,6 +10,7 @@ Retrieved: 2026-08-01
 ## Result
 
 - 52 measures imported
+- 17 shared libraries published as their own packages
 - 1 skipped
 
 ## Skipped

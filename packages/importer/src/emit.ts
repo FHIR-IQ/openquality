@@ -9,6 +9,11 @@ export interface PlanProvenance {
   modifications?: string[]
 }
 
+export interface PackageRef {
+  id: string
+  version: string
+}
+
 export interface PackagePlan {
   id: string
   version: string
@@ -29,17 +34,61 @@ export interface PackagePlan {
    */
   measureFileName: string
   /**
-   * Included libraries vendored into this package's cql/ directory, resolved
-   * transitively. They are artifacts of this package, not dependencies on other
-   * packages: see the note in emitManifest.
+   * The shared library packages this measure's CQL includes directly. The
+   * libraries are published once as their own packages rather than copied into
+   * every measure, and resolved transitively by whatever reads the package.
    */
-  libraryFileNames: string[]
+  dependencies: PackageRef[]
   valueSets: CqlValueSet[]
   provenance: PlanProvenance
 }
 
 /** Every seeded package is CC0, matching the upstream licence. */
 const LICENSE = 'CC0-1.0'
+
+function valueSetsFor(input: CqlValueSet[]): Record<string, unknown>[] {
+  // Only value sets that resolved to an OID or a URL are emitted. The core
+  // check rejects an entry with neither, and a value set the parser could not
+  // resolve is a skip condition rather than something to emit half of.
+  //
+  // Deduplicated because CQL legitimately declares one value set under two
+  // names, and the manifest lists value sets rather than the names logic gives
+  // them. CMS1028 declares 2.16.840.1.113762.1.4.1029.302 as both
+  // "Placenta Accreta" and "Placental Accreta Spectrum", which put the same OID
+  // in that manifest twice.
+  //
+  // The key is the oid and url together, not the oid alone. Two entries sharing
+  // an OID but disagreeing on its URL are contradictory rather than redundant,
+  // and collapsing them here would hide a real problem from the validator that
+  // exists to report it.
+  const seen = new Set<string>()
+  return input
+    .filter((v) => v.oid || v.url)
+    .filter((v) => {
+      const key = `${v.oid ?? ''}|${v.url ?? ''}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    .map((v) => {
+      const entry: Record<string, unknown> = {}
+      if (v.oid) entry.oid = v.oid
+      if (v.url) entry.url = v.url
+      entry.source = 'vsac'
+      return entry
+    })
+}
+
+function provenanceFor(p: PlanProvenance): Record<string, unknown> {
+  const provenance: Record<string, unknown> = {
+    upstream: p.upstream,
+    ref: p.ref,
+    retrieved: p.retrieved,
+    relationship: p.relationship,
+  }
+  if (p.modifications?.length) provenance.modifications = p.modifications
+  return provenance
+}
 
 export function emitManifest(plan: PackagePlan): string {
   const manifest: Record<string, unknown> = {
@@ -56,62 +105,19 @@ export function emitManifest(plan: PackagePlan): string {
 
   manifest.dataModel = plan.dataModel
 
-  // The measure library first, then every library it includes. All are real
-  // files in this package, so all are declared: `artifacts.present` then checks
-  // each one exists, which is the guarantee that a vendored package is complete.
-  //
-  // Deliberately NOT emitted as `dependencies`. A shared CQL library is not a
-  // measure, and the manifest requires `measure.title` for Level 1, so
-  // publishing FHIRHelpers as its own package would mean inventing measure
-  // identity for something that is not a measure.
+  // The Measure and its own CQL. Shared libraries are dependencies, published
+  // once each as library packages, not copied in: a copy in every measure meant
+  // a fix had to be made up to 52 times, and nothing said whether all were made.
   manifest.artifacts = [
     { path: `fhir/${plan.measureFileName}`, type: 'fhir/Measure' },
     { path: `cql/${plan.cqlFileName}`, type: 'cql' },
-    ...plan.libraryFileNames.map((name) => ({ path: `cql/${name}`, type: 'cql' })),
   ]
+  if (plan.dependencies.length > 0) manifest.dependencies = plan.dependencies
 
-  // Only value sets that resolved to an OID or a URL are emitted. The core
-  // check rejects an entry with neither, and a value set the parser could not
-  // resolve is a skip condition rather than something to emit half of.
-  //
-  // Deduplicated because CQL legitimately declares one value set under two
-  // names, and the manifest lists value sets rather than the names logic gives
-  // them. CMS1028 declares 2.16.840.1.113762.1.4.1029.302 as both
-  // "Placenta Accreta" and "Placental Accreta Spectrum", which put the same OID
-  // in that manifest twice.
-  //
-  // The key is the oid and url together, not the oid alone. Two entries sharing
-  // an OID but disagreeing on its URL are contradictory rather than redundant,
-  // and collapsing them here would hide a real problem from the validator that
-  // exists to report it.
-  const seen = new Set<string>()
-  const valueSets = plan.valueSets
-    .filter((v) => v.oid || v.url)
-    .filter((v) => {
-      const key = `${v.oid ?? ''}|${v.url ?? ''}`
-      if (seen.has(key)) return false
-      seen.add(key)
-      return true
-    })
-    .map((v) => {
-      const entry: Record<string, unknown> = {}
-      if (v.oid) entry.oid = v.oid
-      if (v.url) entry.url = v.url
-      entry.source = 'vsac'
-      return entry
-    })
+  const valueSets = valueSetsFor(plan.valueSets)
   if (valueSets.length > 0) manifest.valueSets = valueSets
 
-  const provenance: Record<string, unknown> = {
-    upstream: plan.provenance.upstream,
-    ref: plan.provenance.ref,
-    retrieved: plan.provenance.retrieved,
-    relationship: plan.provenance.relationship,
-  }
-  if (plan.provenance.modifications?.length) {
-    provenance.modifications = plan.provenance.modifications
-  }
-  manifest.provenance = provenance
+  manifest.provenance = provenanceFor(plan.provenance)
 
   return stringify(manifest, { lineWidth: 0 })
 }
@@ -164,6 +170,77 @@ export function emitReadme(plan: PackagePlan): string {
     'existed in MADiE. The package version is the upstream version and reflects that.',
     '',
   )
+
+  return lines.join('\n')
+}
+
+/** One shared CQL library, published as its own package for measures to depend on. */
+export interface LibraryPlan {
+  id: string
+  version: string
+  slug: string
+  /** The CQL library name, as `include` statements use it. */
+  name: string
+  /** The CQL header version exactly, which is what an include resolves against. */
+  cqlVersion: string
+  dataModel: string
+  cqlFileName: string
+  valueSets: CqlValueSet[]
+  dependencies: PackageRef[]
+  /** Ids of the measure packages that reach this library, directly or not. */
+  includedBy: string[]
+  provenance: PlanProvenance
+}
+
+export function emitLibraryManifest(plan: LibraryPlan): string {
+  const manifest: Record<string, unknown> = {
+    id: plan.id,
+    version: plan.version,
+    license: LICENSE,
+    library: { name: plan.name, version: plan.cqlVersion },
+    dataModel: plan.dataModel,
+    artifacts: [{ path: `cql/${plan.cqlFileName}`, type: 'cql' }],
+  }
+  if (plan.dependencies.length > 0) manifest.dependencies = plan.dependencies
+  const valueSets = valueSetsFor(plan.valueSets)
+  if (valueSets.length > 0) manifest.valueSets = valueSets
+  manifest.provenance = provenanceFor(plan.provenance)
+  return stringify(manifest, { lineWidth: 0 })
+}
+
+export function emitLibraryReadme(plan: LibraryPlan): string {
+  const lines: string[] = [`# ${plan.name}`, '']
+
+  lines.push('## Intent', '')
+  lines.push(
+    `Shared CQL library ${plan.name} version '${plan.cqlVersion}', published once so that`,
+    'measures depend on it instead of each carrying a copy. Included by these measure',
+    'packages in this collection, directly or through another library:',
+    '',
+  )
+  for (const id of [...plan.includedBy].sort()) lines.push(`- \`${id}\``)
+  lines.push('')
+
+  lines.push('## Known Limitations', '')
+  lines.push(
+    'None recorded yet. If you have found something a future implementer of a measure',
+    'that uses this library should know, file it in [`knowledge/`](../../../knowledge/).',
+    '',
+  )
+
+  lines.push('## Provenance', '')
+  lines.push(
+    `Redistributed from [${plan.provenance.upstream}](${plan.provenance.upstream}) at commit`,
+    `\`${plan.provenance.ref}\`, retrieved ${plan.provenance.retrieved}, under ${LICENSE}.`,
+    '',
+  )
+  if (plan.provenance.relationship === 'derived' && plan.provenance.modifications?.length) {
+    lines.push('Modified from the upstream content:', '')
+    for (const modification of plan.provenance.modifications) lines.push(`- ${modification}`)
+    lines.push('')
+  } else {
+    lines.push('Redistributed unmodified.', '')
+  }
 
   return lines.join('\n')
 }

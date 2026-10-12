@@ -1,0 +1,38 @@
+id: cms/lib-pcmaternal
+version: 5.25.0
+license: CC0-1.0
+library:
+  name: PCMaternal
+  version: 5.25.000
+dataModel: qi-core
+artifacts:
+  - path: cql/PCMaternal.cql
+    type: cql
+dependencies:
+  - id: cms/lib-cqmcommon
+    version: 4.1.0
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
+valueSets:
+  - oid: 2.16.840.1.113762.1.4.1045.59
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.59
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1029.369
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.369
+    source: vsac
+  - oid: 2.16.840.1.113883.3.666.5.307
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1045.26
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1045.26
+    source: vsac
+  - oid: 2.16.840.1.113762.1.4.1111.143
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.143
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

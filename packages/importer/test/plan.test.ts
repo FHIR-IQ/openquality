@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { planPackage, resolveLibraries } from '../src/plan.js'
+import { directDependencies, planLibrary, planPackage, resolveLibraries } from '../src/plan.js'
 import type { UpstreamMeasure } from '../src/measure.js'
 
 const MEASURE: UpstreamMeasure = {
@@ -32,9 +32,9 @@ describe('planPackage', () => {
     expect(result.plan?.dataModel).toBe('qi-core')
   })
 
-  it('leaves libraryFileNames empty; the caller vendors them', () => {
+  it('leaves dependencies empty; the caller resolves them against upstream', () => {
     const result = planPackage(MEASURE, CQL, CONTEXT)
-    expect(result.plan?.libraryFileNames).toEqual([])
+    expect(result.plan?.dependencies).toEqual([])
   })
 
   it('marks the package derived and lists what was stripped', () => {
@@ -118,5 +118,49 @@ describe('resolveLibraries', () => {
     ])
     const { resolved } = resolveLibraries(`include A version '1.0.000'`, cyclic)
     expect(resolved).toEqual(['A', 'B'])
+  })
+})
+
+describe('directDependencies', () => {
+  it('maps each direct include to a library package id and its header version', () => {
+    const available = new Map([
+      ['FHIRHelpers', `library FHIRHelpers version '4.4.000'`],
+      ['QICoreCommon', [`library QICoreCommon version '4.0.000'`, `include FHIRHelpers version '4.4.000'`].join('\n')],
+    ])
+    const cql = [`include QICoreCommon version '4.0.000' called Q`, `include FHIRHelpers version '4.4.000' called FHIRHelpers`].join('\n')
+    expect(directDependencies(cql, available)).toEqual([
+      { id: 'cms/lib-fhirhelpers', version: '4.4.0' },
+      { id: 'cms/lib-qicorecommon', version: '4.0.0' },
+    ])
+  })
+})
+
+describe('planLibrary', () => {
+  const available = new Map([
+    ['FHIRHelpers', `library FHIRHelpers version '4.4.000'\nusing FHIR version '4.0.1'`],
+    ['QICoreCommon', [`library QICoreCommon version '4.0.000'`, `using QICore version '6.0.0'`, `include FHIRHelpers version '4.4.000'`].join('\n')],
+  ])
+
+  it('plans a shared library as its own package', () => {
+    const result = planLibrary('QICoreCommon', available, CONTEXT, ['cms/m'])
+    expect(result.skipped).toBeUndefined()
+    expect(result.plan).toMatchObject({
+      id: 'cms/lib-qicorecommon',
+      version: '4.0.0',
+      name: 'QICoreCommon',
+      cqlVersion: '4.0.000',
+      dataModel: 'qi-core',
+      dependencies: [{ id: 'cms/lib-fhirhelpers', version: '4.4.0' }],
+      includedBy: ['cms/m'],
+    })
+  })
+
+  it('maps FHIR to fhir-r4', () => {
+    expect(planLibrary('FHIRHelpers', available, CONTEXT, ['cms/m']).plan?.dataModel).toBe('fhir-r4')
+  })
+
+  it('skips a library with no header rather than guessing its identity', () => {
+    const result = planLibrary('Bad', new Map([['Bad', 'define X: 1']]), CONTEXT, ['cms/m'])
+    expect(result.skipped?.reason).toMatch(/header/)
   })
 })

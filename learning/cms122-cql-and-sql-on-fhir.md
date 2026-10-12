@@ -13,8 +13,9 @@ time rather than five minutes.
 
 `us.openquality.cms.diabetes-glycemic-status-assessment-greater-than-9`
 
-The measure logic, plus every library it includes, vendored so it loads without
-fetching anything: `FHIRHelpers`, `QICoreCommon`, `Status`, `Hospice`,
+The measure logic. The libraries it includes are published as shared library
+packages, and the FHIR package and CRMI Bundle built from the measure carry them,
+so it loads without fetching anything else: `FHIRHelpers`, `QICoreCommon`, `Status`, `Hospice`,
 `PalliativeCare`, `AdvancedIllnessandFrailty`, `CumulativeMedicationDuration`
 and `SupplementalDataElements`.
 
