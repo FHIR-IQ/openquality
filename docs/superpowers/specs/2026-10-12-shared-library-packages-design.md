@@ -1,7 +1,7 @@
 # Shared library packages: design
 
 Date: 2026-10-12
-Status: Approved in conversation (stop vendoring), awaiting written-spec review
+Status: Implemented 2026-10-12 (PR #16). MCP 0.2.0 released by tag.
 
 ## Goal
 

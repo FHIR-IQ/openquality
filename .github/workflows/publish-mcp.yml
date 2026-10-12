@@ -45,9 +45,31 @@ jobs:
             exit 1
           fi
 
+      # Safe to re-run: a version npm already has is skipped, not republished,
+      # so rerunning a job whose registry step failed does not fail on npm.
       - name: Publish to npm
         working-directory: packages/mcp
-        run: npm publish --access public
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if npm view "@openquality/mcp@$version" version >/dev/null 2>&1; then
+            echo "@openquality/mcp@$version is already on npm, skipping"
+          else
+            npm publish --access public
+          fi
+
+      # The registry checks the npm package's mcpName, and npm takes a little
+      # while to serve a version it has just accepted. Publishing to the registry
+      # straight away failed with "registry validation failed for package 0".
+      - name: Wait for npm to serve the version
+        working-directory: packages/mcp
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          for attempt in $(seq 1 40); do
+            if npm view "@openquality/mcp@$version" mcpName 2>/dev/null | grep -q .; then exit 0; fi
+            sleep 15
+          done
+          echo "npm did not serve @openquality/mcp@$version within 10 minutes"
+          exit 1
 
       # A step's own env is not visible to its `if`, and putting the key in the
       # job's env would hand it to every step, including dependency code run by
