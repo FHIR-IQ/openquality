@@ -1,0 +1,64 @@
+name: Publish MCP server
+
+# Publishes @openquality/mcp to npm and to the official MCP Registry when a tag
+# like mcp-v0.1.2 is pushed.
+#
+# npm uses trusted publishing: npm verifies this workflow's GitHub OIDC token,
+# so no npm token is stored anywhere and nobody's personal 2FA is needed. The
+# trust is registered on npm against this file's name (publish-mcp.yml); renaming
+# the file breaks publishing until it is registered again with `npm trust github`.
+#
+# The registry name us.openquality/mcp is proven by a domain key, which this
+# workflow reads from the MCP_REGISTRY_KEY secret (the hex Ed25519 private key).
+# Without that secret the registry step is skipped and the npm publish still runs.
+
+on:
+  push:
+    tags: ['mcp-v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      # Node 24 ships npm 11, which trusted publishing needs. CI tests on 22.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+
+      - name: The tag must name the version being published
+        run: |
+          tag="${GITHUB_REF_NAME#mcp-v}"
+          version="$(node -p "require('./packages/mcp/package.json').version")"
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match packages/mcp/package.json version $version"
+            exit 1
+          fi
+
+      - name: Publish to npm
+        working-directory: packages/mcp
+        run: npm publish --access public
+
+      - name: Publish to the MCP Registry
+        if: env.MCP_REGISTRY_KEY != ''
+        env:
+          MCP_REGISTRY_KEY: ${{ secrets.MCP_REGISTRY_KEY }}
+        working-directory: packages/mcp
+        run: |
+          # Pinned to a release and its published checksum: this step holds the
+          # domain key, so it must not run whatever the URL happens to serve.
+          curl -fsSL -o mcp-publisher.tgz "https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz"
+          echo "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  mcp-publisher.tgz" | sha256sum -c -
+          tar xzf mcp-publisher.tgz mcp-publisher
+          ./mcp-publisher login http --domain openquality.us --private-key "$MCP_REGISTRY_KEY"
+          ./mcp-publisher publish
