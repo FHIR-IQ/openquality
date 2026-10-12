@@ -153,8 +153,9 @@ A read-only MCP server with five tools (`search_measures`, `get_measure`,
   both ways (see `readManifest`).
 - Releasing: bump the version in `packages/mcp/package.json`, `SERVER_VERSION`
   in `server.ts`, and both versions in `server.json` (a test holds all four
-  equal), then `npm publish --access public` in `packages/mcp` (2FA, so the
-  maintainer runs it), then `mcp-publisher publish` there. The registry name
+  equal), merge, then push a tag `mcp-v<version>`. `publish-mcp.yml` publishes
+  to npm by trusted publishing (no token; registered on npm against that file
+  name) and to the MCP Registry using the `MCP_REGISTRY_KEY` secret. The registry name
   `us.openquality/mcp` is proven by `site/.well-known/mcp-registry-auth` (and
   a matching DNS TXT record); the Ed25519 signing key lives outside the repo
   with the maintainer. Log in with `mcp-publisher login http --domain
