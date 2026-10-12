@@ -3,7 +3,7 @@
   "name": "us.openquality/mcp",
   "title": "Open Quality",
   "description": "Open healthcare quality measures: CQL, SQL and FHIR with provenance and known issues",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "websiteUrl": "https://openquality.us/mcp-setup",
   "repository": {
     "url": "https://github.com/FHIR-IQ/openquality",
@@ -20,7 +20,7 @@
     {
       "registryType": "npm",
       "identifier": "@openquality/mcp",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       }

@@ -18,16 +18,18 @@ useful result.
 
 ## Preconditions
 
-54 packages are published, 52 of them CC0 eCQMs imported from
+54 measure packages are published, 52 of them CC0 eCQMs imported from
 [cqframework/ecqm-content-qicore-2025](https://github.com/cqframework/ecqm-content-qicore-2025)
-at a pinned commit. Every package carries:
+at a pinned commit, plus 17 shared library packages those measures depend on. Every
+measure package carries:
 
 - a FHIR `Measure` resource
-- the measure CQL, plus every library it includes, vendored
+- the measure's own CQL, with the shared libraries it includes listed as dependencies
 - a manifest with provenance stating whether the content is `unmodified` or `derived`,
   and naming exactly what changed
 
-Two output forms, built from one list of resources so they cannot disagree:
+Two output forms, built from one list of resources so they cannot disagree. Both
+resolve dependencies transitively and include every library the measure needs:
 
 ```bash
 pnpm oq fhir-bundle <package-dir>    # CRMI artifact Bundle, the $package shape
@@ -45,14 +47,14 @@ files).
 1. Read the catalogue and select a measure.
 2. Fetch the package and emit the CRMI artifact Bundle.
 3. Load the Bundle. The first entry is an `asset-collection` Library with a `composed-of`
-   reference to every other entry.
+   reference to the measure's own artifacts and a `depends-on` reference to each shared
+   library it carries.
 4. Evaluate the measure against your own test patients.
 
 **What we want to learn**
 
 - Does the Bundle load without hand-editing? If not, what is missing?
-- Are the `depends-on` relationships between libraries sufficient to resolve them, given
-  every library is vendored in the same package?
+- Are the `depends-on` relationships between libraries sufficient to resolve them?
 - Is `experimental: true` on the Library resources a problem for any consumer? It is set
   deliberately, because these are repackaged copies, not authoritative publication.
 - Canonical URLs point at `openquality.us`, not at the steward, for the same reason. Does
@@ -61,26 +63,31 @@ files).
 **What would count as failure, and be worth more than success:** a consumer that cannot
 load the Bundle, or that resolves a canonical to the wrong artifact.
 
-## Scenario 2: the vendoring problem
+## Scenario 2: shared libraries resolved across tools
 
-This is the known weak point, and the scenario exists to put numbers on it.
+Bryn Rhodes reports that CRMI supports shared libraries and that the tooling does too,
+from authoring in VS Code, CQL Studio and MADiE through at least the HAPI reference
+implementation. This scenario tests that at the scale of a full measure set.
 
-Every package vendors the libraries its measure includes. Across the 52 CMS packages that
-is 301 CQL files under 69 distinct names, 232 of them redundant copies. `FHIRHelpers`,
-`QICoreCommon` and `SupplementalDataElements` each appear in all 52.
+The 52 CMS measures depend on 17 shared library packages (`FHIRHelpers`,
+`QICoreCommon`, `SupplementalDataElements` and 14 more), each published once. A measure
+names the libraries it includes directly; the libraries name theirs. Until 2026-10-12
+every measure carried its own copy instead: 301 CQL files for 69 distinct libraries.
 
-Measured: every shared library name currently resolves to exactly one content hash, so
-the copies have not diverged. That is a fact about today, not a guarantee.
+1. Load the 17 library packages into the tool.
+2. Load measures one at a time, without their dependencies bundled, and let the tool
+   resolve each `depends-on` against what is already loaded.
+3. Load two measures that share libraries into one environment, and check each resolves
+   to the one copy.
+4. Evaluate a measure loaded this way and compare the result with the same measure loaded
+   from its self-contained bundle.
 
-1. Load two packages that share a library into the same environment.
-2. Observe what happens with two `Library` resources of the same name and version.
+**What we want to learn:** which tools resolve shared libraries by canonical and version
+on their own, which need the dependencies bundled, and where they disagree. Every
+difference is a finding, recorded against the measure and version under Scenario 3.
 
-**What we want to learn:** whether vendoring is merely wasteful or actually breaks
-resolution when two packages meet in one tool. The answer decides how urgent the fix is.
-
-The root cause is ours: Level 1 requires measure identity, including a title, and a shared
-library is not a measure, so there was no legal shape for a library-only package. Recorded
-as `corpus-2026-002`.
+The change behind this was ours to make: Level 1 used to require a measure title, so a
+library-only package had no valid shape. Recorded and resolved as `corpus-2026-002`.
 
 ## Scenario 3: record what broke
 
@@ -115,7 +122,8 @@ thing that can be re-run rather than re-read.
 ## What we need from the track
 
 1. One consumer willing to load a Bundle and say what broke.
-2. A view on whether vendoring is a real problem or a cosmetic one.
+2. Shared libraries loaded once and resolved by more than one tool, with the differences
+   written down.
 3. Anything found, recorded as an entry rather than a hallway conversation.
 
 Contact: open an issue on [the repository](https://github.com/FHIR-IQ/openquality/issues),

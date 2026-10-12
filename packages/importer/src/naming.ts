@@ -27,3 +27,12 @@ export function slugFor(title: string): string {
 export function packageId(namespace: string, slug: string): string {
   return `${namespace}/${slug}`
 }
+
+/**
+ * The package id a shared CQL library is published under. Lowercased rather
+ * than slugged from CamelCase, so the id is predictable from the name an
+ * `include` statement uses: FHIRHelpers is `lib-fhirhelpers`.
+ */
+export function librarySlug(name: string): string {
+  return `lib-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+}

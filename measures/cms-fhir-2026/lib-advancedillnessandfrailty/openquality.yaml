@@ -1,0 +1,43 @@
+id: cms/lib-advancedillnessandfrailty
+version: 1.27.0
+license: CC0-1.0
+library:
+  name: AdvancedIllnessandFrailty
+  version: 1.27.000
+dataModel: qi-core
+artifacts:
+  - path: cql/AdvancedIllnessandFrailty.cql
+    type: cql
+dependencies:
+  - id: cms/lib-cumulativemedicationduration
+    version: 6.0.0
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
+  - id: cms/lib-status
+    version: 1.15.0
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.110.12.1082
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1082
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.196.12.1510
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.12.1510
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.118.12.1300
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.118.12.1300
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.113.12.1074
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.113.12.1074
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1088
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1088
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.113.12.1075
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.113.12.1075
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

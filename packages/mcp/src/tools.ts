@@ -1,6 +1,7 @@
 // Imported module by module rather than through core's index, so the server
 // does not pull in the tarball packer and its dependencies.
-import { buildPackageBundle, type CqlFile, type FhirResourceFile } from '../../core/src/fhir.js'
+import { buildPackageBundle, type CqlFile, type FhirResourceFile, type PackageDependency } from '../../core/src/fhir.js'
+import { resolveDependencies } from '../../core/src/corpus.js'
 import { parseManifest, type Manifest } from '../../core/src/manifest.js'
 import { loadCatalogue, type Catalogue, type PackageEntry } from './catalogue.js'
 import type { CorpusSource } from './source.js'
@@ -59,6 +60,7 @@ function summary(pkg: PackageEntry) {
     license: pkg.license,
     level: pkg.level,
     relationship: pkg.relationship,
+    kind: pkg.kind ?? 'measure',
     knowledgeEntries: pkg.knowledge.length,
   }
 }
@@ -78,6 +80,8 @@ async function readManifest(source: CorpusSource, pkg: PackageEntry): Promise<Ma
 
 export interface SearchInput {
   query: string
+  /** 'measure' by default, so results do not fill up with shared libraries. */
+  kind?: 'measure' | 'library' | 'any'
   collection?: string
   dataModel?: string
   limit?: number
@@ -88,6 +92,8 @@ export function searchMeasures(source: CorpusSource, input: SearchInput): Promis
     const catalogue = await loadCatalogue(source)
     const tokens = input.query.toLowerCase().split(/\s+/).filter(Boolean)
     const matches = catalogue.packages.filter((pkg) => {
+      const kind = input.kind ?? 'measure'
+      if (kind !== 'any' && (pkg.kind ?? 'measure') !== kind) return false
       if (input.collection && pkg.collection !== input.collection) return false
       if (input.dataModel && pkg.dataModel !== input.dataModel) return false
       const haystack = [pkg.id, pkg.title, pkg.steward ?? '', ...pkg.identifiers].join(' ').toLowerCase()
@@ -111,6 +117,8 @@ export function getMeasure(source: CorpusSource, input: { id: string }): Promise
         measure: manifest.measure,
         measurementPeriod: manifest.measurementPeriod,
         provenance: manifest.provenance,
+        library: manifest.library,
+        dependencies: manifest.dependencies ?? [],
         artifacts: pkg.artifacts,
         valueSets: manifest.valueSets ?? [],
         knowledge: catalogue.knowledge
@@ -118,7 +126,10 @@ export function getMeasure(source: CorpusSource, input: { id: string }): Promise
           .map(({ id, title, type, status, measureVersion, summary: text, page }) => ({
             id, title, type, status, measureVersion, summary: text, page,
           })),
-        files: 'Read any path in `artifacts` with get_artifact. get_bundle returns them as one CRMI Bundle.',
+        files:
+          'Read any path in `artifacts` with get_artifact. `dependencies` are shared library ' +
+          'packages: get_measure on one gives its files. get_bundle returns the package and ' +
+          'every dependency as one CRMI Bundle.',
       },
       pkg.license,
     )
@@ -146,23 +157,48 @@ export function getBundle(source: CorpusSource, input: { id: string }): Promise<
     const pkg = findPackage(catalogue, input.id)
     if (!pkg) return fail(source, `get_bundle: no package with id "${input.id}". Use search_measures to find one.`)
     const manifest = await readManifest(source, pkg)
-    // Built from the catalogue's artifact list. A test holds this equal to
-    // `oq fhir-bundle`, which walks the directory instead, for every package.
-    const cql: CqlFile[] = []
-    const resources: FhirResourceFile[] = []
-    for (const artifact of pkg.artifacts) {
-      const path = artifact.slice(pkg.path.length + 1)
-      if (artifact.endsWith('.cql')) {
-        cql.push({ path, source: await source.readText(artifact) })
-      } else if (artifact.endsWith('.json')) {
-        const parsed: unknown = JSON.parse(await source.readText(artifact))
-        if (parsed && typeof parsed === 'object' && typeof (parsed as Record<string, unknown>).resourceType === 'string') {
-          resources.push({ path, resource: parsed as Record<string, unknown> })
-        }
+    // Built from the catalogue's artifact list. A test holds this equal to what
+    // the CLI builds by walking directories, for every package.
+    const { cql, resources } = await readArtifacts(source, pkg)
+
+    // Shared libraries are dependencies, resolved transitively through the
+    // catalogue, so the Bundle carries everything the measure needs, as
+    // CRMI $package does.
+    const byKey = new Map(catalogue.packages.map((p) => [`${p.id}@${p.version}`, p]))
+    const lookup = (id: string, version: string) => {
+      const found = byKey.get(`${id}@${version}`)
+      return found && { manifest: { id: found.id, version: found.version, license: found.license, artifacts: [], dependencies: found.dependencies }, entry: found }
+    }
+    const { resolved, missing } = resolveDependencies(manifest, lookup)
+    if (missing.length > 0) {
+      return fail(source, `get_bundle: ${pkg.id} depends on packages not in the catalogue: ${missing.map((m) => `${m.id}@${m.version}`).join(', ')}`)
+    }
+    const dependencies: PackageDependency[] = []
+    for (const dep of resolved) {
+      dependencies.push({ manifest: await readManifest(source, dep.entry), files: (await readArtifacts(source, dep.entry)).cql })
+    }
+    return ok(source, buildPackageBundle(manifest, cql, resources, { license: manifest.license }, dependencies), pkg.license)
+  })
+}
+
+async function readArtifacts(
+  source: CorpusSource,
+  pkg: PackageEntry,
+): Promise<{ cql: CqlFile[]; resources: FhirResourceFile[] }> {
+  const cql: CqlFile[] = []
+  const resources: FhirResourceFile[] = []
+  for (const artifact of pkg.artifacts) {
+    const path = artifact.slice(pkg.path.length + 1)
+    if (artifact.endsWith('.cql')) {
+      cql.push({ path, source: await source.readText(artifact) })
+    } else if (artifact.endsWith('.json')) {
+      const parsed: unknown = JSON.parse(await source.readText(artifact))
+      if (parsed && typeof parsed === 'object' && typeof (parsed as Record<string, unknown>).resourceType === 'string') {
+        resources.push({ path, resource: parsed as Record<string, unknown> })
       }
     }
-    return ok(source, buildPackageBundle(manifest, cql, resources, { license: manifest.license }), pkg.license)
-  })
+  }
+  return { cql, resources }
 }
 
 export interface KnownIssuesInput {

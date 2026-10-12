@@ -459,7 +459,7 @@
       </tr>
       <tr>
         <td>Seed corpus</td><td class="state shipped">shipped</td>
-        <td>52 CC0 CMS eCQM packages for the 2026 reporting year, provenance pinned to the upstream commit and re-verified byte-for-byte in CI on every change.</td>
+        <td>52 CC0 CMS eCQM packages for the 2026 reporting year, and the 17 shared CQL libraries they depend on as packages of their own, provenance pinned to the upstream commit and re-verified byte-for-byte in CI on every change.</td>
       </tr>
       <tr>
         <td>Knowledge corpus</td><td class="state shipped">seeded</td>
@@ -487,7 +487,7 @@
   <div class="term" style="margin-top:34px"><span class="c"># what runs today</span>
 <span class="p">$</span> oq validate-all measures/cms-fhir-2026
 
-Checked 52 packages, 0 below Level 1
+Checked 69 packages, 0 below Level 1
 
 <span class="c"># cql.translate, fhir.validate, and sql.parse will run on publish.</span>
 <span class="c"># They do not exist yet, which is why nothing is Level 2.</span></div>

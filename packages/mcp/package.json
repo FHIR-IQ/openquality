@@ -1,6 +1,6 @@
 {
   "name": "@openquality/mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "mcpName": "us.openquality/mcp",
   "description": "Read-only MCP server for the Open Quality measure corpus: measure code, provenance, known issues and CRMI Bundles",
   "type": "module",

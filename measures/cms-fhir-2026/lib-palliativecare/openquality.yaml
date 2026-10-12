@@ -1,0 +1,32 @@
+id: cms/lib-palliativecare
+version: 1.18.0
+license: CC0-1.0
+library:
+  name: PalliativeCare
+  version: 1.18.000
+dataModel: qi-core
+artifacts:
+  - path: cql/PalliativeCare.cql
+    type: cql
+dependencies:
+  - id: cms/lib-fhirhelpers
+    version: 4.4.0
+  - id: cms/lib-qicorecommon
+    version: 4.0.0
+  - id: cms/lib-status
+    version: 1.15.0
+valueSets:
+  - oid: 2.16.840.1.113883.3.464.1003.101.12.1090
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.101.12.1090
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.198.12.1135
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1135
+    source: vsac
+  - oid: 2.16.840.1.113883.3.464.1003.1167
+    url: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.1167
+    source: vsac
+provenance:
+  upstream: https://github.com/cqframework/ecqm-content-qicore-2025
+  ref: d4e0edd01b7da2a3b43d5360156b43761438190a
+  retrieved: 2026-08-01
+  relationship: unmodified

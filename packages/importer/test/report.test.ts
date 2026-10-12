@@ -6,6 +6,7 @@ describe('renderImportReport', () => {
     ref: 'abc123',
     retrieved: '2026-08-01',
     upstream: 'https://github.com/cqframework/ecqm-content-qicore-2025',
+    libraries: [] as string[],
   }
 
   it('accounts for every measure, imported and skipped', () => {
@@ -18,6 +19,11 @@ describe('renderImportReport', () => {
     expect(report).toContain('1 skipped')
     expect(report).toContain('CMS999Broken')
     expect(report).toContain('no parseable version')
+  })
+
+  it('counts the shared libraries published as their own packages', () => {
+    const report = renderImportReport({ ...base, imported: ['cms/a'], libraries: ['cms/lib-x', 'cms/lib-y'], skipped: [] })
+    expect(report).toContain('2 shared libraries')
   })
 
   it('states the pinned commit', () => {

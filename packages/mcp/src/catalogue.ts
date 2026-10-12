@@ -16,6 +16,9 @@ export interface PackageEntry {
   artifacts: string[]
   valueSets: number
   relationship?: string
+  /** Absent in catalogues built before shared library packages; read as 'measure'. */
+  kind?: 'measure' | 'library'
+  dependencies?: { id: string; version: string }[]
   knowledge: string[]
 }
 

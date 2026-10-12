@@ -25,7 +25,7 @@ check(tools.length === 5, `five tools (got ${tools.map((t) => t.name).join(', ')
 const calls: [string, Record<string, unknown>][] = [
   ['search_measures', { query: 'CMS122FHIR' }],
   ['get_measure', { id: 'cms/appropriate-testing-for-pharyngitis' }],
-  ['get_artifact', { path: 'measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/Status.cql' }],
+  ['get_artifact', { path: 'measures/cms-fhir-2026/lib-status/cql/Status.cql' }],
   ['get_bundle', { id: 'cms/appropriate-testing-for-pharyngitis' }],
   ['known_issues', { measure: 'cms/diabetes-glycemic-status-assessment-greater-than-9', limit: 1 }],
 ]

@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { buildPackageBundle, parseManifest } from '@openquality/core'
+import { buildPackageBundle, parseManifest, resolveDependencies } from '@openquality/core'
 import { FsSource } from '../src/source.js'
 import { loadCatalogue } from '../src/catalogue.js'
 import { getArtifact, getBundle, getMeasure, knownIssues, searchMeasures, type ToolResult } from '../src/tools.js'
@@ -44,6 +44,14 @@ describe('search_measures', () => {
     expect(out.total).toBeGreaterThan(3)
   })
 
+  it('returns measures by default and shared libraries only when asked', async () => {
+    const byDefault = json(await searchMeasures(source, { query: 'fhirhelpers' }))
+    expect(byDefault.results).toEqual([])
+    const libraries = json(await searchMeasures(source, { query: 'fhirhelpers', kind: 'library' }))
+    expect(libraries.results.map((r: any) => r.id)).toEqual(['cms/lib-fhirhelpers'])
+    expect(libraries.results[0].kind).toBe('library')
+  })
+
   it('filters by collection', async () => {
     const out = json(await searchMeasures(source, { query: 'glycemic', collection: 'community' }))
     expect(out.results.every((r: any) => r.collection === 'community')).toBe(true)
@@ -57,6 +65,11 @@ describe('get_measure', () => {
     expect(out.provenance.relationship).toBe('derived')
     expect(out.provenance.modifications.join(' ')).toMatch(/CPT 99429/)
     expect(out.valueSets.length).toBeGreaterThan(0)
+  })
+
+  it('names the shared libraries the measure depends on', async () => {
+    const out = json(await getMeasure(source, { id: DERIVED }))
+    expect(out.dependencies.map((d: any) => d.id)).toContain('cms/lib-fhirhelpers')
   })
 
   it('lists the knowledge entries filed against the measure', async () => {
@@ -73,7 +86,7 @@ describe('get_measure', () => {
 
 describe('get_artifact', () => {
   it('returns the raw file for a catalogued artifact', async () => {
-    const path = 'measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/FHIRHelpers.cql'
+    const path = 'measures/cms-fhir-2026/lib-fhirhelpers/cql/FHIRHelpers.cql'
     const result = await getArtifact(source, { path })
     expect(body(result)).toBe(await readFile(join(ROOT, path), 'utf8'))
   })
@@ -93,25 +106,50 @@ describe('get_artifact', () => {
 })
 
 describe('get_bundle', () => {
-  it('builds the same Bundle oq fhir-bundle builds, for every package', async () => {
-    const { packages } = await loadCatalogue(source)
-    for (const pkg of packages) {
-      const parsed = parseManifest(await readFile(join(ROOT, pkg.manifest), 'utf8'))
-      if (!parsed.ok) throw new Error(`manifest ${pkg.id}`)
-      const cql = []
-      const resources = []
-      for (const artifact of pkg.artifacts) {
-        const rel = artifact.slice(pkg.path.length + 1)
-        const text = await readFile(join(ROOT, artifact), 'utf8')
-        if (artifact.endsWith('.cql')) cql.push({ path: rel, source: text })
-        else if (artifact.endsWith('.json')) {
-          const resource = JSON.parse(text)
-          if (typeof resource.resourceType === 'string') resources.push({ path: rel, resource })
-        }
+  async function readFromDisk(pkg: { manifest: string; path: string; artifacts: string[] }) {
+    const parsed = parseManifest(await readFile(join(ROOT, pkg.manifest), 'utf8'))
+    if (!parsed.ok) throw new Error(`manifest ${pkg.manifest}`)
+    const cql = []
+    const resources = []
+    for (const artifact of pkg.artifacts) {
+      const rel = artifact.slice(pkg.path.length + 1)
+      const text = await readFile(join(ROOT, artifact), 'utf8')
+      if (artifact.endsWith('.cql')) cql.push({ path: rel, source: text })
+      else if (artifact.endsWith('.json')) {
+        const resource = JSON.parse(text)
+        if (typeof resource.resourceType === 'string') resources.push({ path: rel, resource })
       }
-      const expected = buildPackageBundle(parsed.manifest, cql, resources, { license: parsed.manifest.license })
+    }
+    return { manifest: parsed.manifest, cql, resources }
+  }
+
+  it('builds the same Bundle the CLI builds, dependencies included, for every package', async () => {
+    const { packages } = await loadCatalogue(source)
+    const byKey = new Map(packages.map((p) => [`${p.id}@${p.version}`, p]))
+    for (const pkg of packages) {
+      const own = await readFromDisk(pkg)
+      const { resolved } = resolveDependencies(own.manifest, (id, version) => {
+        const found = byKey.get(`${id}@${version}`)
+        return found && { manifest: { id: found.id, version: found.version, dependencies: found.dependencies } as any, pkg: found }
+      })
+      const dependencies = []
+      for (const dep of resolved) {
+        const read = await readFromDisk(dep.pkg)
+        dependencies.push({ manifest: read.manifest, files: read.cql })
+      }
+      const expected = buildPackageBundle(own.manifest, own.cql, own.resources, { license: own.manifest.license }, dependencies)
       expect(json(await getBundle(source, { id: pkg.id })), pkg.id).toEqual(expected)
     }
+  })
+
+  it('carries the shared libraries a measure depends on, as depends-on', async () => {
+    const bundle = json(await getBundle(source, { id: DERIVED }))
+    const ids = bundle.entry.map((e: any) => e.resource.id)
+    expect(ids).toContain('FHIRHelpers')
+    expect(bundle.entry[0].resource.relatedArtifact).toContainEqual({
+      type: 'depends-on',
+      resource: 'https://openquality.us/fhir/Library/FHIRHelpers',
+    })
   })
 })
 
@@ -135,7 +173,7 @@ describe('every result', () => {
     const results = [
       await searchMeasures(source, { query: 'cms' }),
       await getMeasure(source, { id: DERIVED }),
-      await getArtifact(source, { path: 'measures/cms-fhir-2026/appropriate-testing-for-pharyngitis/cql/Status.cql' }),
+      await getArtifact(source, { path: 'measures/cms-fhir-2026/lib-status/cql/Status.cql' }),
       await getBundle(source, { id: DERIVED }),
       await knownIssues(source, {}),
     ]

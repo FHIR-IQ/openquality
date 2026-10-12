@@ -190,7 +190,7 @@
     <h1>Vendored library duplication</h1>
     <div class="facts">
       <span class="fact on">implementation note</span>
-      <span class="fact">open</span>
+      <span class="fact">resolved</span>
       <span class="fact mono">corpus-2026-002</span>
       
       <span class="fact">reported by aks129</span>
@@ -252,11 +252,24 @@ library&#39;s logic (as opposed to the display-text stripping this importer
 already does) has to be fixed by hand in up to 52 copies, and nothing in the
 corpus would tell an author that copy 12 of 52 was missed.</p>
 <h2>Resolution</h2>
-<p>Open. The likely answer is a report rather than a rule: a check that hashes
-every file with a shared library name and flags any name whose copies are not
-byte-identical, the way <code>import-report.md</code> lists skips. That would catch both
-failure modes above without requiring the packages to stop vendoring their
-dependencies. Nothing is decided.</p>
+<p>Resolved 2026-10-12 by removing the copies rather than reporting on them.</p>
+<p>Each of the 17 shared libraries the CMS measures include is now a package of its own,
+<code>cms/lib-&lt;name&gt;</code> (for example <code>cms/lib-fhirhelpers</code>). A package can declare <code>library</code>
+identity (the CQL library name and header version) in place of <code>measure</code>, which is what
+was missing: Level 1 used to require <code>measure.title</code>, so a library-only package had no
+valid shape.</p>
+<p>Each measure lists the libraries its CQL includes directly under <code>dependencies</code>, and each
+library lists its own. <code>oq validate-all</code> fails if any dependency is not a package in the
+corpus. The CQL files in <code>cms-fhir-2026</code> went from 301 to 69: 52 measure libraries and
+17 shared ones, each stored once.</p>
+<p>A measure still loads on its own. <code>oq fhir-bundle</code>, <code>oq fhir-package</code> and the MCP
+server&#39;s <code>get_bundle</code> resolve dependencies transitively and include them. A test
+(<code>tools/test/library-sets.test.ts</code>) holds every measure&#39;s bundle to the exact set of
+Library resources it carried before the change, compared by id, version, CQL bytes and
+dependency edges.</p>
+<p>Both failure modes listed above are closed. There is one copy of each library, so copies
+cannot diverge. A hand-authored package can still carry its own copy of a library, which
+stays valid but is no longer how the imported corpus works.</p>
 
   </article>
 

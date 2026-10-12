@@ -63,7 +63,9 @@ sequence of checks, each owned by its own module, each returning `Finding[]`:
 | `readme.ts` | Required README sections |
 | `pack.ts` | The file walk, the rule that a package holds only real files, and deterministic tarballs |
 | `cql.ts` | Reading library name, version and includes out of CQL source |
-| `fhir.ts` | FHIR output: `Library` resources, the NPM package (`package.json`, `.index.json`), and the CRMI artifact Bundle. Both containers are built from one member list so they cannot diverge |
+| `library.ts` | Rules for a shared-library package (`library` identity instead of `measure`) |
+| `corpus.ts` | Reading every package under collection roots; resolving `dependencies` transitively |
+| `fhir.ts` | FHIR output: `Library` resources, the NPM package (`package.json`, `.index.json`), and the CRMI artifact Bundle. Both containers are built from one member list so they cannot diverge, and both take resolved dependencies, built against their own manifests (`depends-on`) |
 | `scanner.ts` / `terminology.ts` | Content the corpus cannot host |
 | `level.ts` | Maps checks → conformance level |
 | `report.ts` | `CheckId` union, `Finding`, `Severity` |
@@ -102,8 +104,17 @@ without a fixture repo.
 Flow: `upstream.ts` (fetch/extract, cached in `.cache/`) → `measure.ts` (read
 FHIR `Measure`) → `cql.ts` (parse headers, strip licensed display text) →
 `naming.ts` (slug, semver) → `plan.ts` (decide import vs. skip; resolve included
-libraries transitively) → `emit.ts` (manifest + README text) → `run.ts`
-(orchestrate, write files, generate `measures/import-report.md`).
+libraries transitively; plan each shared library as its own package) → `emit.ts`
+(manifest + README text, for measures and for libraries) → `run.ts` (orchestrate,
+write files, generate `measures/import-report.md`).
+
+Shared libraries are **not vendored**. Each one a measure reaches becomes
+`cms/lib-<name>` once, and measures list their direct includes under
+`dependencies`. A library that cannot be planned skips every measure that reaches
+it. Whether dependencies resolve is checked by `oq validate-all`, not by
+single-package validation. `tools/test/library-sets.test.ts` holds every measure's
+dependency-resolved bundle to the Library set recorded before this change; if it
+fails, an edge is wrong, so do not regenerate its fixture.
 
 **Determinism is a hard requirement.** CI re-runs the importer and fails on any
 diff against the committed tree — that check is what makes each package's
