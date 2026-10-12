@@ -3,7 +3,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "installCommand": "cd .. && npx --yes pnpm@10.28.2 install --frozen-lockfile",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./ ../packages/mcp ../packages/core ../pnpm-lock.yaml",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./ ../packages/mcp ../packages/core ../measures ../knowledge ../pnpm-lock.yaml",
   "rewrites": [
     {
       "source": "/mcp",
