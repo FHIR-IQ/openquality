@@ -151,6 +151,12 @@ A read-only MCP server with five tools (`search_measures`, `get_measure`,
   a skipped deploy keeps serving the previous commit. Vercel type-checks files
   outside `site/` without strict mode, so narrow unions in a way that compiles
   both ways (see `readManifest`).
+- Releasing: bump the version in `packages/mcp/package.json`, `SERVER_VERSION`
+  in `server.ts`, and both versions in `server.json` (a test holds all four
+  equal), then `npm publish --access public` in `packages/mcp` (2FA, so the
+  maintainer runs it), then `mcp-publisher publish` there. The registry name
+  `us.openquality/mcp` is proven by a DNS TXT record on openquality.us; the
+  signing key lives outside the repo with the maintainer.
 
 ### Content policy
 

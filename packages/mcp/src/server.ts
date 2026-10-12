@@ -4,7 +4,7 @@ import type { CorpusSource } from './source.js'
 import { getArtifact, getBundle, getMeasure, knownIssues, searchMeasures } from './tools.js'
 
 export const SERVER_NAME = 'openquality'
-export const SERVER_VERSION = '0.1.0'
+export const SERVER_VERSION = '0.1.1'
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false } as const
 const id = z.string().min(1).max(200).describe('Package id, for example cms/diabetes-glycemic-status-assessment-greater-than-9')
