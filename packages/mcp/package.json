@@ -1,0 +1,29 @@
+{
+  "name": "@openquality/mcp",
+  "version": "0.1.0",
+  "description": "Read-only MCP server for the Open Quality measure corpus: measure code, provenance, known issues and CRMI Bundles",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FHIR-IQ/openquality.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://openquality.us/mcp-setup",
+  "exports": { ".": "./src/index.ts" },
+  "bin": { "openquality-mcp": "dist/stdio.js" },
+  "files": ["dist"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "esbuild src/stdio.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/stdio.js --packages=external --banner:js=\"#!/usr/bin/env node\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.31.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@openquality/core": "workspace:*",
+    "esbuild": "0.28.2"
+  }
+}
