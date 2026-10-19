@@ -14,7 +14,7 @@
     "packages": 71,
     "measures": 54,
     "libraries": 17,
-    "knowledgeEntries": 13
+    "knowledgeEntries": 14
   },
   "dependencies": "A package lists its direct dependencies as id and version. Resolve them transitively against `packages` to get everything a measure needs.",
   "packages": [
@@ -3060,6 +3060,21 @@
       "reporter": "aks129",
       "page": "https://openquality.us/knowledge/corpus-2026-007",
       "source": "knowledge/corpus/2026-007-the-licensing-check-could-not-see-fhir-resources.md"
+    },
+    {
+      "id": "corpus-2026-008",
+      "title": "Included library versions not published",
+      "type": "defect",
+      "status": "open",
+      "scope": "corpus",
+      "categories": [
+        "packaging",
+        "cql"
+      ],
+      "summary": "Seventeen imported measures, and one imported library, include a shared CQL library at a version the corpus does not carry. Each includes an older version than the one upstream publishes in input/cql. The importer matches includes by library name only, so it pairs every one of them with the newer library, and nothing reported the difference until oq validate-all gained the cql.includes warning on 2026-10-18.",
+      "reporter": "aks129",
+      "page": "https://openquality.us/knowledge/corpus-2026-008",
+      "source": "knowledge/corpus/2026-008-included-library-versions-not-published.md"
     },
     {
       "id": "cql-2026-001",

@@ -94,3 +94,8 @@ dependency edges.
 Both failure modes listed above are closed. There is one copy of each library, so copies
 cannot diverge. A hand-authored package can still carry its own copy of a library, which
 stays valid but is no longer how the imported corpus works.
+
+**Later finding.** The one-copy guarantee holds, but it hid a different gap: 17 measures
+include an older version of a shared library than the one upstream publishes, and the
+importer resolved them by name to the newer one. "Loads on its own" above holds only for
+a tool that resolves includes by name. See `corpus-2026-008`.

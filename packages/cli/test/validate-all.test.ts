@@ -8,12 +8,12 @@ let root: string
 const lines: string[] = []
 const write = (line: string) => lines.push(line)
 
-async function writePackage(name: string, manifest: string, readme: string): Promise<void> {
+async function writePackage(name: string, manifest: string, readme: string, cql = `library A version '1.0.000'\n`): Promise<void> {
   const dir = join(root, name)
   await mkdir(join(dir, 'cql'), { recursive: true })
   await writeFile(join(dir, 'openquality.yaml'), manifest)
   await writeFile(join(dir, 'README.md'), readme)
-  await writeFile(join(dir, 'cql', 'A.cql'), `library A version '1.0.000'\n`)
+  await writeFile(join(dir, 'cql', 'A.cql'), cql)
 }
 
 const GOOD_MANIFEST = [
@@ -92,5 +92,21 @@ describe('dependencies across the validated packages', () => {
     await writePackage('measure', withDependency('cms/lib-gone'), GOOD_README)
     expect(await runValidateAll([root], 1, write)).toBe(1)
     expect(lines.join('\n')).toMatch(/dependencies\.resolve.*cms\/lib-gone@1\.0\.0/)
+  })
+
+  it('warns about an include the dependencies provide only at another version, without failing', async () => {
+    await writePackage('lib-a', LIBRARY_MANIFEST, GOOD_README)
+    await writePackage('measure', withDependency('cms/lib-a'), GOOD_README, "library M version '1.0.000'\ninclude A version '0.9.000'\n")
+    expect(await runValidateAll([root], 1, write)).toBe(0)
+    const out = lines.join('\n')
+    expect(out).toMatch(/WARN .*cql\.includes: cql\/A\.cql includes A version '0\.9\.000'; provided: 1\.0\.000/)
+    expect(out).toContain('1 include not satisfied at its exact version')
+  })
+
+  it('says nothing about includes when every one is satisfied', async () => {
+    await writePackage('lib-a', LIBRARY_MANIFEST, GOOD_README)
+    await writePackage('measure', withDependency('cms/lib-a'), GOOD_README, "library M version '1.0.000'\ninclude A version '1.0.000'\n")
+    await runValidateAll([root], 1, write)
+    expect(lines.join('\n')).not.toMatch(/cql\.includes|include not satisfied/)
   })
 })

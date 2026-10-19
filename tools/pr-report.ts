@@ -10,11 +10,14 @@
  * different things. Sharing `validatePackage` is what matters, not the
  * formatting.
  */
-import { stat } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { validatePackage } from '@openquality/core'
-import type { Finding } from '@openquality/core'
+import { parseManifest, readCorpus, resolveDependencies, unsatisfiedIncludes, validatePackage } from '@openquality/core'
+import type { CorpusPackage, Finding } from '@openquality/core'
+
+/** A row in the report. Corpus-level rows have no CheckId; only these fields are rendered. */
+type Row = Pick<Finding, 'severity' | 'message' | 'path'>
 
 const LEVEL_NAMES = ['Shared', 'Described', 'Verified'] as const
 
@@ -53,18 +56,66 @@ function escapePipes(text: string): string {
   return text.replace(/\|/g, '\\|')
 }
 
-function renderPackage(dir: string, result: Awaited<ReturnType<typeof validatePackage>>): string[] {
-  const { level, report } = result
-  const errors = report.findings.filter((f) => f.severity === 'error')
+/**
+ * What `oq validate-all` checks across the corpus, for one changed package:
+ * dependencies that are not packages (CI fails on these) and CQL includes no
+ * package provides at the exact version (a warning, as in validate-all). Without
+ * this, a pull request could pass its comment and then fail CI.
+ */
+async function corpusRows(dir: string, corpus: Map<string, CorpusPackage>): Promise<Row[]> {
+  let manifestText: string
+  try {
+    manifestText = await readFile(join(dir, 'openquality.yaml'), 'utf8')
+  } catch {
+    return []
+  }
+  const parsed = parseManifest(manifestText)
+  if (!parsed.ok) return [] // validatePackage reports the schema failure.
+  const pkg = { dir, manifest: parsed.manifest }
+  const { resolved, missing } = resolveDependencies(pkg.manifest, (id, version) => corpus.get(`${id}@${version}`))
+  const rows: Row[] = missing.map((dep) => ({
+    severity: 'error' as const,
+    path: 'openquality.yaml',
+    message: `${dep.requiredBy} depends on ${dep.id}@${dep.version}, which is not a package in this repository.`,
+  }))
+  for (const inc of await unsatisfiedIncludes(pkg, resolved)) {
+    const provided = inc.available.length
+      ? `This package and its dependencies provide ${inc.available.join(', ')}.`
+      : 'Neither this package nor its dependencies provide it; add it as a dependency or as a CQL file here.'
+    rows.push({ severity: 'warning', path: inc.path, message: `Includes ${inc.library} version '${inc.version}'. ${provided}` })
+  }
+  return rows
+}
+
+/** Every collection under measures/, which is what CI's validate-all covers. */
+async function collectionRoots(): Promise<string[]> {
+  try {
+    const entries = await readdir('measures', { withFileTypes: true })
+    return entries.filter((e) => e.isDirectory()).map((e) => join('measures', e.name)).sort()
+  } catch {
+    return []
+  }
+}
+
+function renderPackage(dir: string, result: Awaited<ReturnType<typeof validatePackage>>, extra: Row[]): string[] {
+  const { level } = result
+  const findings: Row[] = [...result.report.findings, ...extra]
+  const errors = findings.filter((f) => f.severity === 'error')
+  const ownErrors = result.report.findings.some((f) => f.severity === 'error')
   const lines: string[] = []
 
   const verdict = errors.length === 0 ? '✅' : '❌'
   lines.push(`### ${verdict} \`${dir}\``)
   lines.push('')
-  lines.push(`**Level ${level} (${LEVEL_NAMES[level]})**` + (errors.length ? ', because of the errors below.' : '.'))
+  const why = !errors.length
+    ? '.'
+    : ownErrors
+      ? ', because of the errors below.'
+      : ' on its own, but the dependency errors below still block merge.'
+  lines.push(`**Level ${level} (${LEVEL_NAMES[level]})**` + why)
   lines.push('')
 
-  if (report.findings.length === 0) {
+  if (findings.length === 0) {
     lines.push('No findings.')
     lines.push('')
     return lines
@@ -72,12 +123,12 @@ function renderPackage(dir: string, result: Awaited<ReturnType<typeof validatePa
 
   lines.push('| | Where | What |')
   lines.push('|---|---|---|')
-  for (const finding of report.findings) {
+  for (const finding of findings) {
     lines.push(`| ${icon(finding.severity)} | \`${escapePipes(finding.path ?? '')}\` | ${escapePipes(finding.message)} |`)
   }
   lines.push('')
 
-  if (errors.length === 0 && report.findings.length > 0) {
+  if (errors.length === 0 && findings.length > 0) {
     lines.push('Warnings do not block a level. Nothing here needs fixing before merge.')
     lines.push('')
   }
@@ -94,11 +145,13 @@ export async function renderReport(dirs: string[]): Promise<{ markdown: string; 
 
   const lines = ['## Package validation', '']
   let ok = true
+  const corpus = await readCorpus(await collectionRoots())
 
   for (const dir of dirs) {
     const result = await validatePackage(dir)
-    if (result.report.findings.some((f) => f.severity === 'error')) ok = false
-    lines.push(...renderPackage(dir, result))
+    const extra = await corpusRows(dir, corpus)
+    if ([...result.report.findings, ...extra].some((f) => f.severity === 'error')) ok = false
+    lines.push(...renderPackage(dir, result, extra))
   }
 
   if (!ok) {

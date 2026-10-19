@@ -112,7 +112,12 @@ Shared libraries are **not vendored**. Each one a measure reaches becomes
 `cms/lib-<name>` once, and measures list their direct includes under
 `dependencies`. A library that cannot be planned skips every measure that reaches
 it. Whether dependencies resolve is checked by `oq validate-all`, not by
-single-package validation. `tools/test/library-sets.test.ts` holds every measure's
+single-package validation. Includes are matched by library **name**, so a
+measure that includes an older version than upstream publishes gets the newer
+library: `validate-all` (and the PR comment) warn on every include not provided
+at its exact version (`unsatisfiedIncludes` in `corpus.ts`), and 30 such
+warnings are expected today. See `knowledge/corpus/2026-008`. They are
+warnings so CI stays green; making them errors is a decision, not a cleanup. `tools/test/library-sets.test.ts` holds every measure's
 dependency-resolved bundle to the Library set recorded before this change; if it
 fails, an edge is wrong, so do not regenerate its fixture.
 

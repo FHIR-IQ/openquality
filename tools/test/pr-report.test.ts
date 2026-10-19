@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdir, writeFile, rm, cp } from 'node:fs/promises'
+import { mkdir, readFile, writeFile, rm, cp } from 'node:fs/promises'
 import { packageDirsFor, renderReport } from '../pr-report.js'
 
 // Written against real directories under measures/, because the whole job of
@@ -103,5 +103,23 @@ describe('renderReport on a package that fails', () => {
     await writeFile(`${SCRATCH}/openquality.yaml`, 'id: a|b/c\nversion: 1.0.0\nlicense: MIT\nartifacts: []\n', 'utf8')
     const { markdown } = await renderReport([SCRATCH])
     expect(markdown).not.toMatch(/\| a\|b\/c/)
+  })
+
+  it('fails on a dependency that is not a package, which CI would otherwise be first to catch', async () => {
+    const manifest = await readFile(`${TEMPLATE}/openquality.yaml`, 'utf8')
+    await writeFile(`${SCRATCH}/openquality.yaml`, manifest + 'dependencies:\n  - id: cms/lib-gone\n    version: 1.0.0\n', 'utf8')
+    const { markdown, ok } = await renderReport([SCRATCH])
+    expect(ok).toBe(false)
+    expect(markdown).toContain('cms/lib-gone@1.0.0, which is not a package')
+  })
+})
+
+describe('renderReport on includes', () => {
+  it('warns, without failing, about an include no package provides', async () => {
+    // Real package: it includes FHIRHelpers 4.0.1 and carries no FHIRHelpers.
+    const { markdown, ok } = await renderReport(['measures/community/hospital-at-home-eligibility'])
+    expect(ok).toBe(true)
+    expect(markdown).toContain("Includes FHIRHelpers version '4.0.1'")
+    expect(markdown).toContain('Warnings do not block a level')
   })
 })
