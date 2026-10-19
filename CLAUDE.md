@@ -192,6 +192,15 @@ Twelve CPT declarations across six upstream CQL files are stripped of their
 `display` clauses at import; the affected packages are marked `derived` with the
 exact codes named in `modifications`.
 
+## Development loop
+
+Most changes come from an agent loop run by `/cycle` (`.claude/commands/cycle.md`)
+and reviewed by four council agents (`.claude/agents/council-*.md`).
+`docs/operating-model.md` is the policy: what the loop may do on its own, what is
+reserved for the maintainer, and the lean rules it works by. Read it before acting
+as the loop. Labels: `ready` (maintainer demand), `loop`, `needs-maintainer`,
+`stop-the-line`.
+
 ## Repository layout notes
 
 - `measures/cms-fhir-2026/` is **generated**. `measures/community/` is
