@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { readCorpus, resolveDependencies } from '../src/corpus.js'
+import { readCorpus, resolveDependencies, unsatisfiedIncludes, type CorpusPackage } from '../src/corpus.js'
 import type { Manifest } from '../src/manifest.js'
 
 function pkg(id: string, deps: string[] = []): { manifest: Manifest } {
@@ -65,5 +65,48 @@ describe('readCorpus', () => {
     const corpus = await readCorpus([join(root, 'col')])
     expect([...corpus.keys()]).toEqual(['x/a@1.0.0', 'x/b@1.0.0'])
     expect(corpus.get('x/b@1.0.0')!.dir).toBe(join(root, 'col', 'b'))
+  })
+})
+
+describe('unsatisfiedIncludes', () => {
+  async function onDisk(id: string, cql: string, deps: string[] = []): Promise<CorpusPackage> {
+    const dir = await mkdtemp(join(tmpdir(), 'oq-includes-'))
+    await mkdir(join(dir, 'cql'))
+    await writeFile(join(dir, 'cql', 'Main.cql'), cql)
+    return { dir, manifest: { ...pkg(id, deps).manifest, artifacts: [{ path: 'cql/Main.cql', type: 'cql' }] } }
+  }
+
+  it('is satisfied by a dependency whose CQL header has the included name and version', async () => {
+    const lib = await onDisk('cms/lib-status', "library Status version '1.15.000'\n")
+    const m = await onDisk('cms/m', "library M version '1.0.000'\ninclude Status version '1.15.000' called Status\n", ['cms/lib-status'])
+    expect(await unsatisfiedIncludes(m, [lib])).toEqual([])
+  })
+
+  it('reports an include whose library is present only at another version, naming what is there', async () => {
+    const lib = await onDisk('cms/lib-status', "library Status version '1.15.000'\n")
+    const m = await onDisk('cms/m', "library M version '1.0.000'\ninclude Status version '1.13.000' called Status\n", ['cms/lib-status'])
+    expect(await unsatisfiedIncludes(m, [lib])).toEqual([
+      { path: 'cql/Main.cql', library: 'Status', version: '1.13.000', available: ['1.15.000'] },
+    ])
+  })
+
+  it('reports an include nothing provides', async () => {
+    const m = await onDisk('community/m', "library M version '1.0.000'\ninclude FHIRHelpers version '4.0.1'\n")
+    expect(await unsatisfiedIncludes(m, [])).toEqual([
+      { path: 'cql/Main.cql', library: 'FHIRHelpers', version: '4.0.1', available: [] },
+    ])
+  })
+
+  it('is satisfied by a CQL file inside the package itself', async () => {
+    const m = await onDisk('cms/m', "library M version '1.0.000'\ninclude Helpers version '1.0.000'\n")
+    await writeFile(join(m.dir, 'cql', 'Helpers.cql'), "library Helpers version '1.0.000'\n")
+    m.manifest.artifacts.push({ path: 'cql/Helpers.cql', type: 'cql' })
+    expect(await unsatisfiedIncludes(m, [])).toEqual([])
+  })
+
+  it('skips an unreadable file rather than throwing', async () => {
+    const m = await onDisk('cms/m', '')
+    m.manifest.artifacts.push({ path: 'cql/Gone.cql', type: 'cql' })
+    expect(await unsatisfiedIncludes(m, [])).toEqual([])
   })
 })

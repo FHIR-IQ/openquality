@@ -159,7 +159,7 @@
     <div class="counts">
       <div><b>54</b> measures</div>
       <div><b>17</b> shared libraries</div>
-      <div><b>13</b> knowledge entries</div>
+      <div><b>14</b> knowledge entries</div>
       <div><b>15</b> stewards</div>
       <div><b>46</b> verified unmodified</div>
     </div>
@@ -224,6 +224,13 @@
         <span class="es">resolved</span></div>
         <p><a class="elink" href="/knowledge/corpus-2026-007">The licensing check could not see FHIR resources</a></p>
         <p>The check that enforces this project's hardest content rule, that AMA-licensed CPT descriptors are never redistributed, read CQL and nothing else. It returned no findings for every other file type, including FHIR resources, where the same twelve licensed descriptors also appear.</p>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="et">defect</span>
+        <span class="es mono">corpus-2026-008</span>
+        <span class="es">open</span></div>
+        <p><a class="elink" href="/knowledge/corpus-2026-008">Included library versions not published</a></p>
+        <p>Seventeen imported measures, and one imported library, include a shared CQL library at a version the corpus does not carry. Each includes an older version than the one upstream publishes in input/cql. The importer matches includes by library name only, so it pairs every one of them with the newer library, and nothing reported the difference until oq validate-all gained the cql.includes warning on 2026-10-18.</p>
       </div>
     </div>
     <div class="scope">
@@ -305,7 +312,7 @@
       the corpus supports: the finding is what has to be public, not the finder.
     </p>
     <div class="people">
-      <span class="person"><b>aks129</b> <span>8 entries</span></span>
+      <span class="person"><b>aks129</b> <span>9 entries</span></span>
       <span class="person"><b>anonymous</b> <span>4 entries</span></span>
       <span class="person"><b>evan-machusak</b> <span>1 entry</span></span>
     </div>

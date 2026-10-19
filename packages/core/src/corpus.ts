@@ -1,5 +1,6 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
+import { parseHeader, parseIncludes } from './cql.js'
 import { parseManifest, type Manifest } from './manifest.js'
 
 export interface CorpusPackage {
@@ -90,4 +91,60 @@ export function resolveDependencies<T extends { manifest: Manifest }>(
     resolved: [...resolved.values()].sort((a, b) => byId(a.manifest.id, b.manifest.id)),
     missing: missing.sort((a, b) => byId(a.id, b.id)),
   }
+}
+
+export interface UnsatisfiedInclude {
+  /** Package-relative path of the CQL file holding the include. */
+  path: string
+  library: string
+  version: string
+  /** Versions of that library the package and its dependencies do provide, sorted. */
+  available: string[]
+}
+
+async function cqlSources(pkg: CorpusPackage): Promise<{ path: string; source: string }[]> {
+  const out: { path: string; source: string }[] = []
+  for (const artifact of pkg.manifest.artifacts) {
+    if (!artifact.path.endsWith('.cql')) continue
+    try {
+      out.push({ path: artifact.path, source: await readFile(join(pkg.dir, artifact.path), 'utf8') })
+    } catch {
+      // artifacts.present reports a missing file; this check has nothing to read.
+    }
+  }
+  return out
+}
+
+/**
+ * Every `include` in a package's own CQL that neither the package nor its
+ * resolved dependencies provide at exactly the named version.
+ *
+ * Package dependencies are matched by package id and version, so they can
+ * resolve while the CQL still asks for a library version no package carries.
+ * Upstream ecqm-content-qicore-2025 has measures that include an older version
+ * of a shared library than the one it publishes, and this is what makes that
+ * visible. Only the package's own includes are checked; a library's includes
+ * are checked when the library package itself is.
+ */
+export async function unsatisfiedIncludes(pkg: CorpusPackage, resolved: CorpusPackage[]): Promise<UnsatisfiedInclude[]> {
+  const own = await cqlSources(pkg)
+  const provided = new Map<string, Set<string>>()
+  for (const p of [pkg, ...resolved]) {
+    for (const { source } of p === pkg ? own : await cqlSources(p)) {
+      const header = parseHeader(source)
+      if (!header) continue
+      if (!provided.has(header.name)) provided.set(header.name, new Set())
+      provided.get(header.name)!.add(header.version)
+    }
+  }
+
+  const out: UnsatisfiedInclude[] = []
+  for (const { path, source } of own) {
+    for (const include of parseIncludes(source)) {
+      const versions = provided.get(include.library)
+      if (versions?.has(include.version)) continue
+      out.push({ path, library: include.library, version: include.version, available: [...(versions ?? [])].sort() })
+    }
+  }
+  return out
 }

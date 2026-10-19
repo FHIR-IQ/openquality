@@ -29,7 +29,8 @@ measure package carries:
   and naming exactly what changed
 
 Two output forms, built from one list of resources so they cannot disagree. Both
-resolve dependencies transitively and include every library the measure needs:
+resolve dependencies transitively and include every library package the measure depends
+on. For 17 measures that is not the exact version their CQL includes (see Scenario 2):
 
 ```bash
 pnpm oq fhir-bundle <package-dir>    # CRMI artifact Bundle, the $package shape
@@ -86,6 +87,16 @@ every measure carried its own copy instead: 301 CQL files for 69 distinct librar
 on their own, which need the dependencies bundled, and where they disagree. Every
 difference is a finding, recorded against the measure and version under Scenario 3.
 
+**The first thing to test is a known mismatch.** 17 of the measures, as published
+upstream, include an older version of a shared library than upstream publishes: for
+example nine includes of `Status version '1.13.000'` where only Status 1.15.000 exists in
+`input/cql`. The importer resolved each by name to the newer library, so their bundles
+carry Status 1.15.000. A tool that resolves by name will load them; a tool that requires
+the exact version will not. Which tools do which is unknown, because nothing here runs a
+translator. The full list is
+[`corpus-2026-008`](../knowledge/corpus/2026-008-included-library-versions-not-published.md),
+and `pnpm oq validate-all measures/cms-fhir-2026` prints it.
+
 The change behind this was ours to make: Level 1 used to require a measure title, so a
 library-only package had no valid shape. Recorded and resolved as `corpus-2026-002`.
 
@@ -112,6 +123,8 @@ thing that can be re-run rather than re-read.
   in the code and unimplemented, so every package sits at Level 1. Nothing here claims
   its CQL translates.
 - **No repository service.** Artifacts only.
+- **17 measures include library versions the corpus does not carry.** Inherited from
+  upstream and reported as a warning, not fixed. See Scenario 2.
 - **Licensed content is stripped.** Six measures are `derived` because AMA-licensed CPT
   descriptors were removed from twelve codes, in both the CQL and the `Measure` resource.
   The code and code system are kept; only the display text is gone. See
