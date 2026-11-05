@@ -41,6 +41,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://openquality.us/knowledge/cms122-2026-006</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://openquality.us/knowledge/cms125-2026-001</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://openquality.us/knowledge/cms135-2026-001</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://openquality.us/knowledge/cms165-2026-001</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://openquality.us/knowledge/cms506-2026-001</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://openquality.us/knowledge/corpus-2026-001</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -77,6 +102,11 @@
   </url>
   <url>
     <loc>https://openquality.us/knowledge/corpus-2026-008</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://openquality.us/knowledge/corpus-2026-009</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
