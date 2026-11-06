@@ -14,7 +14,7 @@
     "packages": 71,
     "measures": 54,
     "libraries": 17,
-    "knowledgeEntries": 14
+    "knowledgeEntries": 20
   },
   "dependencies": "A package lists its direct dependencies as id and version. Resolve them transitively against `packages` to get everything a measure needs.",
   "packages": [
@@ -347,7 +347,9 @@
           "version": "5.1.0"
         }
       ],
-      "knowledge": []
+      "knowledge": [
+        "cms125-2026-001"
+      ]
     },
     {
       "id": "cms/cataracts-20-40-or-better-visual-acuity-within-90-days-following-cataract-surgery",
@@ -723,7 +725,9 @@
           "version": "5.1.0"
         }
       ],
-      "knowledge": []
+      "knowledge": [
+        "cms165-2026-001"
+      ]
     },
     {
       "id": "cms/coronary-artery-disease-cad-beta-blocker-therapy-prior-myocardial-infarction-mi-or-left-ventricular-systolic-dysfunction-lvef-less-than-or-equal-to-40",
@@ -896,7 +900,8 @@
         "cms122-2026-002",
         "cms122-2026-003",
         "cms122-2026-004",
-        "cms122-2026-005"
+        "cms122-2026-005",
+        "cms122-2026-006"
       ]
     },
     {
@@ -1319,7 +1324,9 @@
           "version": "5.1.0"
         }
       ],
-      "knowledge": []
+      "knowledge": [
+        "cms135-2026-001"
+      ]
     },
     {
       "id": "cms/heart-failure-hf-beta-blocker-therapy-for-left-ventricular-systolic-dysfunction-lvsd",
@@ -2647,7 +2654,9 @@
           "version": "5.1.0"
         }
       ],
-      "knowledge": []
+      "knowledge": [
+        "cms506-2026-001"
+      ]
     },
     {
       "id": "cms/severe-obstetric-complications",
@@ -2951,6 +2960,86 @@
       "source": "knowledge/cms122/test-cases/2026-005-no-result-counts-as-numerator.md"
     },
     {
+      "id": "cms122-2026-006",
+      "title": "Poor control is not a treatment target",
+      "type": "implementation-note",
+      "status": "open",
+      "measure": "cms/diabetes-glycemic-status-assessment-greater-than-9",
+      "measureVersion": "0.5.0",
+      "categories": [
+        "measure-logic",
+        "clinical-evidence"
+      ],
+      "summary": "Not meeting CMS122FHIR's poor-control numerator does not mean that a patient has achieved an appropriate individualized glycemic goal.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/cms122-2026-006",
+      "source": "knowledge/cms122/2026-006-poor-control-is-not-a-treatment-target.md"
+    },
+    {
+      "id": "cms125-2026-001",
+      "title": "Screening age and reporting lookback",
+      "type": "implementation-note",
+      "status": "open",
+      "measure": "cms/breast-cancer-screening",
+      "measureVersion": "0.4.0",
+      "categories": [
+        "measure-logic",
+        "clinical-evidence"
+      ],
+      "summary": "Age 42 at measurement-period end in CMS125FHIR is a reporting-population rule, not a recommendation to defer initial mammography until age 42.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/cms125-2026-001",
+      "source": "knowledge/cms125/2026-001-screening-age-and-reporting-lookback.md"
+    },
+    {
+      "id": "cms135-2026-001",
+      "title": "Medication measures and comprehensive therapy",
+      "type": "implementation-note",
+      "status": "open",
+      "measure": "cms/heart-failure-hf-angiotensin-converting-enzyme-ace-inhibitor-or-angiotensin-receptor-blocker-arb-or-angiotensin-receptor-neprilysin-inhibitor-arni-therapy-for-left-ventricular-systolic-dysfunction-lvsd",
+      "measureVersion": "0.4.0",
+      "categories": [
+        "measure-logic",
+        "clinical-evidence"
+      ],
+      "summary": "The ACE inhibitor/ARB/ARNI and beta-blocker measures assess selected medication processes. Meeting their numerators does not establish comprehensive HFrEF therapy.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/cms135-2026-001",
+      "source": "knowledge/cms135/2026-001-medication-measures-and-comprehensive-therapy.md"
+    },
+    {
+      "id": "cms165-2026-001",
+      "title": "Reporting threshold and treatment goal",
+      "type": "implementation-note",
+      "status": "open",
+      "measure": "cms/controlling-high-blood-pressure",
+      "measureVersion": "0.5.0",
+      "categories": [
+        "measure-logic",
+        "clinical-evidence"
+      ],
+      "summary": "CMS165FHIR's below-140/90 numerator threshold should not be presented as the clinical treatment goal in the 2025 multisociety hypertension guideline.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/cms165-2026-001",
+      "source": "knowledge/cms165/2026-001-reporting-threshold-and-treatment-goal.md"
+    },
+    {
+      "id": "cms506-2026-001",
+      "title": "Concurrent prescribing and clinical judgment",
+      "type": "implementation-note",
+      "status": "open",
+      "measure": "cms/safe-use-of-opioids-concurrent-prescribing",
+      "measureVersion": "0.3.7",
+      "categories": [
+        "measure-logic",
+        "clinical-evidence"
+      ],
+      "summary": "CMS506FHIR's discharge prescribing indicator should not be interpreted as an absolute clinical prohibition on every concurrent opioid/benzodiazepine prescription.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/cms506-2026-001",
+      "source": "knowledge/cms506/2026-001-concurrent-prescribing-and-clinical-judgment.md"
+    },
+    {
       "id": "corpus-2026-001",
       "title": "Draft versioning of seeded packages",
       "type": "implementation-note",
@@ -3075,6 +3164,21 @@
       "reporter": "aks129",
       "page": "https://openquality.us/knowledge/corpus-2026-008",
       "source": "knowledge/corpus/2026-008-included-library-versions-not-published.md"
+    },
+    {
+      "id": "corpus-2026-009",
+      "title": "Clinical evidence crosswalk",
+      "type": "implementation-note",
+      "status": "open",
+      "scope": "corpus",
+      "categories": [
+        "measure-metadata",
+        "clinical-evidence"
+      ],
+      "summary": "This initial evidence crosswalk connects five clinical areas in the seeded CMS FHIR collection to dated professional guidance and selected research. A reporting threshold is not necessarily a treatment target, and a narrow process measure does not establish that a patient received comprehensive guideline-directed care.",
+      "reporter": "codex",
+      "page": "https://openquality.us/knowledge/corpus-2026-009",
+      "source": "knowledge/corpus/2026-009-clinical-evidence-crosswalk.md"
     },
     {
       "id": "cql-2026-001",
