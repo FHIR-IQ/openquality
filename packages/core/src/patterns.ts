@@ -32,17 +32,32 @@ function maskQuoted(cql: string): string {
   return cql.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"/g, (q) => q[0] + ' '.repeat(q.length - 2) + q[q.length - 1])
 }
 
-function lineOf(text: string, index: number): number {
-  let line = 1
-  for (let i = 0; i < index; i++) if (text.charCodeAt(i) === 10) line++
-  return line
+/**
+ * Line numbers for match offsets, in one pass. Rescanning from the start for
+ * each finding costs file length times findings, which a large contributor file
+ * with many findings turns into minutes.
+ */
+function lineFinder(text: string): (index: number) => number {
+  const starts = [0]
+  for (let i = 0; i < text.length; i++) if (text.charCodeAt(i) === 10) starts.push(i + 1)
+  return (index) => {
+    let lo = 0
+    let hi = starts.length - 1
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1
+      if (starts[mid]! <= index) lo = mid
+      else hi = mid - 1
+    }
+    return lo + 1
+  }
 }
 
 export function checkCqlPatterns(path: string, source: string): Finding[] {
   const cql = stripComments(source)
   const findings: Finding[] = []
+  const lineOf = lineFinder(cql)
   const warn = (index: number, message: string) =>
-    findings.push({ check: 'cql.patterns', severity: 'warning', path, message: `line ${lineOf(cql, index)}: ${message}` })
+    findings.push({ check: 'cql.patterns', severity: 'warning', path, message: `line ${lineOf(index)}: ${message}` })
 
   for (const m of cql.matchAll(USING_NO_VERSION)) {
     warn(m.index!, `\`using ${m[1]}\` has no version. The CMS QMD patterns require one: the model declaration "SHALL include a version". ${PATTERNS_URL}`)

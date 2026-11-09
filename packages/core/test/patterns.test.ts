@@ -54,4 +54,23 @@ describe('checkCqlPatterns', () => {
     const cql = HEAD + "using USCore version '6.1.0'\n// 'female' in \"Administrative Gender\"\n/* [Encounter] */\n"
     expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
   })
+
+  it('numbers lines correctly after blank lines, and never across them', () => {
+    const findings = checkCqlPatterns('cql/A.cql', "library A version '1.0.0'\n\n\n\nusing FHIR\n")
+    expect(findings.map((f) => f.message.slice(0, 7))).toEqual(['line 5:'])
+    expect(checkCqlPatterns('cql/A.cql', 'using\n'.repeat(1000))).toEqual([])
+  })
+
+  it('does not read contains inside a string as a terminology contains', () => {
+    expect(checkCqlPatterns('cql/A.cql', HEAD + "define \"S\": 'X.code contains y'\n")).toEqual([])
+  })
+
+  it('stays fast on a large file with many findings', () => {
+    const big = HEAD + 'define "C": X.code contains y\n'.repeat(20000)
+    const start = Date.now()
+    const findings = checkCqlPatterns('cql/A.cql', big)
+    expect(findings).toHaveLength(20000)
+    expect(findings[19999]!.message).toMatch(/^line 20002:/)
+    expect(Date.now() - start).toBeLessThan(2000)
+  })
 })
