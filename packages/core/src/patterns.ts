@@ -14,12 +14,12 @@ import { stripComments } from './cql.js'
  */
 const PATTERNS_URL = 'https://build.fhir.org/ig/cqframework/cms-qmd/pattern_fhir.html'
 
-const USING_NO_VERSION = /^using\s+([A-Za-z0-9_]+)\s*$/gm
+const USING_NO_VERSION = /^\s*using\s+([A-Za-z0-9_.]+)(?:\s+called\s+[A-Za-z0-9_]+)?\s*$/gm
 const STRING_MEMBERSHIP = /'[^'\n]*'\s+in\s+"/g
 const TERMINOLOGY_CONTAINS = /\.(code|category|type|class|reasonCode)\s+contains\b/g
 const UNQUALIFIED_RETRIEVE = /\[[A-Z][A-Za-z0-9_]*\s*[:\]]/g
 
-const USING = /^using\s+[A-Za-z0-9_]+/gm
+const USING = /^\s*using\s+[A-Za-z0-9_.]+/gm
 
 /**
  * Blanks the inside of every string literal and quoted identifier, keeping the
@@ -46,9 +46,9 @@ export function checkCqlPatterns(path: string, source: string): Finding[] {
     warn(m.index!, `\`using ${m[1]}\` has no version. The CMS QMD patterns require one: the model declaration "SHALL include a version". ${PATTERNS_URL}`)
   }
   for (const m of cql.matchAll(STRING_MEMBERSHIP)) {
-    warn(m.index!, `string-based membership testing. The CMS QMD patterns say it "SHOULD NOT be used"; compare a code with \`~\` or \`in\`. ${PATTERNS_URL}`)
+    warn(m.index!, `likely string-based membership testing (a string tested with \`in\` against a named value set; ignore this if the right side is a list of strings). The CMS QMD patterns say it "SHOULD NOT be used"; compare a code with \`~\` or \`in\`. ${PATTERNS_URL}`)
   }
-  for (const m of cql.matchAll(TERMINOLOGY_CONTAINS)) {
+  for (const m of maskQuoted(cql).matchAll(TERMINOLOGY_CONTAINS)) {
     warn(m.index!, `\`contains\` on the terminology-valued element \`${m[1]}\`. The CMS QMD patterns say not to; use \`includesCode()\` or \`in\`. ${PATTERNS_URL}`)
   }
 

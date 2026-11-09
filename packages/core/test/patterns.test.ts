@@ -17,6 +17,11 @@ describe('checkCqlPatterns', () => {
     expect(findings[0]!.message).toMatch(/line 2.*using FHIR.*version/)
   })
 
+  it('warns on a versionless model declaration written with called or indented', () => {
+    const findings = checkCqlPatterns('cql/A.cql', "library A version '1.0.0'\n  using FHIR called F\n")
+    expect(findings.map((f) => f.severity)).toEqual(['warning'])
+  })
+
   it('warns on string-based membership testing', () => {
     const findings = checkCqlPatterns('cql/A.cql', HEAD + "define \"F\": 'female' in \"Administrative Gender\"\n")
     expect(findings.map((f) => f.severity)).toEqual(['warning'])
