@@ -122,16 +122,6 @@ const MODEL_PACKAGES: Record<string, string> = {
   USQualityCore: 'fhir.onc.us-quality-core',
 }
 
-/**
- * A derived ModelInfo is versioned after the IG it derives from plus
- * `-derived` (US CQL ships `QICore` 6.0.0-derived), and CQL names that
- * version in `using`. No package is published under it, so the dependency
- * takes the IG's version.
- */
-function packageVersionForModel(modelVersion: string): string {
-  return modelVersion.replace(/-derived$/, '')
-}
-
 export function buildPackageJson(
   manifest: Manifest,
   files: CqlFile[],
@@ -146,7 +136,7 @@ export function buildPackageJson(
   for (const file of files) {
     const header = parseHeader(file.source)
     const pkg = header?.model ? MODEL_PACKAGES[header.model] : undefined
-    if (pkg && header?.modelVersion) dependencies[pkg] = packageVersionForModel(header.modelVersion)
+    if (pkg && header?.modelVersion) dependencies[pkg] = header.modelVersion
   }
 
   return {

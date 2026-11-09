@@ -129,14 +129,6 @@ describe('buildPackageJson', () => {
     })
   })
 
-  it('maps a derived ModelInfo version to the package version that exists', () => {
-    const derived: CqlFile = { path: 'a.cql', source: `library A version '1.0.0'\nusing QICore version '6.0.0-derived'` }
-    expect(buildPackageJson(MANIFEST, [derived]).dependencies).toEqual({
-      'hl7.fhir.r4.core': '4.0.1',
-      'hl7.fhir.us.qicore': '6.0.0',
-    })
-  })
-
   it('carries the licence through from the manifest', () => {
     expect(buildPackageJson(MANIFEST, [MAIN]).license).toBe('CC0-1.0')
     expect(buildPackageJson(MANIFEST, [MAIN], { license: 'MIT' }).license).toBe('MIT')
