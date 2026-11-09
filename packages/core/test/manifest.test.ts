@@ -120,6 +120,12 @@ describe('dataModel', () => {
     if (result.ok) expect(result.manifest.dataModel).toBe('qi-core')
   })
 
+  it('accepts us-quality-core, which the CMS QMD authoring patterns target', () => {
+    const result = parseManifest(`${base}\ndataModel: us-quality-core\n`)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.manifest.dataModel).toBe('us-quality-core')
+  })
+
   it('still rejects an unknown data model', () => {
     const result = parseManifest(`${base}\ndataModel: nonsense\n`)
     expect(result.ok).toBe(false)

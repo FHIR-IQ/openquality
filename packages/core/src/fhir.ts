@@ -112,6 +112,16 @@ export function fhirVersionFor(files: CqlFile[]): string {
   return '4.0.1'
 }
 
+/**
+ * The FHIR package that defines each CQL data model a measure may declare.
+ * US Quality Core's id is taken from the cms-qmd IG's own package.json, which
+ * lists `fhir.onc.us-quality-core#0.5.0`.
+ */
+const MODEL_PACKAGES: Record<string, string> = {
+  QICore: 'hl7.fhir.us.qicore',
+  USQualityCore: 'fhir.onc.us-quality-core',
+}
+
 export function buildPackageJson(
   manifest: Manifest,
   files: CqlFile[],
@@ -125,9 +135,8 @@ export function buildPackageJson(
   const dependencies: Record<string, string> = { 'hl7.fhir.r4.core': fhirVersion }
   for (const file of files) {
     const header = parseHeader(file.source)
-    if (header?.model === 'QICore' && header.modelVersion) {
-      dependencies['hl7.fhir.us.qicore'] = header.modelVersion
-    }
+    const pkg = header?.model ? MODEL_PACKAGES[header.model] : undefined
+    if (pkg && header?.modelVersion) dependencies[pkg] = header.modelVersion
   }
 
   return {
