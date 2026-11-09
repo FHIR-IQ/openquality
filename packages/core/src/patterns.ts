@@ -14,12 +14,14 @@ import { stripComments } from './cql.js'
  */
 const PATTERNS_URL = 'https://build.fhir.org/ig/cqframework/cms-qmd/pattern_fhir.html'
 
-const USING_NO_VERSION = /^\s*using\s+([A-Za-z0-9_.]+)(?:\s+called\s+[A-Za-z0-9_]+)?\s*$/gm
+// [ \t] rather than \s at the edges: \s also matches newlines, and on a file of
+// thousands of blank lines that turns one line's match into a scan of the rest.
+const USING_NO_VERSION = /^[ \t]*using[ \t]+([A-Za-z0-9_.]+)(?:[ \t]+called[ \t]+[A-Za-z0-9_]+)?[ \t]*$/gm
 const STRING_MEMBERSHIP = /'[^'\n]*'\s+in\s+"/g
 const TERMINOLOGY_CONTAINS = /\.(code|category|type|class|reasonCode)\s+contains\b/g
 const UNQUALIFIED_RETRIEVE = /\[[A-Z][A-Za-z0-9_]*\s*[:\]]/g
 
-const USING = /^\s*using\s+[A-Za-z0-9_.]+/gm
+const USING = /^[ \t]*using[ \t]+[A-Za-z0-9_.]+/gm
 
 /**
  * Blanks the inside of every string literal and quoted identifier, keeping the
