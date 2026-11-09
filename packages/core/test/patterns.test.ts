@@ -29,15 +29,24 @@ describe('checkCqlPatterns', () => {
     expect(findings[0]!.message).toMatch(/line 3.*contains/)
   })
 
-  it('reports unqualified retrieves once per file, as info', () => {
-    const cql = HEAD + 'define "E": [Encounter: "Office Visit"]\ndefine "O": [Observation]\n'
+  it('reports unqualified retrieves once per file, as info, when the library uses more than one model', () => {
+    const cql = HEAD + "using USCore version '6.1.0'\ndefine \"E\": [Encounter: \"Office Visit\"]\ndefine \"O\": [Observation]\n"
     const findings = checkCqlPatterns('cql/A.cql', cql)
     expect(findings).toEqual([expect.objectContaining({ severity: 'info' })])
-    expect(findings[0]!.message).toMatch(/2 retrieves/)
+    expect(findings[0]!.message).toMatch(/2 retrieves.*2 models/)
+  })
+
+  it('does not report unqualified retrieves in a single-model library, as the IG limits the practice', () => {
+    expect(checkCqlPatterns('cql/A.cql', HEAD + 'define "E": [Encounter]\n')).toEqual([])
+  })
+
+  it('does not count brackets inside strings or quoted identifiers as retrieves', () => {
+    const cql = HEAD + "using USCore version '6.1.0'\ncode \"BP [HOOS]\": '1' from \"LOINC\"\ndefine \"U\": 'mm[Hg]'\n"
+    expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
   })
 
   it('ignores anything inside a comment', () => {
-    const cql = HEAD + "// 'female' in \"Administrative Gender\"\n/* [Encounter] */\n"
+    const cql = HEAD + "using USCore version '6.1.0'\n// 'female' in \"Administrative Gender\"\n/* [Encounter] */\n"
     expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
   })
 })

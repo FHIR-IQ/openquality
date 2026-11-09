@@ -49,7 +49,7 @@ describe('validatePackage', () => {
   it('runs the CMS QMD pattern checks over CQL artifacts without changing the level', async () => {
     await write('openquality.yaml', MANIFEST)
     await write('README.md', README)
-    await write('cql/M.cql', "library M version '1.0.0'\nusing FHIR\ndefine \"E\": [Encounter]\n")
+    await write('cql/M.cql', "library M version '1.0.0'\nusing FHIR\nusing USCore version '6.1.0'\ndefine \"E\": [Encounter]\n")
 
     const result = await validatePackage(dir)
     expect(result.report.checksRun).toContain('cql.patterns')

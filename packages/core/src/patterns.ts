@@ -19,6 +19,17 @@ const STRING_MEMBERSHIP = /'[^'\n]*'\s+in\s+"/g
 const TERMINOLOGY_CONTAINS = /\.(code|category|type|class|reasonCode)\s+contains\b/g
 const UNQUALIFIED_RETRIEVE = /\[[A-Z][A-Za-z0-9_]*\s*[:\]]/g
 
+const USING = /^using\s+[A-Za-z0-9_]+/gm
+
+/**
+ * Blanks the inside of every string literal and quoted identifier, keeping the
+ * quotes and the length. A unit such as `'mm[Hg]'` or a code display such as
+ * `"Hip Disability [HOOS]"` otherwise reads as a retrieve.
+ */
+function maskQuoted(cql: string): string {
+  return cql.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"/g, (q) => q[0] + ' '.repeat(q.length - 2) + q[q.length - 1])
+}
+
 function lineOf(text: string, index: number): number {
   let line = 1
   for (let i = 0; i < index; i++) if (text.charCodeAt(i) === 10) line++
@@ -41,7 +52,10 @@ export function checkCqlPatterns(path: string, source: string): Finding[] {
     warn(m.index!, `\`contains\` on the terminology-valued element \`${m[1]}\`. The CMS QMD patterns say not to; use \`includesCode()\` or \`in\`. ${PATTERNS_URL}`)
   }
 
-  const unqualified = [...cql.matchAll(UNQUALIFIED_RETRIEVE)].length
+  // The IG's condition, kept: "When multiple models are included in a library,
+  // qualifying the name of the type with the model name is a best-practice".
+  const models = [...cql.matchAll(USING)].length
+  const unqualified = models > 1 ? [...maskQuoted(cql).matchAll(UNQUALIFIED_RETRIEVE)].length : 0
   if (unqualified > 0) {
     findings.push({
       check: 'cql.patterns',
@@ -49,7 +63,8 @@ export function checkCqlPatterns(path: string, source: string): Finding[] {
       path,
       message:
         `${unqualified} ${unqualified === 1 ? 'retrieve is' : 'retrieves are'} not qualified with the model name ` +
-        `(for example \`[QICore.Encounter]\`). The CMS QMD patterns call qualifying a best practice. ${PATTERNS_URL}`,
+        `(for example \`[QICore.Encounter]\`), in a library that declares ${models} models. The CMS QMD patterns ` +
+        `call qualifying a best practice when a library includes more than one model. ${PATTERNS_URL}`,
     })
   }
   return findings

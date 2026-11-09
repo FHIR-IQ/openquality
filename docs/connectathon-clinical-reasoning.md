@@ -150,14 +150,16 @@ and a Reviewer (any participant).
 | Model declaration includes a version (SHALL) | all 70 files. 68 declare `QICore` 6.0.0, 5 `USCore` 6.1.0, 2 `FHIR` 4.0.1 |
 | No string-based membership testing (SHOULD NOT) | none found |
 | No `contains` on terminology-valued elements | none found |
-| Retrieves qualified with the model name (best practice) | none of 728 retrieves |
+| Retrieves qualified with the model name (best practice when a library uses more than one model) | none of 662 retrieves. 5 files declare two models, and hold 125 of them |
 | Authored against US Quality Core | no file |
 
 So the work is mostly the model move from QI-Core 6.0.0 to US Quality Core 0.5.0 and
 what follows from it, not cleanup of the CQL already there. These are text matches over
-the CQL with comments removed, not a translation, so a pattern that only shows up after
-translation is not counted. (A first count of 744 retrieves included 16 inside comments.)
-`pnpm oq validate <package>` reports the same checks for one package.
+the CQL, with comments and the contents of strings and quoted identifiers removed (so a
+unit like `'mm[Hg]'` is not read as a retrieve), not a translation. A pattern that only
+shows up after translation is not counted. An earlier count of 744 retrieves had matched
+brackets inside comments, units and code names. `pnpm oq validate <package>` reports the
+same checks for one package.
 
 **What we want to learn**
 
@@ -178,8 +180,10 @@ translation is not counted. (A first count of 744 retrieves included 16 inside c
 - The validator reports the patterns it can read from CQL text, as check
   `cql.patterns` ([#22](https://github.com/FHIR-IQ/openquality/issues/22)): a model
   declaration without a version, string-based membership and `contains` on a
-  terminology-valued element are warnings, and unqualified retrieves are one info line
-  per file. None of them changes a package's level or blocks a pull request.
+  terminology-valued element are warnings. Unqualified retrieves are one info line per
+  file, and only in a library that declares more than one model, which is where the IG
+  calls qualifying a best practice. None of them changes a package's level or blocks a
+  pull request.
 
 ## Known limitations, stated up front
 
