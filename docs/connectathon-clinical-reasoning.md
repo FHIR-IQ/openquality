@@ -117,6 +117,65 @@ those rather than copy them, so the answer stays where the measure developers wo
 **A test case contributed here is the highest-value artifact,** because it is the one
 thing that can be re-run rather than re-read.
 
+## Scenario 4: author against the CMS QMD patterns, and contribute back
+
+Proposed by Bryn Rhodes for the track: an authoring scenario that uses the Open Quality
+repository and contributes back to it, applying the authoring patterns in the
+[CMS FHIR Quality Measure Development IG](https://build.fhir.org/ig/cqframework/cms-qmd/patterns.html)
+(`cms.fhir.qmd`, 0.8.0 continuous build, on US Core 6.1.0 and US Quality Core 0.5.0).
+
+**Roles:** an Author (VS Code CQL, CQL Studio or MADiE), the Repository (Open Quality),
+and a Reviewer (any participant).
+
+1. **Find.** Pick a measure from the catalogue or through the MCP server
+   (`get_measure`, `known_issues`), and pull its CQL, its shared library dependencies,
+   and the interpretation issues already recorded against it.
+2. **Author.** Bring one measure in line with the patterns, or author a new one with
+   them: the US Quality Core model with its version, model-qualified retrieves, status
+   functions on every retrieve, `~` for direct-reference codes and `in` for value sets,
+   explicit `day of` precision, and calendar durations where the intent is calendar
+   time.
+3. **Test.** Add test cases for the populations the change touches.
+4. **Contribute back.** Open a pull request to Open Quality with the result as a new
+   package version. The package is `derived` and its manifest names each change. The
+   validator comments on the pull request, so no local tooling is needed.
+5. **Record what the patterns did not settle.** A pattern that needed judgment, or that
+   two authors applied differently, becomes an interpretation issue against the measure
+   and version, citing the pattern. These go back to the cms-qmd IG as issues.
+
+**Baseline, measured 2026-11-09** over the 70 CQL files in the corpus:
+
+| Pattern | Today |
+|---|---|
+| Model declaration includes a version (SHALL) | all 70 files. 68 declare `QICore` 6.0.0, 5 `USCore` 6.1.0, 2 `FHIR` 4.0.1 |
+| No string-based membership testing (SHOULD NOT) | none found |
+| No `contains` on terminology-valued elements | none found |
+| Retrieves qualified with the model name (best practice) | none of 744 retrieves |
+| Authored against US Quality Core | no file |
+
+So the work is mostly the model move from QI-Core 6.0.0 to US Quality Core 0.5.0 and
+what follows from it, not cleanup of the CQL already there. These are text matches over
+the CQL, not a translation, so treat the counts as a floor.
+
+**What we want to learn**
+
+- Which patterns an author can apply mechanically, and which need a judgment the IG does
+  not yet make.
+- Whether US Quality Core 0.5.0 and its derived ModelInfo work the same way in each
+  authoring tool.
+- What a repository has to check to accept pattern-conformant contributions from people
+  it has never met.
+
+**Open Quality has to fix two things before the event.**
+
+- A package cannot declare US Quality Core today ([#21](https://github.com/FHIR-IQ/openquality/issues/21)). The manifest's `dataModel` accepts
+  `fhir-r4`, `qi-core`, `qdm-5.6`, `omop-5.4`, `sql-on-fhir` and `custom`, so a US
+  Quality Core package would fail schema validation before any other check runs.
+- The validator does not check any pattern ([#22](https://github.com/FHIR-IQ/openquality/issues/22)). The ones that can be read from CQL text
+  (model version, string-based membership, `contains` on terminology, unqualified
+  retrieves) can be added as warnings, so they inform an author without blocking a
+  contribution.
+
 ## Known limitations, stated up front
 
 - **Level 2 is unreachable.** `cql.translate`, `fhir.validate` and `sql.parse` are named
@@ -138,6 +197,7 @@ thing that can be re-run rather than re-read.
 2. Shared libraries loaded once and resolved by more than one tool, with the differences
    written down.
 3. Anything found, recorded as an entry rather than a hallway conversation.
+4. Authors willing to apply the CMS QMD patterns to one measure and open a pull request.
 
 Contact: open an issue on [the repository](https://github.com/FHIR-IQ/openquality/issues),
 or find us on FHIR Zulip [`#cql`](https://chat.fhir.org/#narrow/stream/179220-cql).
