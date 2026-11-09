@@ -172,8 +172,8 @@ same checks for one package.
 
 **What Open Quality changed for this scenario**
 
-- A package can declare `dataModel: us-quality-core`, and its FHIR npm package depends
-  on `fhir.onc.us-quality-core`
+- A package can declare `dataModel: us-quality-core`, and when its CQL declares
+  `using USQualityCore`, its FHIR npm package depends on `fhir.onc.us-quality-core`
   ([#21](https://github.com/FHIR-IQ/openquality/issues/21)). Declaring US Core as a
   dependency as well is still open
   ([#24](https://github.com/FHIR-IQ/openquality/issues/24)).
