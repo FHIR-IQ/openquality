@@ -8,6 +8,7 @@ import { checkReadmeSections } from './readme.js'
 import { scanContent } from './scanner.js'
 import { computeLevel } from './level.js'
 import { checkLibraryIdentity } from './library.js'
+import { checkCqlPatterns } from './patterns.js'
 import { listPackageFiles, listPackageSymlinks } from './pack.js'
 import type { CheckId, ConformanceLevel, Finding, ValidationReport } from './report.js'
 
@@ -203,6 +204,15 @@ export async function validatePackage(dir: string): Promise<ValidationResult> {
     if (full === undefined) continue
     const content = await readIfPresent(full)
     if (content !== undefined) findings.push(...scanContent(relPath, content))
+  }
+
+  // Guidance, not a gate: every finding is a warning or info, so it never
+  // changes the level. See patterns.ts.
+  checksRun.push('cql.patterns')
+  for (const artifact of manifest.artifacts.filter((a) => a.type === 'cql')) {
+    const full = await resolveInside(dir, artifact.path)
+    const source = full === undefined ? undefined : await readIfPresent(full)
+    if (source !== undefined) findings.push(...checkCqlPatterns(artifact.path, source))
   }
 
   const report: ValidationReport = { checksRun, findings }

@@ -18,6 +18,7 @@ export type CheckId =
   | 'readme.sections'
   | 'package.symlinks'
   | 'content.forbidden'
+  | 'cql.patterns'
   | 'cql.translate'
   | 'fhir.validate'
   | 'sql.parse'

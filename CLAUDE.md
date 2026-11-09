@@ -67,6 +67,7 @@ sequence of checks, each owned by its own module, each returning `Finding[]`:
 | `corpus.ts` | Reading every package under collection roots; resolving `dependencies` transitively |
 | `fhir.ts` | FHIR output: `Library` resources, the NPM package (`package.json`, `.index.json`), and the CRMI artifact Bundle. Both containers are built from one member list so they cannot diverge, and both take resolved dependencies, built against their own manifests (`depends-on`) |
 | `scanner.ts` / `terminology.ts` | Content the corpus cannot host |
+| `patterns.ts` | CMS QMD authoring patterns readable from CQL text (`cql.patterns`); warnings and info only, never a level gate |
 | `level.ts` | Maps checks → conformance level |
 | `report.ts` | `CheckId` union, `Finding`, `Severity` |
 

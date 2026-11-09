@@ -1,0 +1,76 @@
+import { describe, expect, it } from 'vitest'
+import { checkCqlPatterns } from '../src/patterns.js'
+
+const HEAD = "library A version '1.0.0'\nusing QICore version '6.0.0'\n"
+
+describe('checkCqlPatterns', () => {
+  it('finds nothing in CQL that follows the patterns', () => {
+    const cql = HEAD + 'define "E": [QICore.Encounter: "Office Visit"]\n'
+    expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
+  })
+
+  it('warns on a model declaration without a version', () => {
+    const findings = checkCqlPatterns('cql/A.cql', "library A version '1.0.0'\nusing FHIR\n")
+    expect(findings).toEqual([
+      expect.objectContaining({ check: 'cql.patterns', severity: 'warning', path: 'cql/A.cql' }),
+    ])
+    expect(findings[0]!.message).toMatch(/line 2.*using FHIR.*version/)
+  })
+
+  it('warns on a versionless model declaration written with called or indented', () => {
+    const findings = checkCqlPatterns('cql/A.cql', "library A version '1.0.0'\n  using FHIR called F\n")
+    expect(findings.map((f) => f.severity)).toEqual(['warning'])
+  })
+
+  it('warns on string-based membership testing', () => {
+    const findings = checkCqlPatterns('cql/A.cql', HEAD + "define \"F\": 'female' in \"Administrative Gender\"\n")
+    expect(findings.map((f) => f.severity)).toEqual(['warning'])
+    expect(findings[0]!.message).toMatch(/line 3.*string-based membership/)
+  })
+
+  it('warns on contains applied to a terminology-valued element', () => {
+    const findings = checkCqlPatterns('cql/A.cql', HEAD + 'define "C": exists ([QICore.Condition] C where C.category contains "Problem")\n')
+    expect(findings.map((f) => f.severity)).toEqual(['warning'])
+    expect(findings[0]!.message).toMatch(/line 3.*contains/)
+  })
+
+  it('reports unqualified retrieves once per file, as info, when the library uses more than one model', () => {
+    const cql = HEAD + "using USCore version '6.1.0'\ndefine \"E\": [Encounter: \"Office Visit\"]\ndefine \"O\": [Observation]\n"
+    const findings = checkCqlPatterns('cql/A.cql', cql)
+    expect(findings).toEqual([expect.objectContaining({ severity: 'info' })])
+    expect(findings[0]!.message).toMatch(/2 retrieves.*2 models/)
+  })
+
+  it('does not report unqualified retrieves in a single-model library, as the IG limits the practice', () => {
+    expect(checkCqlPatterns('cql/A.cql', HEAD + 'define "E": [Encounter]\n')).toEqual([])
+  })
+
+  it('does not count brackets inside strings or quoted identifiers as retrieves', () => {
+    const cql = HEAD + "using USCore version '6.1.0'\ncode \"BP [HOOS]\": '1' from \"LOINC\"\ndefine \"U\": 'mm[Hg]'\n"
+    expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
+  })
+
+  it('ignores anything inside a comment', () => {
+    const cql = HEAD + "using USCore version '6.1.0'\n// 'female' in \"Administrative Gender\"\n/* [Encounter] */\n"
+    expect(checkCqlPatterns('cql/A.cql', cql)).toEqual([])
+  })
+
+  it('numbers lines correctly after blank lines, and never across them', () => {
+    const findings = checkCqlPatterns('cql/A.cql', "library A version '1.0.0'\n\n\n\nusing FHIR\n")
+    expect(findings.map((f) => f.message.slice(0, 7))).toEqual(['line 5:'])
+    expect(checkCqlPatterns('cql/A.cql', 'using\n'.repeat(1000))).toEqual([])
+  })
+
+  it('does not read contains inside a string as a terminology contains', () => {
+    expect(checkCqlPatterns('cql/A.cql', HEAD + "define \"S\": 'X.code contains y'\n")).toEqual([])
+  })
+
+  it('stays fast on a large file with many findings', () => {
+    const big = HEAD + 'define "C": X.code contains y\n'.repeat(20000)
+    const start = Date.now()
+    const findings = checkCqlPatterns('cql/A.cql', big)
+    expect(findings).toHaveLength(20000)
+    expect(findings[19999]!.message).toMatch(/^line 20002:/)
+    expect(Date.now() - start).toBeLessThan(2000)
+  })
+})

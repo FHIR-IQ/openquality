@@ -46,6 +46,22 @@ describe('validatePackage', () => {
     expect(result.report.findings.filter((f) => f.severity === 'error')).toEqual([])
   })
 
+  it('runs the CMS QMD pattern checks over CQL artifacts without changing the level', async () => {
+    await write('openquality.yaml', MANIFEST)
+    await write('README.md', README)
+    await write('cql/M.cql', "library M version '1.0.0'\nusing FHIR\nusing USCore version '6.1.0'\ndefine \"E\": [Encounter]\n")
+
+    const result = await validatePackage(dir)
+    expect(result.report.checksRun).toContain('cql.patterns')
+    const patterns = result.report.findings.filter((f) => f.check === 'cql.patterns')
+    expect(patterns.map((f) => [f.severity, f.path])).toEqual([
+      ['warning', 'cql/M.cql'],
+      ['info', 'cql/M.cql'],
+    ])
+    expect(result.level).toBe(1)
+    expect(result.blockers.join(' ')).not.toMatch(/cql\.patterns/)
+  })
+
   it('reports a declared artifact that is missing from disk', async () => {
     await write('openquality.yaml', MANIFEST)
     await write('README.md', README)

@@ -150,12 +150,16 @@ and a Reviewer (any participant).
 | Model declaration includes a version (SHALL) | all 70 files. 68 declare `QICore` 6.0.0, 5 `USCore` 6.1.0, 2 `FHIR` 4.0.1 |
 | No string-based membership testing (SHOULD NOT) | none found |
 | No `contains` on terminology-valued elements | none found |
-| Retrieves qualified with the model name (best practice) | none of 744 retrieves |
+| Retrieves qualified with the model name (best practice when a library uses more than one model) | none of 662 retrieves. 5 files declare two models, and hold 125 of them |
 | Authored against US Quality Core | no file |
 
 So the work is mostly the model move from QI-Core 6.0.0 to US Quality Core 0.5.0 and
 what follows from it, not cleanup of the CQL already there. These are text matches over
-the CQL, not a translation, so treat the counts as a floor.
+the CQL, with comments and the contents of strings and quoted identifiers removed (so a
+unit like `'mm[Hg]'` is not read as a retrieve), not a translation. A pattern that only
+shows up after translation is not counted. An earlier count of 744 retrieves had matched
+brackets inside comments, units and code names. `pnpm oq validate <package>` reports the
+same checks for one package.
 
 **What we want to learn**
 
@@ -166,15 +170,20 @@ the CQL, not a translation, so treat the counts as a floor.
 - What a repository has to check to accept pattern-conformant contributions from people
   it has never met.
 
-**Open Quality has to fix two things before the event.**
+**What Open Quality changed for this scenario**
 
-- A package cannot declare US Quality Core today ([#21](https://github.com/FHIR-IQ/openquality/issues/21)). The manifest's `dataModel` accepts
-  `fhir-r4`, `qi-core`, `qdm-5.6`, `omop-5.4`, `sql-on-fhir` and `custom`, so a US
-  Quality Core package would fail schema validation before any other check runs.
-- The validator does not check any pattern ([#22](https://github.com/FHIR-IQ/openquality/issues/22)). The ones that can be read from CQL text
-  (model version, string-based membership, `contains` on terminology, unqualified
-  retrieves) can be added as warnings, so they inform an author without blocking a
-  contribution.
+- A package can declare `dataModel: us-quality-core`, and when its CQL declares
+  `using USQualityCore`, its FHIR npm package depends on `fhir.onc.us-quality-core`
+  ([#21](https://github.com/FHIR-IQ/openquality/issues/21)). Declaring US Core as a
+  dependency as well is still open
+  ([#24](https://github.com/FHIR-IQ/openquality/issues/24)).
+- The validator reports the patterns it can read from CQL text, as check
+  `cql.patterns` ([#22](https://github.com/FHIR-IQ/openquality/issues/22)): a model
+  declaration without a version, string-based membership and `contains` on a
+  terminology-valued element are warnings. Unqualified retrieves are one info line per
+  file, and only in a library that declares more than one model, which is where the IG
+  calls qualifying a best practice. None of them changes a package's level or blocks a
+  pull request.
 
 ## Known limitations, stated up front
 
