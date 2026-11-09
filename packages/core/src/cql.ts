@@ -27,6 +27,7 @@ export interface CqlInclude {
 
 const LIBRARY = /^library\s+([A-Za-z0-9_]+)\s+version\s+'([^']+)'/m
 const USING = /^using\s+([A-Za-z0-9_]+)(?:\s+version\s+'([^']+)')?/m
+const USINGS = /^using\s+([A-Za-z0-9_]+)(?:\s+version\s+'([^']+)')?/gm
 const INCLUDE = /^include\s+([A-Za-z0-9_]+)\s+version\s+'([^']+)'(?:\s+called\s+([A-Za-z0-9_]+))?/gm
 
 export function parseHeader(cql: string): CqlHeader | undefined {
@@ -34,6 +35,11 @@ export function parseHeader(cql: string): CqlHeader | undefined {
   if (!library) return undefined
   const using = cql.match(USING)
   return { name: library[1], version: library[2], model: using?.[1], modelVersion: using?.[2] }
+}
+
+/** Every `using` declaration. parseHeader keeps only the first; a measure can declare several models. */
+export function parseUsings(cql: string): { model: string; version?: string }[] {
+  return [...cql.matchAll(USINGS)].map((m) => ({ model: m[1], version: m[2] }))
 }
 
 export function parseIncludes(cql: string): CqlInclude[] {

@@ -24,7 +24,7 @@ measure:
   title: "Diabetes: Glycemic Status Assessment Greater Than 9%"
   steward: National Committee for Quality Assurance   # the measure steward, not the publisher
   identifiers: [CMS122FHIR]
-dataModel: qi-core                         # fhir-r4 | qi-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
+dataModel: qi-core                         # fhir-r4 | qi-core | us-quality-core | qdm-5.6 | omop-5.4 | sql-on-fhir | custom
 artifacts:                                 # the measure's own files
   - path: fhir/Measure-CMS122FHIRDiabetesAssessGreaterThan9Percent.json
     type: fhir/Measure

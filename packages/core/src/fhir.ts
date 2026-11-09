@@ -10,7 +10,7 @@
  * filesystem and belongs in the CLI, the same split as manifest.ts and pack.ts.
  */
 import type { Manifest } from './manifest.js'
-import { parseHeader, parseIncludes } from './cql.js'
+import { parseHeader, parseIncludes, parseUsings } from './cql.js'
 
 /**
  * Canonical base for resources this repository packages.
@@ -112,6 +112,17 @@ export function fhirVersionFor(files: CqlFile[]): string {
   return '4.0.1'
 }
 
+/**
+ * The FHIR package that defines each CQL data model a measure may declare.
+ * US Quality Core's id is taken from the cms-qmd IG's own package.json, which
+ * lists `fhir.onc.us-quality-core#0.5.0`.
+ */
+const MODEL_PACKAGES: Record<string, string> = {
+  QICore: 'hl7.fhir.us.qicore',
+  USQualityCore: 'fhir.onc.us-quality-core',
+  USCore: 'hl7.fhir.us.core',
+}
+
 export function buildPackageJson(
   manifest: Manifest,
   files: CqlFile[],
@@ -124,9 +135,9 @@ export function buildPackageJson(
   // install rather than merely misinforming them.
   const dependencies: Record<string, string> = { 'hl7.fhir.r4.core': fhirVersion }
   for (const file of files) {
-    const header = parseHeader(file.source)
-    if (header?.model === 'QICore' && header.modelVersion) {
-      dependencies['hl7.fhir.us.qicore'] = header.modelVersion
+    for (const using of parseUsings(file.source)) {
+      const pkg = MODEL_PACKAGES[using.model]
+      if (pkg && using.version) dependencies[pkg] = using.version
     }
   }
 
