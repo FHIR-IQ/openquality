@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseUsings, stripComments } from '../src/cql.js'
+import { stripComments } from '../src/cql.js'
 
 describe('stripComments', () => {
   it('blanks a line comment but keeps the newline', () => {
@@ -49,16 +49,5 @@ describe('stripComments', () => {
   it('leaves a file with no comments untouched', () => {
     const cql = `library X version '1.0.0'\ndefine "A": true\n`
     expect(stripComments(cql)).toBe(cql)
-  })
-})
-
-describe('parseUsings', () => {
-  it('returns every model a library declares, in order, with its version', () => {
-    const cql = "library A version '1.0.0'\nusing USQualityCore version '0.5.0'\nusing USCore version '6.1.0'\nusing FHIR\n"
-    expect(parseUsings(cql)).toEqual([
-      { model: 'USQualityCore', version: '0.5.0' },
-      { model: 'USCore', version: '6.1.0' },
-      { model: 'FHIR', version: undefined },
-    ])
   })
 })

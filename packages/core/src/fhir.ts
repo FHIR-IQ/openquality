@@ -10,7 +10,7 @@
  * filesystem and belongs in the CLI, the same split as manifest.ts and pack.ts.
  */
 import type { Manifest } from './manifest.js'
-import { parseHeader, parseIncludes, parseUsings } from './cql.js'
+import { parseHeader, parseIncludes } from './cql.js'
 
 /**
  * Canonical base for resources this repository packages.
@@ -120,7 +120,16 @@ export function fhirVersionFor(files: CqlFile[]): string {
 const MODEL_PACKAGES: Record<string, string> = {
   QICore: 'hl7.fhir.us.qicore',
   USQualityCore: 'fhir.onc.us-quality-core',
-  USCore: 'hl7.fhir.us.core',
+}
+
+/**
+ * A derived ModelInfo is versioned after the IG it derives from plus
+ * `-derived` (US CQL ships `QICore` 6.0.0-derived), and CQL names that
+ * version in `using`. No package is published under it, so the dependency
+ * takes the IG's version.
+ */
+function packageVersionForModel(modelVersion: string): string {
+  return modelVersion.replace(/-derived$/, '')
 }
 
 export function buildPackageJson(
@@ -135,10 +144,9 @@ export function buildPackageJson(
   // install rather than merely misinforming them.
   const dependencies: Record<string, string> = { 'hl7.fhir.r4.core': fhirVersion }
   for (const file of files) {
-    for (const using of parseUsings(file.source)) {
-      const pkg = MODEL_PACKAGES[using.model]
-      if (pkg && using.version) dependencies[pkg] = using.version
-    }
+    const header = parseHeader(file.source)
+    const pkg = header?.model ? MODEL_PACKAGES[header.model] : undefined
+    if (pkg && header?.modelVersion) dependencies[pkg] = packageVersionForModel(header.modelVersion)
   }
 
   return {

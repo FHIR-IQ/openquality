@@ -120,16 +120,20 @@ describe('buildPackageJson', () => {
     expect(buildPackageJson(MANIFEST, [plain]).dependencies).toEqual({ 'hl7.fhir.r4.core': '4.0.1' })
   })
 
-  it('declares US Quality Core and US Core when the CQL uses them', () => {
-    const usqc: CqlFile = {
-      path: 'a.cql',
-      source: `library A version '1.0.0'\nusing USQualityCore version '0.5.0'\nusing USCore version '6.1.0'`,
-    }
+  it('declares US Quality Core when the CQL uses it', () => {
+    const usqc: CqlFile = { path: 'a.cql', source: `library A version '1.0.0'\nusing USQualityCore version '0.5.0'` }
     expect(fhirVersionFor([usqc])).toBe('4.0.1')
     expect(buildPackageJson(MANIFEST, [usqc]).dependencies).toEqual({
       'hl7.fhir.r4.core': '4.0.1',
       'fhir.onc.us-quality-core': '0.5.0',
-      'hl7.fhir.us.core': '6.1.0',
+    })
+  })
+
+  it('maps a derived ModelInfo version to the package version that exists', () => {
+    const derived: CqlFile = { path: 'a.cql', source: `library A version '1.0.0'\nusing QICore version '6.0.0-derived'` }
+    expect(buildPackageJson(MANIFEST, [derived]).dependencies).toEqual({
+      'hl7.fhir.r4.core': '4.0.1',
+      'hl7.fhir.us.qicore': '6.0.0',
     })
   })
 
